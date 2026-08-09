@@ -1,0 +1,114 @@
+{
+  "model_type": "transformer",
+  "threshold": 0.55,
+  "selection": "max boundary F1 on val (ties -> higher threshold)",
+  "val_boundary_f1": {
+    "precision": 0.14444444444444443,
+    "recall": 0.32865168539325845,
+    "f1": 0.2006861063464837,
+    "tp": 468,
+    "fp": 2772,
+    "fn": 956,
+    "threshold": 0.55
+  },
+  "test_boundary_f1": {
+    "precision": 0.12658227848101267,
+    "recall": 0.3381294964028777,
+    "f1": 0.1842053693905546,
+    "tp": 470,
+    "fp": 3243,
+    "fn": 920,
+    "threshold": 0.55
+  },
+  "fixed_threshold_reference": {
+    "threshold": 0.8,
+    "val": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1424,
+      "threshold": 0.8
+    },
+    "test": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1390,
+      "threshold": 0.8
+    }
+  },
+  "diagnostics": {
+    "n": 16027,
+    "pos_rate": 0.08885006551444438,
+    "overall": {
+      "n": 16027,
+      "mean": 0.523553192615509,
+      "std": 0.045944780111312866,
+      "min": 0.47096267342567444,
+      "p5": 0.4805334508419037,
+      "p25": 0.49244236946105957,
+      "median": 0.5058492422103882,
+      "p75": 0.5418417453765869,
+      "p95": 0.6328356802463531,
+      "max": 0.6875600218772888
+    },
+    "positives": {
+      "n": 1424,
+      "mean": 0.539897620677948,
+      "std": 0.05498668923974037,
+      "min": 0.4709627628326416,
+      "p5": 0.48124978840351107,
+      "p25": 0.49624282121658325,
+      "median": 0.520634114742279,
+      "p75": 0.572826012969017,
+      "p95": 0.6526060104370117,
+      "max": 0.6875600218772888
+    },
+    "negatives": {
+      "n": 14603,
+      "mean": 0.5219594240188599,
+      "std": 0.04464683309197426,
+      "min": 0.47096267342567444,
+      "p5": 0.4805333912372589,
+      "p25": 0.49226972460746765,
+      "median": 0.504910945892334,
+      "p75": 0.5404144525527954,
+      "p95": 0.6299366474151611,
+      "max": 0.6875600218772888
+    },
+    "histogram_edges": [
+      0.0,
+      0.1,
+      0.2,
+      0.30000000000000004,
+      0.4,
+      0.5,
+      0.6000000000000001,
+      0.7000000000000001,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "histogram_counts": [
+      0,
+      0,
+      0,
+      0,
+      6380,
+      8209,
+      1438,
+      0,
+      0,
+      0
+    ]
+  },
+  "artifacts": {
+    "threshold_csv": "<project-root>/artifacts/results/latest/transformer_threshold_f1.csv",
+    "diagnostics_json": "<project-root>/artifacts/results/latest/transformer_boundary_diagnostics.json",
+    "threshold_png": "<project-root>/artifacts/results/latest/transformer_boundary_threshold_f1.png"
+  }
+}

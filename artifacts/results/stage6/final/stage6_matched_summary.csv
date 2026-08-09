@@ -1,0 +1,6 @@
+method,chunk_config,avg_chunk_size,n_chunks,pool_recall@20,bge_recall@1,rerank20_recall@1,rerank20_minus_bge@1,bge_recall@3,rerank20_recall@3,rerank20_minus_bge@3,bge_recall@5,rerank20_recall@5,rerank20_minus_bge@5,rerank_seconds,n_pairs
+fixed,"fixed_size=6,overlap=0",5.950,48029,0.9264,0.5087,0.5446,0.0359,0.7316,0.7490,0.0174,0.8101,0.8304,0.0203,331.3708,20640
+fixed,"fixed_size=15,overlap=0",14.649,19507,0.9641,0.6279,0.6289,0.0010,0.8159,0.8159,0.0000,0.8808,0.8760,-0.0048,729.9158,20640
+bilstm,"target=15,min=11,max=19,overlap=0",14.801,19306,0.9632,0.6298,0.6269,-0.0029,0.8081,0.8285,0.0203,0.8653,0.8769,0.0116,727.6356,20640
+transformer,"target=15,min=11,max=19,overlap=0",14.774,19341,0.9574,0.6366,0.6250,-0.0116,0.8110,0.8149,0.0039,0.8672,0.8769,0.0097,594.5275,20640
+fixed,"fixed_size=15,overlap=1",14.695,20792,0.9593,0.6260,0.6269,0.0010,0.8023,0.8198,0.0174,0.8556,0.8750,0.0194,599.5210,20640

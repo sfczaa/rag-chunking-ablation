@@ -1,0 +1,6 @@
+claim,metric,value,rule,reference_small_eval,replicates
+1. chunk size matters more than chunking method,"pearson_r(avg_chunk_size, recall@5) over bge configs",0.9515,r >= 0.5,Stage 2/3 (n=203): r ~ +0.77,yes
+1. chunk size matters more than chunking method,"recall@5 size effect (largest vs smallest size) minus mean method spread at matched (size, overlap)",0.0523,size effect > method spread,Stage 2 (n=203): size ~ +0.07 vs method <= 0.014,yes
+2. BGE-only remains a strong baseline,best bge recall@5 over the grid,0.8808,">= 0.80 (loose heuristic; the corpus is ~5x larger, so some absolute drop vs the 200-doc eval is expected)",Stage 3 (200 docs): 0.921,yes
+3. rerank20 helps mainly at small chunks,recall@1 delta at fixed size 6 (vs mean delta at the size-15 configs),0.0359,delta(size 6) >= 2 SE (0.0308) and > mean size-15 delta (-0.0031),Stage 5 (n=203): +0.113 at size 6 vs ~+0.002 mean at size 15,yes
+4. rerank20 does not clearly improve the size-15 sweet spot,max recall@1 delta over the size-15 configs,0.001,max size-15 delta < 2 SE (0.0308),Stage 5 (n=203): size-15 deltas within 1 SE ~ 0.034,yes
