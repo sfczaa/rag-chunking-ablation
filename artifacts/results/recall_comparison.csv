@@ -1,0 +1,5 @@
+method,metric,recall@1,recall@3,recall@5,avg_chunk_size,n_chunks
+fixed,doc_constrained,0.5271,0.7340,0.8079,9.881,6713
+fixed,unconstrained,0.5369,0.7537,0.8325,9.881,6713
+bilstm,doc_constrained,0.4975,0.7094,0.8079,9.368,7124
+bilstm,unconstrained,0.5074,0.7192,0.8276,9.368,7124
