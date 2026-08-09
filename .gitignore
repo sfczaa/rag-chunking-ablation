@@ -1,0 +1,40 @@
+# --------------------------------------------------------------------------- #
+# Data, caches and weights — regenerable, and far too large for git.
+# Everything the study *concluded* lives in artifacts/results/, which IS tracked.
+# --------------------------------------------------------------------------- #
+artifacts/data/
+artifacts/models/
+artifacts/results/latest/
+artifacts_smoke/
+
+# Drive-download leftovers / local scratch copies (root-anchored: must NOT
+# match artifacts/results/, which holds the tracked archived evidence)
+/results/
+/data/
+/models/*.pt
+
+# --------------------------------------------------------------------------- #
+# Python
+# --------------------------------------------------------------------------- #
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# --------------------------------------------------------------------------- #
+# Personal working files (kept local, not part of the public record)
+# --------------------------------------------------------------------------- #
+日誌*.docx
+~$*.docx
+NEXT_STEPS.md
+PROGRESS.md
+
+# --------------------------------------------------------------------------- #
+# Editor / tooling local state
+# --------------------------------------------------------------------------- #
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
