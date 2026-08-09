@@ -1,0 +1,5 @@
+claim,metric,value,rule,reference_nq,replicates
+1. chunk size matters more than chunking method,"pearson_r(avg_chunk_size, recall@5) over the 30 bge configs",0.8005,r >= 0.5,"NQ: r ~ 0.77 (n=203), 0.95 (n=1032)",yes
+1. chunk size matters more than chunking method,"recall@5 size effect (largest vs smallest size) minus mean method spread at matched (size, overlap)",0.0208,size effect > method spread,NQ n=203: size ~ +0.07 vs method <= 0.014; n=1032: 0.052 > spread,yes
+2. methods tie at matched (large) chunk size,max method spread of recall@5 over the size-15 cells,0.02,max spread < 2 SE (0.0355),NQ stage3: spread 0.020 at size 15/ov0 (~1 SE = 0.019),yes
+3. best chunk size is large,nominal size of the best-recall@5 config (project ranking),15.0,"best nominal size in {12, 15}",NQ: best size 15 at n=203 and at n=1032,yes
