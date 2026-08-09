@@ -25,7 +25,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
 import config as C  # noqa: E402
 
-# The archived Stage 5 eval set (see PROGRESS.md); the Stage 5 CSVs do not
+# The archived Stage 5 eval set (see README.md); the Stage 5 CSVs do not
 # store the counts themselves.
 SMALL_EVAL_DOCS = 200
 SMALL_EVAL_QUESTIONS = 203
