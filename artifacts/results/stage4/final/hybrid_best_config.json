@@ -1,0 +1,145 @@
+{
+  "ranking": "per retriever: max doc-constrained recall@5, then recall@3, then recall@1, then min avg_chunk_size",
+  "per_retriever": {
+    "bge": {
+      "ranking": "max doc-constrained recall@5, then recall@3, then recall@1, then min avg_chunk_size",
+      "selected_metrics": {
+        "recall@1": 0.6502463054187192,
+        "recall@3": 0.8472906403940886,
+        "recall@5": 0.9211822660098522,
+        "avg_chunk_size": 14.660539215686274
+      },
+      "config": {
+        "method": "fixed",
+        "model_type": "none",
+        "boundary_embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "avg_chunk_size": 14.660539215686274,
+        "n_chunks": 4080,
+        "fixed_size": 15,
+        "fixed_overlap": 0,
+        "semantic_policy": null,
+        "semantic_target_size": null,
+        "semantic_min_size": null,
+        "semantic_max_size": null,
+        "semantic_overlap": null,
+        "boundary_threshold": null,
+        "retriever": "bge",
+        "embedding_model": "BAAI/bge-base-en-v1.5",
+        "retrieval_embedding_model": "BAAI/bge-base-en-v1.5",
+        "rrf_k": null,
+        "fuse_depth": null,
+        "recall@1": 0.6502463054187192,
+        "recall@3": 0.8472906403940886,
+        "recall@5": 0.9211822660098522,
+        "recall_unconstrained@1": 0.6699507389162561,
+        "recall_unconstrained@3": 0.8620689655172413,
+        "recall_unconstrained@5": 0.9310344827586207
+      }
+    },
+    "bm25": {
+      "ranking": "max doc-constrained recall@5, then recall@3, then recall@1, then min avg_chunk_size",
+      "selected_metrics": {
+        "recall@1": 0.5024630541871922,
+        "recall@3": 0.7093596059113301,
+        "recall@5": 0.8029556650246306,
+        "avg_chunk_size": 14.747287968441814
+      },
+      "config": {
+        "method": "bilstm",
+        "model_type": "bilstm",
+        "boundary_embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "avg_chunk_size": 14.747287968441814,
+        "n_chunks": 4056,
+        "fixed_size": null,
+        "fixed_overlap": null,
+        "semantic_policy": "target",
+        "semantic_target_size": 15,
+        "semantic_min_size": 11,
+        "semantic_max_size": 19,
+        "semantic_overlap": 0,
+        "boundary_threshold": null,
+        "retriever": "bm25",
+        "embedding_model": "none",
+        "retrieval_embedding_model": "none",
+        "rrf_k": null,
+        "fuse_depth": null,
+        "recall@1": 0.5024630541871922,
+        "recall@3": 0.7093596059113301,
+        "recall@5": 0.8029556650246306,
+        "recall_unconstrained@1": 0.5024630541871922,
+        "recall_unconstrained@3": 0.7339901477832512,
+        "recall_unconstrained@5": 0.8226600985221675
+      }
+    },
+    "rrf": {
+      "ranking": "max doc-constrained recall@5, then recall@3, then recall@1, then min avg_chunk_size",
+      "selected_metrics": {
+        "recall@1": 0.6403940886699507,
+        "recall@3": 0.7980295566502463,
+        "recall@5": 0.8866995073891626,
+        "avg_chunk_size": 14.660539215686274
+      },
+      "config": {
+        "method": "fixed",
+        "model_type": "none",
+        "boundary_embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "avg_chunk_size": 14.660539215686274,
+        "n_chunks": 4080,
+        "fixed_size": 15,
+        "fixed_overlap": 0,
+        "semantic_policy": null,
+        "semantic_target_size": null,
+        "semantic_min_size": null,
+        "semantic_max_size": null,
+        "semantic_overlap": null,
+        "boundary_threshold": null,
+        "retriever": "rrf",
+        "embedding_model": "BAAI/bge-base-en-v1.5",
+        "retrieval_embedding_model": "BAAI/bge-base-en-v1.5",
+        "rrf_k": 60,
+        "fuse_depth": 50,
+        "recall@1": 0.6403940886699507,
+        "recall@3": 0.7980295566502463,
+        "recall@5": 0.8866995073891626,
+        "recall_unconstrained@1": 0.6600985221674877,
+        "recall_unconstrained@3": 0.8078817733990148,
+        "recall_unconstrained@5": 0.8866995073891626
+      }
+    }
+  },
+  "overall": {
+    "ranking": "max doc-constrained recall@5, then recall@3, then recall@1, then min avg_chunk_size",
+    "selected_metrics": {
+      "recall@1": 0.6502463054187192,
+      "recall@3": 0.8472906403940886,
+      "recall@5": 0.9211822660098522,
+      "avg_chunk_size": 14.660539215686274
+    },
+    "config": {
+      "method": "fixed",
+      "model_type": "none",
+      "boundary_embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "avg_chunk_size": 14.660539215686274,
+      "n_chunks": 4080,
+      "fixed_size": 15,
+      "fixed_overlap": 0,
+      "semantic_policy": null,
+      "semantic_target_size": null,
+      "semantic_min_size": null,
+      "semantic_max_size": null,
+      "semantic_overlap": null,
+      "boundary_threshold": null,
+      "retriever": "bge",
+      "embedding_model": "BAAI/bge-base-en-v1.5",
+      "retrieval_embedding_model": "BAAI/bge-base-en-v1.5",
+      "rrf_k": null,
+      "fuse_depth": null,
+      "recall@1": 0.6502463054187192,
+      "recall@3": 0.8472906403940886,
+      "recall@5": 0.9211822660098522,
+      "recall_unconstrained@1": 0.6699507389162561,
+      "recall_unconstrained@3": 0.8620689655172413,
+      "recall_unconstrained@5": 0.9310344827586207
+    }
+  }
+}

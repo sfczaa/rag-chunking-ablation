@@ -1,0 +1,11 @@
+arm,method,chunk_config,stage6_n_chunks,stage8_n_chunks,delta_n_chunks,stage6_recall@1,stage8_recall@1,delta_recall@1,stage6_recall@3,stage8_recall@3,delta_recall@3,stage6_recall@5,stage8_recall@5,delta_recall@5
+bge,fixed,"fixed_size=6,overlap=0",48029,48029,0,0.5087,0.5087,0.0000,0.7316,0.7316,0.0000,0.8101,0.8101,0.0000
+rerank20,fixed,"fixed_size=6,overlap=0",48029,48029,0,0.5446,0.5446,0.0000,0.7490,0.7490,0.0000,0.8304,0.8304,0.0000
+bge,fixed,"fixed_size=15,overlap=0",19507,19507,0,0.6279,0.6279,0.0000,0.8159,0.8159,0.0000,0.8808,0.8808,0.0000
+rerank20,fixed,"fixed_size=15,overlap=0",19507,19507,0,0.6289,0.6289,0.0000,0.8159,0.8159,0.0000,0.8760,0.8760,0.0000
+bge,fixed,"fixed_size=15,overlap=1",20792,20792,0,0.6260,0.6260,0.0000,0.8023,0.8023,0.0000,0.8556,0.8556,0.0000
+rerank20,fixed,"fixed_size=15,overlap=1",20792,20792,0,0.6269,0.6269,0.0000,0.8198,0.8198,0.0000,0.8750,0.8750,0.0000
+bge,bilstm,"target=15,min=11,max=19,overlap=0",19306,19306,0,0.6298,0.6298,0.0000,0.8081,0.8081,0.0000,0.8653,0.8653,0.0000
+rerank20,bilstm,"target=15,min=11,max=19,overlap=0",19306,19306,0,0.6269,0.6269,0.0000,0.8285,0.8285,0.0000,0.8769,0.8769,0.0000
+bge,transformer,"target=15,min=11,max=19,overlap=0",19341,19341,0,0.6366,0.6366,0.0000,0.8110,0.8110,0.0000,0.8672,0.8672,0.0000
+rerank20,transformer,"target=15,min=11,max=19,overlap=0",19341,19341,0,0.6250,0.6250,0.0000,0.8149,0.8149,0.0000,0.8769,0.8769,0.0000

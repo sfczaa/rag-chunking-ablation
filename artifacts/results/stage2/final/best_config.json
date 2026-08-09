@@ -1,0 +1,32 @@
+{
+  "ranking": "max doc-constrained recall@5, then recall@3, then recall@1, then min avg_chunk_size",
+  "selected_metrics": {
+    "recall@1": 0.5665024630541872,
+    "recall@3": 0.7980295566502463,
+    "recall@5": 0.8669950738916257,
+    "avg_chunk_size": 14.747287968441814
+  },
+  "config": {
+    "method": "bilstm",
+    "model_type": "bilstm",
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "boundary_embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "retrieval_embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "recall@1": 0.5665024630541872,
+    "recall@3": 0.7980295566502463,
+    "recall@5": 0.8669950738916257,
+    "recall_unconstrained@1": 0.5812807881773399,
+    "recall_unconstrained@3": 0.8078817733990148,
+    "recall_unconstrained@5": 0.8719211822660099,
+    "avg_chunk_size": 14.747287968441814,
+    "n_chunks": 4056,
+    "fixed_size": null,
+    "fixed_overlap": null,
+    "semantic_policy": "target",
+    "semantic_target_size": 15,
+    "semantic_min_size": 11,
+    "semantic_max_size": 19,
+    "semantic_overlap": 0,
+    "boundary_threshold": null
+  }
+}
