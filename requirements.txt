@@ -1,0 +1,15 @@
+# Core. On Colab, torch is already installed (with CUDA) — no need to pin it.
+datasets>=2.18
+huggingface_hub>=0.20
+sentence-transformers>=2.6
+faiss-cpu>=1.7
+nltk>=3.8
+mwparserfromhell>=0.6
+requests>=2.31
+numpy>=1.24
+matplotlib>=3.7
+tqdm>=4.66
+gradio>=4.0      # Route D interactive demo only (scripts/19_demo.py)
+
+# torch is required but intentionally left unpinned so Colab's preinstalled
+# GPU build is reused. For a local run:  pip install torch
