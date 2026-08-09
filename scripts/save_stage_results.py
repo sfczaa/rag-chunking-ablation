@@ -19,7 +19,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import config as C  # noqa: E402
 
 VALID_STAGES = ("stage1", "stage2", "stage3", "stage4", "stage5", "stage6",
-                "stage7", "stage8")
+                "stage7", "stage8", "stage9")
 
 
 def stage_final_dir(stage: str) -> pathlib.Path:
@@ -71,7 +71,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(
         description="Archive results/latest/ into results/<stage>/final/ (copy only).")
     ap.add_argument("--stage", required=True, choices=VALID_STAGES,
-                    help="stage folder to snapshot into (stage1 | ... | stage8)")
+                    help="stage folder to snapshot into (stage1 | ... | stage9)")
     args = ap.parse_args()
     save_stage_results(args.stage)
 
