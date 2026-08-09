@@ -1,0 +1,7 @@
+# torch is intentionally unpinned/omitted: the ZeroGPU image ships a supported
+# CUDA build, and installing our own would shadow it.
+spaces
+sentence-transformers>=2.6
+faiss-cpu>=1.7
+huggingface_hub>=0.20
+numpy>=1.24
