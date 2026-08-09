@@ -55,7 +55,7 @@ CHECKPOINT_FILES = {
 # cached corpus, so recall deltas should be 0.0000; anything above one
 # question (~0.005 at n=203) means the setup differs.
 CHECK_TOLERANCE = 0.005
-# The archived Stage 3 eval set (see PROGRESS.md); its CSV does not store the
+# The archived Stage 3 eval set (see README.md); its CSV does not store the
 # counts itself.
 NQ_SMALL_DOCS = 200
 NQ_SMALL_QUESTIONS = 203
