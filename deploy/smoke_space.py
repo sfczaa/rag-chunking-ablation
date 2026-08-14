@@ -21,6 +21,7 @@ import argparse
 import importlib
 import os
 import pathlib
+import shutil
 import sys
 import tempfile
 import time
@@ -30,6 +31,31 @@ from create_space import assemble  # noqa: E402
 
 EXPECTED = {"fixed": (19507, 14.649), "bilstm": (19306, 14.801)}
 TOL_SIZE = 0.01
+BENCH_SUBDIR = pathlib.Path("data/nq/large_n1000")
+
+
+def _ascii_safe_data_root(data_root: pathlib.Path,
+                          tmp: pathlib.Path) -> pathlib.Path:
+    """FAISS reads indices through a C++ ``const char*``, which cannot open a
+    path containing non-ASCII characters on Windows — and the usual Drive mount
+    here is ``G:\\我的雲端硬碟\\...``. Python-side loads (JSONL, safetensors)
+    handle Unicode fine, so only the bench subtree needs relocating. Staging it
+    under an ASCII temp dir keeps the smoke test usable without asking anyone to
+    remount their Drive. Spaces run on Linux under ASCII cache paths, so this
+    never applies in production."""
+    if str(data_root).isascii():
+        return data_root
+    src = data_root / BENCH_SUBDIR
+    if not src.is_dir():
+        raise SystemExit(f"[smoke] bench dir not found: {src}")
+    dest_root = tmp / "assets"
+    dest = dest_root / BENCH_SUBDIR
+    print(f"[smoke] non-ASCII data root detected — staging the bench to an "
+          f"ASCII path so FAISS can read it\n[smoke]   {src}\n[smoke]   -> {dest}")
+    shutil.copytree(src, dest)
+    mb = sum(p.stat().st_size for p in dest.rglob("*") if p.is_file()) / 1024 / 1024
+    print(f"[smoke] staged {mb:.0f} MB")
+    return dest_root
 
 
 def main() -> None:
@@ -43,7 +69,9 @@ def main() -> None:
 
     with tempfile.TemporaryDirectory(prefix="smoke_") as tmp:
         payload = assemble(pathlib.Path(tmp) / "space")
-        os.environ["LOCAL_ASSETS"] = str(pathlib.Path(args.data_root).resolve())
+        data_root = _ascii_safe_data_root(
+            pathlib.Path(args.data_root).resolve(), pathlib.Path(tmp))
+        os.environ["LOCAL_ASSETS"] = str(data_root)
         os.environ["FT_REPO"] = str(pathlib.Path(args.ft_model).resolve())
         os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
         sys.path.insert(0, str(payload))
