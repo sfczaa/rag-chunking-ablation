@@ -92,6 +92,8 @@ it is not drawn on this axis).
 Regenerate with `python scripts/14_evolution_plot.py` (reads only the archived
 `stage*/final/` CSVs; writes `artifacts/results/portfolio/`).
 
+### Stages 1–2 — fixed vs BiLSTM vs Transformer chunking
+
 Evaluated on **200 NQ documents / 203 questions**, doc-constrained Recall@k, every
 learned config size-matched to fixed-size (the Stage 2 sweep, MiniLM embeddings).
 
