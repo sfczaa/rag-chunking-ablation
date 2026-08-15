@@ -88,7 +88,8 @@ N_WIKI_ARTICLES = 5000               # how many articles to build the dataset fr
 WIKI_API_ENDPOINT = "https://en.wikipedia.org/w/api.php"
 # A descriptive User-Agent is required by the Wikimedia API etiquette.
 WIKI_API_USER_AGENT = (
-    "RAG-chunk-optimize/1.0 (portfolio project; contact: sfczaa@gmail.com)"
+    "RAG-chunk-optimize/1.0 "
+    "(https://github.com/sfczaa/rag-chunking-ablation)"
 )
 WIKI_API_BATCH = 50                  # titles per API request (API max for anon)
 
