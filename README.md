@@ -1,171 +1,71 @@
-# Retrieval-aware RAG Chunking Optimizer
+# Retrieval-aware RAG Chunking
 
-Find the chunking strategy that retrieves answer-bearing passages best — *fairly*.
-A BiLSTM trained on Wikipedia *section* pseudo-labels predicts where a topic
-changes; **target-size semantic cutting** turns those predictions into chunks
-that stay size-comparable to a fixed-size baseline. The optimizer then sweeps
-both strategies across chunk sizes and overlap settings and ranks them on
-**Natural Questions (NQ)** by doc-constrained Recall@k.
+**Does *how* you split documents matter for RAG retrieval, or only *how big* the
+pieces are?**
 
-> **This project does not assume learned chunking always wins.** It controls for
-> chunk size and overlap, then measures which strategy retrieves answer-bearing
-> chunks better — and exports the best configuration it finds.
+Smarter chunking is widely assumed to improve retrieval. This is a controlled
+ablation that tests the assumption: a BiLSTM and a Transformer are trained to
+predict topic boundaries, their predictions are turned into chunks that stay
+size-comparable to a fixed-size baseline, and all three are then swept across
+chunk sizes and overlaps and scored on **Natural Questions** by doc-constrained
+Recall@k. Each stage changes exactly one variable and must reproduce the
+previous stage's numbers before its own are read.
 
-> No paid APIs. Runs end-to-end on the Colab free tier (T4 GPU). Every phase
-> caches to Google Drive and is resumable.
+**[▶ Try the live demo](https://huggingface.co/spaces/sfczaa/rag-chunking-ablation-demo)**
+· [Fine-tuned reranker](https://huggingface.co/sfczaa/bge-reranker-base-nq-ft)
+· [Benchmark assets](https://huggingface.co/datasets/sfczaa/rag-chunking-ablation-demo-assets)
+
+## Key findings
+
+- **Chunk size dominates; the chunking method does not.** Over 30 configurations
+  (3 methods × 5 sizes × 2 overlaps, n=1032 questions), moving from 6 to 15
+  sentences is worth **+0.064 Recall@5** (p ≈ 3e-16) — roughly **18×** the
+  largest chunking-method coefficient, which is not significant. Even *overlap*,
+  a nuisance knob, outweighs the choice of method.
+- **The tie is measured, not merely unproven.** At this sample size the smallest
+  detectable between-method gap is 0.032, and the largest gap actually observed
+  at any matched (size, overlap) cell is 0.023 — below the detection floor.
+- **It replicates.** The result holds at 5× scale (200 → 1000 documents) and
+  survives a change of dataset (NQ → TriviaQA).
+- **The embedder was the real lever.** Swapping only the retrieval embedder
+  (MiniLM → BGE), chunks held identical, improved **all 30/30** matched
+  configurations. Hybrid BM25 + RRF did not help.
+- **Fine-tuning the reranker was the one intervention that moved the sweet
+  spot**: +0.107 Recall@1 in-domain. Cross-dataset it only recovers parity with
+  plain dense retrieval — reported as damage control, not lift.
+
+Negative and null results are reported as such; the two figures below are the
+short version, and every number links to an archived CSV under
+[`artifacts/results/`](artifacts/results).
 
 ---
 
-## Pipeline
+## How it works
 
-| Phase | What it does | Module / script |
+| Step | What happens | Code |
 |---|---|---|
-| 1 | Wikipedia → `(sentences, labels)` with real section boundaries | `rag_chunk/wiki_data.py` · `scripts/1_prepare_data.py` |
-| 2 | Offline sentence embeddings (`all-MiniLM-L6-v2`, d=384) | `rag_chunk/embedding.py` · `scripts/2_embed_offline.py` |
-| 3 | Train BiLSTM (weighted BCE, early stopping) | `rag_chunk/training.py`, `models/bilstm.py` · `scripts/3_train.py` |
-| 4 | Chunk NQ docs (learned vs fixed) → FAISS `IndexFlatIP` | `rag_chunk/retrieval.py`, `chunking.py`, `nq_data.py` · `scripts/4_build_index.py` |
-| 5 | Recall@k + Boundary F1 → table & figure | `rag_chunk/evaluation.py`, `metrics.py` · `scripts/5_evaluate.py` |
-| 6 | Sweep fixed + learned chunking → best config, fair table, plots | `rag_chunk/sweep.py` · `scripts/6_sweep_chunking.py` |
-| 7 | Train Transformer boundary model (Stage 2) | `models/transformer_boundary.py` · `scripts/7_train_transformer.py` |
-| 8 | Sweep fixed + BiLSTM + Transformer | `rag_chunk/sweep.py` · `scripts/8_sweep_with_transformer.py` |
+| Corpus | Wikipedia articles become sentences with *real* section boundaries, parsed from raw wikitext rather than the cleaned dump | `rag_chunk/wiki_data.py` |
+| Boundary models | A BiLSTM and a Transformer predict which sentences begin a new topic | `models/` · `rag_chunk/training.py` |
+| Chunking | Those predictions become chunks by **target-size cutting**, which keeps learned chunks size-comparable to the fixed-size baseline | `rag_chunk/chunking.py` |
+| Retrieval | Chunks and queries are embedded and indexed in FAISS (`IndexFlatIP` over L2-normalised vectors, so inner product is cosine) | `rag_chunk/retrieval.py` |
+| Reranking | The dense top-k is reordered by a cross-encoder, off-the-shelf or fine-tuned on in-domain hard negatives | `rag_chunk/rerank.py` · `rerank_finetune.py` |
+| Scoring | Doc-constrained Recall@k across a swept grid of sizes, overlaps and methods | `rag_chunk/metrics.py` · `sweep.py` |
 
-Phases 1–5 are the original pipeline (single fixed-vs-learned comparison, kept
-working unchanged). **Phase 6** is the Stage 1 optimizer layer. **Phases 7–8**
-are Stage 2: a Transformer boundary model compared three ways against fixed and
-BiLSTM under the same protocol (see
-[`docs/stage2_transformer_boundary.md`](docs/stage2_transformer_boundary.md)).
-**Phase 9** is Stage 3: keep the existing MiniLM boundary/chunking models and
-rerun only the retrieval FAISS/query embeddings with BGE (see
-[`docs/stage3_bge_retrieval.md`](docs/stage3_bge_retrieval.md)). **Phase 10** is
-Stage 4: rank the identical chunks with BGE-only, BM25-only, and BGE+BM25 RRF
-(see [`docs/stage4_hybrid_retrieval.md`](docs/stage4_hybrid_retrieval.md)).
-**Phase 11** is Stage 5: reorder the BGE top-k candidates with an off-the-shelf
-cross-encoder reranker (see [`docs/stage5_reranker.md`](docs/stage5_reranker.md)).
-**Phase 12** is Stage 6: re-run the whole comparison at ~5× scale
-(1000 docs / 1032 questions) and test whether the Stage 1–5 conclusions
-replicate (see [`docs/stage6_large_eval.md`](docs/stage6_large_eval.md)).
-**Phase 13** is Stage 7: the same bge-only sweep on a *different QA dataset*
-(TriviaQA rc.wikipedia) to test whether the headline transfers across
-datasets (see [`docs/stage7_cross_dataset.md`](docs/stage7_cross_dataset.md)).
-**Phase 14** is Stage 8: fine-tune the cross-encoder reranker on the NQ
-*train* split (disjoint from every eval bench) behind a cheap dev-set
-go/no-go gate (see
-[`docs/stage8_reranker_finetune.md`](docs/stage8_reranker_finetune.md)).
+Three choices do the work of keeping the comparison fair:
 
----
-
-## How to run (Google Colab)
-
-1. Upload this whole `RAG chunk optimize` folder to your Drive, e.g.
-   `MyDrive/RAG chunk optimize`.
-2. Open `notebooks/RAG_chunk_optimize_colab.ipynb` in Colab.
-3. Runtime → Change runtime type → **GPU**.
-4. Run the cells top-to-bottom. The first runnable section is a **smoke test**
-   that runs all five phases at tiny scale (a few minutes) in a separate
-   `*_smoke` folder — use it to catch any Colab/dataset issue before committing
-   to the full run. It restores the real config automatically.
-
-The notebook mounts Drive, sets `RAG_DATA_ROOT` to
-`<project>/artifacts`, and runs Phases 1–5. Artifacts (parsed Wikipedia,
-embeddings, model, FAISS indices, results) all land under that folder and
-survive session restarts.
-
-### Or via the scripts (CLI / local)
-
-```bash
-pip install -r requirements.txt          # + torch if running locally
-export RAG_DATA_ROOT=./artifacts         # optional; defaults to a Drive path
-python scripts/0_smoke_test.py           # optional: tiny end-to-end plumbing check
-python scripts/1_prepare_data.py
-python scripts/2_embed_offline.py
-python scripts/3_train.py
-python scripts/4_build_index.py
-python scripts/5_evaluate.py
-python scripts/6_sweep_chunking.py --quick   # fast grid; drop --quick for the full sweep
-```
-
-On **Windows PowerShell** the env-var syntax differs:
-
-```powershell
-pip install -r requirements.txt          # then install torch separately, see below
-$env:RAG_DATA_ROOT = ".\artifacts"
-python scripts\0_smoke_test.py
-# ... scripts\1_prepare_data.py ... scripts\5_evaluate.py
-```
-
-> `requirements.txt` deliberately does **not** pin `torch` (Colab ships it). To
-> run locally install a build for your platform from <https://pytorch.org> first.
-> `faiss-cpu` wheels exist for Windows but can lag; if `pip install faiss-cpu`
-> fails, use Colab or WSL. The intended target is Colab — local runs are a
-> convenience, not the primary path.
-
-### Reproducing the full study from scratch (Stages 1–6)
-
-The archived numbers in `artifacts/results/stage*/final/` were produced on the
-Colab free tier (T4) in June–July 2026. To redo the whole chain on a fresh
-machine or Drive:
-
-1. **Environment.** Python ≥ 3.10, `pip install -r requirements.txt`, plus a
-   `torch` build for your platform (Colab ships one). The requirements are
-   verified to resolve on Python 3.12 (2026-07), but they are floors, not a
-   freeze — newer library versions can move recall values in the third
-   decimal; it is the *directional* conclusions that should replicate.
-2. **Plumbing check.** `python scripts/0_smoke_test.py` — the whole Phase 1–5
-   pipeline at tiny scale in a separate `*_smoke` folder (a few minutes).
-3. **Base pipeline (Phases 1–5).** Run `scripts/1_prepare_data.py` →
-   `2_embed_offline.py` → `3_train.py` → `4_build_index.py` → `5_evaluate.py`.
-   This downloads and caches Wikipedia + NQ and trains the BiLSTM; every later
-   stage reuses these caches and weights unchanged.
-4. **Stages 1–2** (MiniLM chunking sweep): `python scripts/7_train_transformer.py`,
-   then `python scripts/8_sweep_with_transformer.py`, then archive with
-   `python scripts/save_stage_results.py --stage stage2`. (The fixed + BiLSTM
-   subset of this sweep *is* the Stage 1 result — see the archive-gap note
-   below.)
-5. **Stage 3** (embedder swap): `python scripts/9_sweep_bge_retrieval.py` →
-   archive `--stage stage3`.
-6. **Stage 4** (hybrid): `python scripts/10_sweep_hybrid_retrieval.py` →
-   archive `--stage stage4`. Its `bge` arm re-runs the exact Stage 3 path and
-   the script checks it reproduces `stage3/final` **exactly** — only then do
-   the BM25/RRF arms mean anything.
-7. **Stage 5** (reranking): `python scripts/11_sweep_reranker.py` → archive
-   `--stage stage5`. Same built-in exact-reproduction check.
-8. **Stage 6** (5× scale): `python scripts/12_large_eval.py --check` first —
-   it must report all 35 rows identical to `stage5/final` — then
-   `python scripts/12_large_eval.py` (hours; checkpointed and resume-safe),
-   then `python scripts/13_stage6_plots.py`, then archive `--stage stage6`.
-9. **Stage 7** (cross-dataset): `python scripts/15_cross_dataset_eval.py
-   --check` first — it must reproduce `stage3/final` exactly — then
-   `python scripts/15_cross_dataset_eval.py` (streams TriviaQA rc.wikipedia
-   from Hugging Face automatically; checkpointed and resume-safe), then
-   archive `--stage stage7`.
-10. **Stage 8** (reranker fine-tuning, GPU):
-    `python scripts/16_build_rerank_train_data.py` (mines training groups
-    from the NQ *train* split) → `python scripts/17_train_reranker.py`
-    (~17 min on a T4) → `python scripts/18_eval_reranker_ft.py --dev` and
-    read the printed **GO / NO-GO** verdict → only on GO,
-    `python scripts/18_eval_reranker_ft.py` (its bge + rerank20 rows must
-    reproduce `stage6/final` exactly) → archive `--stage stage8`.
-11. **Portfolio figure.** `python scripts/14_evolution_plot.py` (reads only
-    the archived finals).
-
-Every stage writes to `artifacts/results/latest/` first;
-`save_stage_results.py` snapshots that into `stage*/final/`. The
-check-before-conclude discipline in steps 6–8 is what makes a rerun
-trustworthy: a stage's new arms are only interpretable after its baseline arm
-has reproduced the previous stage's archive byte-for-byte. There is no
-separate pytest suite — the smoke test (step 2) and these exact reproduction
-checks are the verification gates.
-
-### Interactive demo
-
-`python scripts/19_demo.py --share` (`pip install gradio`; the notebook has a
-Route D cell) serves a side-by-side retrieval demo on the Stage 6 bench:
-fixed 15/0 vs BiLSTM t15/0, ranked by `bge` / off-the-shelf `rerank20` / the
-Stage 8 fine-tuned `rerank20_ft` — all sharing one BGE top-20 pool. Bench
-questions highlight the answer string, badge gold-document chunks, and show
-each chunk's dense-rank movement after reranking. It runs no experiments and
-writes nothing under `results/`; the two demo FAISS indices are built once
-and cached under `data/nq/large_n1000/indices/demo/`.
+- **Target-size cutting.** A learned chunker that simply produces bigger chunks
+  would "win" for the wrong reason. Learned cuts are constrained to a size
+  window around the same target as the baseline, so the comparison is about
+  *boundary quality*, not chunk length.
+- **Doc-constrained Recall@k.** A short answer — a year, a common surname — can
+  string-match a chunk from an unrelated document and inflate recall, unevenly
+  across methods. A hit only counts when the matching chunk came from the
+  question's gold document. The permissive number is still reported as
+  `unconstrained` for reference.
+- **Reproduce before concluding.** Every stage re-runs the previous stage's arm
+  and must reproduce its archived numbers exactly before its own new arm is
+  read. Several stages report 30/30 or 35/35 rows identical; where a check
+  failed, that is written down instead of smoothed over.
 
 ---
 
@@ -213,7 +113,8 @@ learned config size-matched to fixed-size (the Stage 2 sweep, MiniLM embeddings)
   (overlap) swings one method's R@5 by up to 0.054 — larger than the method effect
   itself. A regression of R@5 on size + method dummies makes it explicit: **size
   contributes +0.07 across the swept range while both method effects stay ≤ 0.014
-  (≈ 5× smaller)**. See `artifacts/results/latest/recall_vs_size_scatter.png`.
+  (≈ 5× smaller)**. See
+  [`artifacts/results/stage2/final/recall_vs_size_scatter.png`](artifacts/results/stage2/final/recall_vs_size_scatter.png).
 
 **Why this is the ceiling (not a bug).** The training objective (Wikipedia
 *section* pseudo-labels, weighted BCE) is misaligned with the evaluation
@@ -494,208 +395,80 @@ fine-tuned reranker cross-dataset. Details in
 
 ---
 
-## Key design decisions
+## Implementation notes
 
-- **Reliable section labels.** The cleaned `wikimedia/wikipedia` `text` field does
-  **not** preserve `== Section ==` markers, so boundaries can't be recovered from
-  it. Instead we pick article titles by streaming the dump, fetch the **raw
-  wikitext** from the MediaWiki API (batched, cached, resumable), and parse the
-  real section structure with `mwparserfromhell`. `labels[i] = 1` iff sentence
-  `i+1` starts a new section.
-- **Class imbalance.** Positives (~6%) are handled with a weighted BCE,
-  `pos_weight = #neg/#pos` computed from the training split (~15).
-- **Offline embeddings.** Sentence embeddings are computed once and cached, so
-  training spends its time on the BiLSTM, not on re-embedding each epoch.
-- **Honest Recall@k.** NQ document text and gold short-answer strings are
-  reconstructed from the **same** token list with the same join rule, so a chunk
-  covering the answer span substring-matches it after normalisation. A "miss"
-  then genuinely means the answer's chunk wasn't retrieved (or chunking split it).
-- **Doc-constrained Recall@k (the headline metric).** A short answer (a year, a
-  common name, a place) can string-match a chunk from an *unrelated* document,
-  which inflates recall — and can do so unevenly between the two methods. So each
-  chunk stores its source document id, and the headline Recall@k only counts a
-  hit when the matching chunk came from the question's **gold** document. The old
-  "match any document" number is still reported as `unconstrained` for reference.
-- **Cosine retrieval.** Chunk/question embeddings are L2-normalised and indexed
-  with FAISS `IndexFlatIP`, so inner product = cosine similarity.
-- **Cache invalidation by manifest.** The NQ corpus and the FAISS indices each
-  store a small manifest of the settings they were built with (NQ corpus size /
-  config; and for indices: boundary threshold, fixed chunk size, embedding model,
-  a SHA-1 of the trained model weights, and a SHA-1 of the corpus *content* — doc
-  titles + question/answer/doc-title — so a rebuilt corpus with the same counts
-  still invalidates the index). Phase 5 rebuilds automatically when any of these
-  change, so you never silently evaluate new settings against a stale index.
-- **Config overrides take effect.** Functions that depend on a tunable
-  (`BOUNDARY_THRESHOLD`, `FIXED_CHUNK_SIZE`, …) read it at call time rather than
-  binding the import-time default, so `C.apply(BOUNDARY_THRESHOLD=0.7,
-  FIXED_CHUNK_SIZE=10)` in a notebook actually changes chunking — and the manifest
-  it's compared against — instead of silently using the old value.
+- **Real section labels, not heuristics.** The cleaned Wikipedia dump drops
+  `== Section ==` markers, so boundaries cannot be recovered from it. Article
+  titles are streamed from the dump, the **raw wikitext** is fetched from the
+  MediaWiki API (batched, cached, resumable) and parsed with `mwparserfromhell`;
+  a sentence is labelled positive when it starts a new section.
+- **Answer matching that cannot silently lie.** Document text and gold
+  short-answer strings are reconstructed from the *same* token list with the
+  same join rule, so a chunk covering the answer span substring-matches it after
+  normalisation. A miss therefore means the answer's chunk really was not
+  retrieved, rather than a formatting mismatch.
+- **Class imbalance.** Boundary sentences are ~6% of the data; training uses a
+  weighted BCE with `pos_weight = #neg/#pos` computed from the training split.
+- **Caches invalidate themselves.** The corpus and every FAISS index store a
+  manifest of the settings they were built with — including the embedding model,
+  a hash of the trained weights and a hash of the corpus *content* — so a
+  changed setting rebuilds the index instead of quietly scoring new settings
+  against a stale one.
 
-## Configuration (`config.py`)
+## Reproducing
 
-| Knob | Default | Meaning |
+Everything runs on a free Colab T4; no paid APIs are involved. The notebooks in
+[`notebooks/`](notebooks) drive the pipeline end to end, and
+`scripts/0_smoke_test.py` runs the whole chain at tiny scale first as a plumbing
+check. The numbered scripts in [`scripts/`](scripts) are thin entry points — data
+preparation, boundary training, the chunking sweeps, the embedder swap, hybrid
+retrieval, reranking, the 5× scale run, the cross-dataset check, reranker
+fine-tuning, and the analyses. `scripts/19_demo.py` serves the same demo as the
+hosted Space locally, and [`deploy/`](deploy) holds the Space payload.
+
+Two things are worth knowing before a rerun. Each stage writes to
+`artifacts/results/latest/` and is snapshotted into `artifacts/results/<stage>/final/`
+by `scripts/save_stage_results.py`; and the long stages are checkpointed and
+resume-safe, because several take hours. There is no separate test suite — the
+smoke test and the per-stage exact-reproduction checks are the verification
+gates.
+
+## Repository layout
+
+```
+├── rag_chunk/     chunking, boundary models, retrieval, reranking, metrics, sweeps
+├── models/        BiLSTM and Transformer boundary architectures
+├── scripts/       numbered entry points, one per pipeline step and analysis
+├── notebooks/     Colab notebooks that drive the study
+├── deploy/        Hugging Face Space payload and publishing scripts
+├── docs/          per-stage write-ups
+├── artifacts/
+│   └── results/   archived, read-only evidence for every claim below
+└── config.py      every path and tunable, read at call time
+```
+
+Data caches and model weights are not tracked; `artifacts/results/` is, because
+the archived CSVs and figures are what the conclusions rest on.
+
+## Stages
+
+| Stage | One variable changed | Write-up |
 |---|---|---|
-| `N_WIKI_ARTICLES` | 5000 | Wikipedia articles used to build the dataset |
-| `HIDDEN_SIZE` | 128 | BiLSTM hidden size H |
-| `MAX_EPOCHS` / `EARLY_STOP_PATIENCE` | 20 / 3 | training budget |
-| `N_NQ_DOCS` | 200 | distinct NQ documents indexed (corpus size) |
-| `BOUNDARY_EMBED_MODEL` | `sentence-transformers/all-MiniLM-L6-v2` | sentence embeddings used by BiLSTM/Transformer boundary models |
-| `RETRIEVAL_EMBED_MODEL` | `sentence-transformers/all-MiniLM-L6-v2` | chunk/query embeddings used by FAISS retrieval; Stage 3 sets this to BGE |
-| `FIXED_CHUNK_SIZE` / `FIXED_CHUNK_OVERLAP` | 10 / 1 | fixed-size baseline chunking |
-| `BOUNDARY_THRESHOLD` | 0.8 | threshold-policy probability cut for "make a cut here" (BiLSTM) |
-| `TRANSFORMER_BOUNDARY_THRESHOLD` | 0.5* | Transformer Boundary-F1 threshold; *calibrated on val by Phase 7 (diagnostic only — the sweep ignores it) |
-| `SEMANTIC_CHUNK_POLICY` | `"target"` | learned cutting policy (`"target"` or `"threshold"`) |
-| `SEMANTIC_TARGET/MIN/MAX_CHUNK_SIZE` | 10 / 6 / 12 | target-size cutting window |
-| `SEMANTIC_OVERLAP` | 1 | sentence overlap between learned chunks |
-| `RECALL_KS` | (1, 3, 5) | k values reported |
-| `FIXED_SIZE_GRID` / `TARGET_SIZE_GRID` / `OVERLAP_GRID` | [6,8,10,12,15] / … / [0,1] | Phase 6 sweep grids |
+| 1 | Fixed vs BiLSTM chunking under MiniLM | [stage1](docs/stage1_chunking_optimizer.md) |
+| 2 | Adds a Transformer boundary model | [stage2](docs/stage2_transformer_boundary.md) |
+| 3 | Retrieval embedder: MiniLM → BGE | [stage3](docs/stage3_bge_retrieval.md) |
+| 4 | Ranking: BGE vs BM25 vs RRF over identical chunks | [stage4](docs/stage4_hybrid_retrieval.md) |
+| 5 | Adds an off-the-shelf cross-encoder reranker | [stage5](docs/stage5_reranker.md) |
+| 6 | Scale: 200 → 1000 documents | [stage6](docs/stage6_large_eval.md) |
+| 7 | Dataset: NQ → TriviaQA | [stage7](docs/stage7_cross_dataset.md) |
+| 8 | Reranker weights: off-the-shelf → fine-tuned | [stage8](docs/stage8_reranker_finetune.md) |
+| 8b | Where that fine-tuning does and does not transfer | [stage8 transfer](docs/stage8_transfer.md) |
 
-NQ defaults to a 200-document subset because the full NQ validation set is far
-too large for the free tier; bump `N_NQ_DOCS` for stronger numbers. To download
-only the validation split faster you can switch `NQ_CONFIG` to `"dev"`.
+*Archive gap, noted for honesty:* Stage 1's own CSVs were overwritten before
+being snapshotted and are unrecoverable. Its numbers survive exactly as the
+fixed + BiLSTM rows of Stage 2's sweep, which re-ran the same deterministic grid
+unchanged — see [`artifacts/results/stage1/final/README.md`](artifacts/results/stage1/final/README.md).
 
-**How the NQ subset is sampled.** We stream the validation split and stop as soon
-as `N_NQ_DOCS` distinct documents with a usable short answer have been collected;
-the questions are those encountered up to that point. This keeps the streamed
-download small (the point of the free-tier target). It does mean later questions
-for the same documents aren't gathered — if you want a larger, more balanced
-query set, raise `N_NQ_DOCS` (more documents *and* more questions) rather than
-expecting a longer scan of the same set.
+## License
 
-## Chunking sweep optimizer (Phase 6)
-
-The optimizer answers one question:
-
-> At the same approximate chunk size and overlap, does learned **target-size**
-> semantic cutting choose better boundaries than fixed-size cutting?
-
-`rag_chunk/sweep.py` builds an in-memory FAISS index for every configuration in a
-grid, scores it on NQ doc-constrained Recall@k, and writes the artifacts below.
-The boundary model runs once per document and is reused across every learned
-config, and per-config indices are discarded after scoring — so the full grid
-stays Colab-friendly and never litters `nq/` with FAISS files.
-
-```bash
-python scripts/6_sweep_chunking.py            # full grid
-python scripts/6_sweep_chunking.py --quick    # smaller, fast grid
-python scripts/6_sweep_chunking.py --save-run  # also snapshot to results/runs/<ts>_sweep/
-```
-
-- **Full grid:** `FIXED_SIZE_GRID` × `OVERLAP_GRID` for fixed-size, and
-  `TARGET_SIZE_GRID` × `OVERLAP_GRID` for learned target-size (its `[min,max]`
-  window is derived per target as `min = max(2, target-4)`, `max = target+4`).
-- **Best config** is ranked by doc-constrained Recall@5, tie-broken by Recall@3,
-  Recall@1, then the smaller average chunk size.
-- **Target-size cutting** keeps learned chunks size-comparable to fixed-size, so
-  the comparison is about *boundary quality*, not chunk length. The original
-  threshold policy is still available (`SEMANTIC_CHUNK_POLICY="threshold"`).
-
-## Output
-
-Phase 5 (unchanged):
-
-- `results/recall_comparison.csv` — comparison table; one row per
-  (method × metric), where `metric` is `doc_constrained` (headline) or
-  `unconstrained` (reference).
-- `results/recall_comparison.png` — grouped doc-constrained Recall@k bar chart.
-
-Phase 6 sweep optimizer (written to `artifacts/results/latest/`):
-
-- `sweep_results.csv` — one row per swept configuration: method, chunk size /
-  overlap (or target size / min / max / overlap), doc-constrained and
-  unconstrained Recall@k, average chunk size and chunk count.
-- `best_config.json` — the validation-best configuration (full row) plus the
-  ranking metric used to choose it.
-- `fair_comparison_table.csv` — each learned row paired with the closest-average-
-  size fixed row at the same overlap, with the Recall@1/3/5 deltas.
-- `recall_vs_chunk_size.png` — doc-constrained Recall@5 vs average chunk size,
-  one line per (method × overlap).
-- `model_comparison.png` — best fixed vs best learned config, grouped Recall@k.
-
-Headline numbers are **doc-constrained** Recall@k (hit must come from the gold
-document):
-
-| Method | Recall@1 | Recall@3 | Recall@5 | Avg Chunk Size |
-|---|---|---|---|---|
-| Fixed-size (baseline) | … | … | … | ~10 sentences |
-| BiLSTM chunking (ours) | … | … | … | … |
-
-> Numbers are filled in when you run Phase 5; they depend on `N_WIKI_ARTICLES`,
-> `N_NQ_DOCS`, and training. This repo ships the pipeline, not pre-baked results.
-
-## File structure
-
-```
-RAG chunk optimize/
-├── config.py                 # all paths + tunables
-├── requirements.txt
-├── models/
-│   └── bilstm.py             # BiLSTM boundary detector
-├── rag_chunk/                # shared package (used by scripts AND notebook)
-│   ├── wiki_data.py  embedding.py  training.py  chunking.py
-│   ├── nq_data.py    retrieval.py  metrics.py    evaluation.py
-│   ├── sweep.py              # Phase 6 chunking sweep optimizer
-│   └── smoke.py              # tiny end-to-end plumbing check
-├── scripts/                  # 0 smoke + 1..6 thin phase entry points
-├── notebooks/
-│   └── RAG_chunk_optimize_colab.ipynb
-└── artifacts/                # created at run time (RAG_DATA_ROOT)
-    ├── data/nq/indices/main/ # Phase 5 evaluation FAISS pair (+ manifest)
-    └── results/
-        ├── recall_comparison.{csv,png}   # Phase 5
-        ├── latest/                        # newest Phase 6 sweep artifacts
-        └── runs/<ts>_sweep/               # opt-in snapshots (--save-run)
-```
-
-## Implemented stages & future extensions
-
-- **Stage 1** — fair chunking optimizer (fixed + BiLSTM) under MiniLM
-  embeddings. See [`docs/stage1_chunking_optimizer.md`](docs/stage1_chunking_optimizer.md).
-  *Known archive gap:* the Stage 1 run's own CSV/plots were overwritten in
-  `results/latest/` before being archived and are unrecoverable; its numbers
-  survive exactly as the fixed + BiLSTM rows of
-  `artifacts/results/stage2/final/sweep_results.csv` (Stage 2 re-ran the same
-  deterministic grid unchanged — see `artifacts/results/stage1/final/README.md`).
-- **Stage 2** — Transformer boundary model (`models/transformer_boundary.py`),
-  compared three ways against fixed and BiLSTM under the same protocol. See
-  [`docs/stage2_transformer_boundary.md`](docs/stage2_transformer_boundary.md).
-- **Stage 3** - BGE retrieval embedding ablation. Boundary/chunking embeddings
-  and Stage 2 weights stay on MiniLM; only FAISS chunk embeddings and query
-  embeddings switch to BGE. See
-  [`docs/stage3_bge_retrieval.md`](docs/stage3_bge_retrieval.md).
-- **Stage 4** - hybrid retrieval ablation: the identical chunks ranked by
-  BGE-only, BM25-only, and BGE+BM25 RRF (`rag_chunk/hybrid.py`,
-  `scripts/10_sweep_hybrid_retrieval.py`). See
-  [`docs/stage4_hybrid_retrieval.md`](docs/stage4_hybrid_retrieval.md).
-- **Stage 5** - cross-encoder reranking ablation: the BGE top-{20,50}
-  candidates reordered by the pretrained `BAAI/bge-reranker-base`
-  (`rag_chunk/rerank.py`, `scripts/11_sweep_reranker.py`). See
-  [`docs/stage5_reranker.md`](docs/stage5_reranker.md).
-- **Stage 6** - larger-scale robustness check: the same pipeline at
-  1000 docs / 1032 questions, with an exact N=200 reproduction check first and
-  explicit direction-replication rules (`rag_chunk/large_eval.py`,
-  `scripts/12_large_eval.py`, `scripts/13_stage6_plots.py`). See
-  [`docs/stage6_large_eval.md`](docs/stage6_large_eval.md).
-- **Stage 7** - cross-dataset robustness check: the identical bge-only sweep
-  on TriviaQA rc.wikipedia, with an exact Stage 3 reproduction check first
-  and a multi-gold extension of the doc-constrained metric
-  (`rag_chunk/cross_dataset.py`, `scripts/15_cross_dataset_eval.py`). See
-  [`docs/stage7_cross_dataset.md`](docs/stage7_cross_dataset.md).
-- **Stage 8** - reranker fine-tuning: `BAAI/bge-reranker-base` fine-tuned on
-  hard-negative groups mined from the NQ train split, gated by a dev-set
-  go/no-go, final-evaluated on the Stage 6 bench with an exact Stage 6
-  reproduction check built in (`rag_chunk/rerank_finetune.py`,
-  `scripts/16/17/18`). See
-  [`docs/stage8_reranker_finetune.md`](docs/stage8_reranker_finetune.md).
-
-The code keeps clean extension points: `MODEL_TYPE` (`bilstm` / `transformer`),
-`BOUNDARY_EMBED_MODEL`, and `RETRIEVAL_EMBED_MODEL` flow through the config,
-manifest and sweep rows. Stage 5 intentionally does not add reranker training
-or fine-tuning, BM25/RRF changes, RL, BGE-M3, a larger dataset, a deeper
-Transformer, or new chunking objectives; Stage 6 adds exactly one of those —
-the larger dataset — and nothing else; Stage 7 again changes exactly one
-thing — the QA dataset; Stage 8 changes exactly one thing — the reranker
-weights.
-
-- Later research ideas should be evaluated as separate stages, not mixed into
-  the existing stage ablations.
+[MIT](LICENSE).
