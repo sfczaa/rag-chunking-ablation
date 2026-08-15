@@ -36,13 +36,13 @@ BENCH_SUBDIR = pathlib.Path("data/nq/large_n1000")
 
 def _ascii_safe_data_root(data_root: pathlib.Path,
                           tmp: pathlib.Path) -> pathlib.Path:
-    """FAISS reads indices through a C++ ``const char*``, which cannot open a
-    path containing non-ASCII characters on Windows — and the usual Drive mount
-    here is ``G:\\我的雲端硬碟\\...``. Python-side loads (JSONL, safetensors)
-    handle Unicode fine, so only the bench subtree needs relocating. Staging it
-    under an ASCII temp dir keeps the smoke test usable without asking anyone to
-    remount their Drive. Spaces run on Linux under ASCII cache paths, so this
-    never applies in production."""
+    """FAISS reads indices through a C++ ``const char*``, which on Windows
+    cannot open a path containing non-ASCII characters — and a localised Drive
+    mount produces exactly that. Python-side loads (JSONL, safetensors) handle
+    Unicode fine, so only the bench subtree needs relocating; staging it under an
+    ASCII temp dir keeps the smoke test usable without remounting anything.
+    Spaces run on Linux under ASCII cache paths, so this never applies in
+    production."""
     if str(data_root).isascii():
         return data_root
     src = data_root / BENCH_SUBDIR
