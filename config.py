@@ -1,10 +1,9 @@
 """Central configuration for the RAG semantic-chunking project.
 
-All paths default to a Google Drive folder so that intermediate artifacts
-(parsed Wikipedia, offline embeddings, the trained model, FAISS indices)
-survive Colab session restarts.  Override the storage root by setting the
-environment variable ``RAG_DATA_ROOT`` (handy for a local run or a quick
-ephemeral test), or by calling :func:`set_data_root`.
+Paths default to a project-local ``artifacts`` directory.  Override the
+storage root by setting the environment variable ``RAG_DATA_ROOT`` (handy
+for Colab, a local run, or a quick ephemeral test), or by calling
+:func:`set_data_root`.
 
 Every tunable number lives here so the notebook / scripts stay declarative.
 The data-scale knobs are read at *call time* by the pipeline functions, so
@@ -19,7 +18,7 @@ from pathlib import Path
 # --------------------------------------------------------------------------- #
 # Storage root + derived paths (recomputed by set_data_root)
 # --------------------------------------------------------------------------- #
-DEFAULT_DRIVE_ROOT = "<project-root>"
+DEFAULT_DATA_ROOT = Path(__file__).resolve().parent / "artifacts"
 
 # These are assigned by set_data_root() below; declared here for clarity.
 DATA_ROOT: Path
@@ -70,7 +69,7 @@ def set_data_root(root) -> None:
     ]
 
 
-set_data_root(os.environ.get("RAG_DATA_ROOT", DEFAULT_DRIVE_ROOT))
+set_data_root(os.environ.get("RAG_DATA_ROOT", DEFAULT_DATA_ROOT))
 
 
 def ensure_dirs() -> None:
