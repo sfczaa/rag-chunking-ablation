@@ -89,6 +89,13 @@ def _load_train_stream():
         return load_dataset(C.NQ_DATASET, C.NQ_CONFIG, split="train",
                             streaming=True)
     except Exception as e1:
+        if not nq_data.trust_remote_code_allowed():
+            raise RuntimeError(
+                f"Could not stream NQ train split ({C.NQ_DATASET}/"
+                f"{C.NQ_CONFIG}): {e1!r}. Older `datasets` versions need "
+                f"trust_remote_code=True, which runs a loading script from the "
+                f"dataset repo. Upgrade `datasets` (preferred), or set "
+                f"RAG_TRUST_REMOTE_CODE=1 to opt in.") from e1
         try:
             return load_dataset(C.NQ_DATASET, C.NQ_CONFIG, split="train",
                                 streaming=True, trust_remote_code=True)

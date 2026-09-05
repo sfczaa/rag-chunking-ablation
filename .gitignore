@@ -38,3 +38,24 @@ PROGRESS.md
 .idea/
 .DS_Store
 Thumbs.db
+
+# --------------------------------------------------------------------------- #
+# Credentials — never commit
+# --------------------------------------------------------------------------- #
+.env
+.env.*
+*.pem
+*.key
+*.p12
+credentials.json
+service_account*.json
+
+# --------------------------------------------------------------------------- #
+# Local assistant / editor tooling state
+# --------------------------------------------------------------------------- #
+.claude/
+.codex/
+.cursor/
+.aider*
+CLAUDE.md
+AGENTS.md

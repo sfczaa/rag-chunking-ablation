@@ -30,9 +30,21 @@ Everything is cached to ``NQ_DIR`` and reused on later runs.
 from __future__ import annotations
 
 import json
+import os
 
 import config as C
 from rag_chunk import wiki_data
+
+
+def trust_remote_code_allowed() -> bool:
+    """Whether the caller opted in to running dataset-repo code.
+
+    ``load_dataset(..., trust_remote_code=True)`` executes a loading script
+    fetched from the Hub, so it stays off unless RAG_TRUST_REMOTE_CODE is set.
+    Upgrading ``datasets`` is the better fix; this is the escape hatch for
+    pinned older environments.
+    """
+    return os.environ.get("RAG_TRUST_REMOTE_CODE", "").lower() in {"1", "true", "yes"}
 
 
 def _docs_path():
@@ -119,6 +131,13 @@ def _load_nq_stream():
     try:
         return load_dataset(C.NQ_DATASET, C.NQ_CONFIG, split=C.NQ_SPLIT, streaming=True)
     except Exception as e1:  # older datasets need an explicit opt-in
+        if not trust_remote_code_allowed():
+            raise RuntimeError(
+                f"Could not load NQ ({C.NQ_DATASET}/{C.NQ_CONFIG}/{C.NQ_SPLIT}): {e1!r}. "
+                f"Older `datasets` versions need trust_remote_code=True, which runs a "
+                f"loading script from the dataset repo. Upgrade `datasets` (preferred), "
+                f"try NQ_CONFIG='dev', or set RAG_TRUST_REMOTE_CODE=1 to opt in."
+            ) from e1
         try:
             return load_dataset(
                 C.NQ_DATASET, C.NQ_CONFIG, split=C.NQ_SPLIT,
