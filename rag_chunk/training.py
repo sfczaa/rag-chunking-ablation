@@ -54,7 +54,8 @@ def load_model(model_type: str = "bilstm", device: str | None = None):
 
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     model = _build_model(model_type, device)
-    state = torch.load(C.model_path(model_type), map_location=device)
+    state = torch.load(C.model_path(model_type), map_location=device,
+                       weights_only=True)
     model.load_state_dict(state)
     model.eval()
     return model
@@ -151,7 +152,8 @@ def train_model(model_type: str = "bilstm", max_epochs: int | None = None) -> di
             break
 
     # reload best weights for the held-out report.
-    model.load_state_dict(torch.load(C.model_path(model_type), map_location=device))
+    model.load_state_dict(torch.load(C.model_path(model_type), map_location=device,
+                                     weights_only=True))
 
     result = {"model_type": model_type, "history": history, "best_val_loss": best_val,
               "pos_weight": float(pw), "model_path": str(C.model_path(model_type))}
