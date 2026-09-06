@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------- #
-# Data, caches and weights — regenerable, and far too large for git.
+# Data, caches and weights: regenerable, and far too large for git.
 # Everything the study *concluded* lives in artifacts/results/, which IS tracked.
 # --------------------------------------------------------------------------- #
 artifacts/data/
@@ -40,7 +40,7 @@ PROGRESS.md
 Thumbs.db
 
 # --------------------------------------------------------------------------- #
-# Credentials — never commit
+# Credentials: never commit
 # --------------------------------------------------------------------------- #
 .env
 .env.*
@@ -49,13 +49,3 @@ Thumbs.db
 *.p12
 credentials.json
 service_account*.json
-
-# --------------------------------------------------------------------------- #
-# Local assistant / editor tooling state
-# --------------------------------------------------------------------------- #
-.claude/
-.codex/
-.cursor/
-.aider*
-CLAUDE.md
-AGENTS.md
