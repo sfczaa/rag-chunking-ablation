@@ -8,7 +8,7 @@ mwparserfromhell>=0.6
 requests>=2.33.0
 numpy>=1.24
 matplotlib>=3.7
-tqdm>=4.66.3
+tqdm>=4.70.0
 gradio>=6.16.0      # Route D interactive demo only (scripts/19_demo.py)
 
 # torch is required but intentionally left unpinned so Colab's preinstalled
