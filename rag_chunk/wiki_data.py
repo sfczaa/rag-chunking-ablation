@@ -60,7 +60,7 @@ def ensure_nltk() -> None:
             return False
 
     download_errors: dict[str, str] = {}
-    for pkg in ("punkt", "punkt_tab"):          # punkt_tab needed on nltk>=3.9
+    for pkg in ("punkt_tab",):
         if _have(pkg):
             continue
         try:
@@ -68,13 +68,12 @@ def ensure_nltk() -> None:
         except Exception as exc:                # network/SSL/etc. — record, verify below
             download_errors[pkg] = repr(exc)
 
-    # `punkt_tab` only exists on newer nltk; success means at least one is present
-    # AND `sent_tokenize` actually works on a probe string.
-    if not (_have("punkt") or _have("punkt_tab")):
+    # Supported NLTK versions use the table-based tokenizer data.
+    if not _have("punkt_tab"):
         raise RuntimeError(
             "NLTK sentence tokenizer is unavailable: could not find or download "
-            f"'punkt'/'punkt_tab'. Download errors: {download_errors or 'none'}. "
-            "On Colab run `import nltk; nltk.download('punkt'); "
+            f"'punkt_tab'. Download errors: {download_errors or 'none'}. "
+            "On Colab run `import nltk; "
             "nltk.download('punkt_tab')` in a cell with network access, then retry."
         )
     from nltk.tokenize import sent_tokenize
@@ -84,7 +83,7 @@ def ensure_nltk() -> None:
         raise RuntimeError(
             f"NLTK punkt is present but sent_tokenize failed: {exc!r}. "
             "The tokenizer data may be partially downloaded — delete the nltk_data "
-            "tokenizers folder and re-download 'punkt' and 'punkt_tab'."
+            "tokenizers folder and re-download 'punkt_tab'."
         ) from exc
     _NLTK_READY = True
 
