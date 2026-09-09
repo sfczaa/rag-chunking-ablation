@@ -3,5 +3,5 @@
 spaces
 sentence-transformers>=2.6
 faiss-cpu>=1.7
-huggingface_hub>=0.20
+huggingface_hub>=1.30.0
 numpy>=1.24
