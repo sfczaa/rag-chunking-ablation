@@ -1,7 +1,8 @@
 # Stage 8 - Fine-tuning the cross-encoder reranker (Route C)
 
-**Status: complete — executed on Colab 2026-07-08 and archived** (9 files in
-`artifacts/results/stage8/final/`, read-only). Dev gate verdict: **GO**
+**Status: complete — executed on Colab 2026-07-08 and archived**
+(`artifacts/results/stage8/final/`, read-only: 9 files from this stage, plus
+5 more added later by the transfer addendum). Dev gate verdict: **GO**
 (ΔR@1 +0.0468 ≥ +0.02). Final eval: built-in check vs `stage6/final` **OK
 (exact)**; headline **ft − off-the-shelf ΔR@1 = +0.107 at fixed 15/0**
 (2 SE = 0.030, n = 1032). Results below in "Results (executed)".
@@ -140,6 +141,8 @@ Written to `artifacts/results/latest/`, archived to
 `artifacts/results/stage8/final/` after review:
 
 - `stage8_dev_results.csv` — dev bench, 3 arms × 2 configs, + gate verdict.
+- `stage8_dev_gate.md` — the gate record: dev bench counts, ΔR@1, threshold,
+  2 SE and verdict.
 - `stage8_ft_eval_results.csv` — Stage 6 bench, 5 configs × 3 arms.
 - `stage8_matched_summary.csv` — per config: pool@20, bge / ots / ft R@k side
   by side, ft−ots and ft−bge deltas.
