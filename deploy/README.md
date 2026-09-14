@@ -44,7 +44,7 @@ Assets live outside the repo (they are gitignored), so pass their location.
 With the Drive data root mounted as `G:`:
 
 ```bash
-# 1. verify the payload end to end on CPU (a few minutes; must print ALL CHECKS PASSED)
+# 1. verify the payload end to end on CPU (must print ALL CHECKS PASSED)
 python deploy/smoke_space.py \
   --data-root "G:/<drive>/RAG chunk optimize/artifacts" \
   --ft-model  "G:/<drive>/RAG chunk optimize/artifacts/models/bge_reranker_ft/final"
@@ -66,8 +66,7 @@ longer show the study's own retrieval.
   is simpler and they are portfolio artifacts in their own right.
 - Free Spaces sleep after 48 idle hours and wake on the next visit.
 - ZeroGPU attaches a GPU only while a request is being served; visitors have a
-  daily GPU-seconds quota (2 min unauthenticated, 5 min signed in). Each query
-  costs ~1s, so this is not a practical limit for a demo.
+  daily GPU-seconds quota (2 min unauthenticated, 5 min signed in).
 - Add the Space URL to the root `README.md` once it is live and public.
 
 ## Design notes that must not regress

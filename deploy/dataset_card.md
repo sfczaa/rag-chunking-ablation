@@ -10,7 +10,7 @@ tags:
 
 # RAG chunking demo assets (Natural Questions bench + prebuilt FAISS indices)
 
-Prebuilt, read-only assets that let an interactive retrieval demo start instantly
+Prebuilt, read-only assets that let an interactive retrieval demo start
 without embedding a corpus at boot.
 
 ## Contents

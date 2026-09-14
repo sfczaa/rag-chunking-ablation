@@ -31,7 +31,7 @@ not pool recall, was the bottleneck**.
 | Mining | deployment-matched chunking (fixed 15 sentences / overlap 0), BGE top-20 pool (`BAAI/bge-base-en-v1.5`) |
 | Objective | listwise softmax cross-entropy over each group |
 | Schedule | 2 epochs, lr 2e-5, warmup 10%, weight decay 0.01, 4 groups/step, fp16, seed 42 |
-| Hardware | ~17 min on a single T4 |
+| Hardware | single T4 |
 | Loss | 0.904 → 0.513 |
 
 Every evaluation below uses the NQ **validation** split, disjoint from training.

@@ -41,12 +41,13 @@ training.
 - **`rerank20`** only on `STAGE6_RERANK_CONFIGS` (5 configs: fixed 6/0,
   fixed 15/0, fixed 15/1, bilstm 15/0, transformer 15/0) — the small-chunk
   config plus the size-15 sweet-spot configs, which is exactly what direction
-  claims 3-4 need. Reranking all 30 configs at n≈1000 would add hours of GPU
-  time without changing what the claims test.
+  claims 3-4 need. Reranking all 30 configs at n≈1000 would multiply the
+  rerank cost measured in Results (finding 4) without changing what the
+  claims test.
 
 ## Restart / resume safety
 
-A large run takes hours on the Colab free tier, so the script checkpoints
+A large run can outlast a Colab free-tier session, so the script checkpoints
 per config: every finished config appends one JSON line to
 `results/latest/stage6_checkpoint_<mode>.jsonl`. Re-running the same command
 resumes — finished configs are skipped, and boundary probabilities are only
@@ -98,7 +99,7 @@ built with different retrieval/reranker models.
 | 4 | rerank20 does not clearly improve the sweet spot | max ΔR@1 over the size-15 configs < 2 SE |
 
 The CSV reports the observed value, the rule and the small-eval reference for
-every claim, so borderline verdicts can be judged by a human rather than
+every claim, so borderline verdicts can be judged from those values rather than
 trusted blindly. A claim failing to replicate is a *finding*, not an error.
 
 ## Outputs

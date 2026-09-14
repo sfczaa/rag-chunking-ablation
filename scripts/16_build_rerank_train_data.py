@@ -10,8 +10,8 @@ and (1 positive + STAGE8_NUM_NEGATIVES hard negatives) groups are mined.
 Everything caches under data/nq_train/ — the eval caches are never touched,
 and nothing is written to results/latest/ (this is data, not results).
 
-Needs a GPU session for the BGE embedding of ~40k chunks (a few minutes on a
-T4); no boundary models are involved (fixed chunking only).
+Needs a GPU session for the BGE embedding of ~40k chunks; no boundary models
+are involved (fixed chunking only).
 
 Usage:
     python scripts/16_build_rerank_train_data.py

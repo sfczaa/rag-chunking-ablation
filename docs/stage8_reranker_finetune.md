@@ -121,12 +121,12 @@ fine-tuning, TriviaQA training data.
 ## Run (Colab, two sessions)
 
 ```bash
-# Session 1 — data + training + go/no-go (~2-3 h on a T4):
+# Session 1 — data + training + go/no-go:
 python scripts/16_build_rerank_train_data.py      # stream train split, mine groups
-python scripts/17_train_reranker.py               # fine-tune (fp16, ~1-1.5 h)
+python scripts/17_train_reranker.py               # fine-tune (fp16)
 python scripts/18_eval_reranker_ft.py --dev       # go/no-go verdict printed
 
-# Session 2 — ONLY if the gate says GO (~2 h):
+# Session 2 — ONLY if the gate says GO:
 python scripts/18_eval_reranker_ft.py             # Stage 6 bench, built-in check
 python scripts/save_stage_results.py --stage stage8
 ```
