@@ -427,7 +427,7 @@ def use_smoke(root=None) -> None:
     """Tiny end-to-end settings for a fast plumbing check.
 
     Writes to a separate ``<root>_smoke`` folder so it never clobbers the real
-    artifacts.  ~minutes on a GPU runtime.
+    artifacts.
     """
     apply(
         N_WIKI_ARTICLES=30,

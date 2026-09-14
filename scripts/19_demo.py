@@ -17,8 +17,8 @@ before/after in one glance. Free-text questions just show retrieval.
 
 The demo runs no experiments and writes nothing under ``results/`` — the two
 FAISS indices it needs are built once and cached under
-``data/nq/large_n<N>/indices/demo/`` (first build embeds ~40k chunks, a few
-minutes on a T4; later launches load instantly).
+``data/nq/large_n<N>/indices/demo/`` (the first build embeds ~40k chunks;
+later launches load the cache).
 
 Usage:
     python scripts/19_demo.py --share       # Colab: prints a public link
@@ -311,7 +311,7 @@ def main() -> None:
         device = None
     if device != "cuda":
         print(f"[demo] WARN: no GPU — reranking {2 * DEPTH} pairs/question "
-              "on CPU takes a minute or more; the bge arm stays fast")
+              "runs on CPU; the bge arm does not rerank")
 
     max_len = int(C.RERANK_MAX_LENGTH)
 

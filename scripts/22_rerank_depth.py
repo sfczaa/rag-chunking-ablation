@@ -22,9 +22,8 @@ That also makes the reproduction check free: the derived depth-20 rows must
 match the archived ``stage8/final`` rows exactly, and only then do the depth-50
 rows mean anything.
 
-Runtime on a T4 (from the archived Stage 6 timings, ~2.5x the depth-20 cost):
-``fixed 15/0`` + ``fixed 6/0`` with both rerankers ~= 1.5 h; ``--configs all``
-~= 4.1 h, which will not fit one free Colab session — use the checkpoint.
+Completed configs are checkpointed, so an interrupted run resumes where it
+stopped.
 
 Usage:
     python scripts/22_rerank_depth.py                     # 2 configs, depths 20/50
@@ -483,8 +482,8 @@ def main() -> None:
         description="Stage 9: re-test rerank depth with the fine-tuned "
                     "cross-encoder on the Stage 6 bench.")
     ap.add_argument("--configs", default="default",
-                    help="'default' (fixed 15/0 + 6/0, ~1.5 h), 'all' (the 5 "
-                         "Stage 6 rerank configs, ~4.1 h), or e.g. 'fixed:15:0'")
+                    help="'default' (fixed 15/0 + 6/0), 'all' (the 5 "
+                         "Stage 6 rerank configs), or e.g. 'fixed:15:0'")
     ap.add_argument("--depths", default="20,50",
                     help="comma-separated rerank depths (default 20,50)")
     ap.add_argument("--ft-model", default=None)
@@ -495,7 +494,7 @@ def main() -> None:
                     help="SMOKE ONLY: score just the first N questions. The "
                          "numbers are not comparable to the archives and the "
                          "Stage 8 check is skipped; use to verify the run "
-                         "end to end before committing ~1.5 h of GPU.")
+                         "end to end before the full run.")
     args = ap.parse_args()
 
     depths = sorted({int(d) for d in args.depths.split(",") if d.strip()})
@@ -550,7 +549,7 @@ def main() -> None:
     except ImportError:
         device = None
     if device != "cuda":
-        print("[stage9] WARN: no GPU — this will take many hours on CPU")
+        print("[stage9] WARN: no GPU — reranking will run on CPU")
     max_len = int(C.RERANK_MAX_LENGTH)
 
     def _scorer(model):

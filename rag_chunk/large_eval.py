@@ -13,7 +13,7 @@ Per chunking config:
                  ``C.STAGE6_RERANK_CONFIGS`` subset (small-chunk + size-15
                  configs — enough to test the Stage 5 direction claims).
 
-Because a large run takes hours on the Colab free tier, :func:`run_stage6` is
+Because a large run can outlast a Colab free-tier session, :func:`run_stage6` is
 **resume-safe**: every finished config is appended to a JSONL checkpoint, and
 a restarted run skips finished configs (boundary probabilities are recomputed
 only for the model types that still have pending configs).
@@ -313,8 +313,8 @@ def direction_checks(rows: list[dict], n_questions: int) -> list[dict]:
     """Re-test the four Stage 1-5 direction claims on the Stage 6 rows.
 
     Each check has an explicit, documented rule (see docs/stage6_large_eval.md)
-    and reports the observed value next to the small-eval reference, so a human
-    can judge the borderline cases. ``2 SE`` uses the actual question count.
+    and reports the observed value next to the small-eval reference, so the
+    borderline cases can be judged from both. ``2 SE`` uses the actual question count.
     """
     topk = max(C.RECALL_KS)
     k1 = min(C.RECALL_KS)
