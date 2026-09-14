@@ -1,13 +1,8 @@
-"""Phase 2 — offline sentence embeddings + a reusable encoder.
+"""Sentence embeddings for boundary detection and retrieval.
 
-The same ``all-MiniLM-L6-v2`` encoder is used everywhere:
-  * Phase 2 pre-computes per-article sentence embeddings once (so training
-    spends its time on the BiLSTM, not on re-embedding every epoch);
-  * Phase 4 reuses it to embed chunks and questions.
-
-Stored sentence embeddings are kept **un-normalised** (raw encoder output) so
-they feed the BiLSTM directly; L2-normalisation is applied later, only for the
-cosine/inner-product FAISS retrieval.
+The boundary encoder supplies unnormalised sentence vectors to the BiLSTM.
+The retrieval encoder is configured separately for chunks and questions;
+its query instruction and normalisation follow the retrieval configuration.
 """
 
 from __future__ import annotations
