@@ -3,7 +3,6 @@ datasets>=5.0.1
 huggingface_hub>=0.20
 sentence-transformers>=2.6
 faiss-cpu>=1.7
-nltk>=3.10.3
 mwparserfromhell>=0.6
 requests>=2.33.0
 numpy>=1.24
