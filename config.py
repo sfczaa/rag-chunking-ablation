@@ -119,6 +119,7 @@ BOUNDARY_EMBED_DIM = EMBED_DIM
 # Retrieval embeddings can be swapped independently. Stage 3 sets this to BGE,
 # while the default keeps the old MiniLM retrieval path unchanged.
 RETRIEVAL_EMBED_MODEL = os.environ.get("RAG_RETRIEVAL_EMBED_MODEL", EMBED_MODEL)
+RETRIEVAL_EMBED_REVISION = None
 RETRIEVAL_EMBED_DIM = None            # None -> infer from SentenceTransformer
 RETRIEVAL_EMBED_BATCH = EMBED_BATCH
 RETRIEVAL_EMBED_NORMALIZE = True      # cosine/IP retrieval; required for BGE

@@ -1,16 +1,5 @@
-# Routine version-update pull requests are switched off here; security updates
-# are a repository setting and are unaffected by open-pull-requests-limit.
-#
-# This repository is a finished ablation record rather than a maintained
-# library. The recall and latency numbers in results/ were produced by one
-# environment, and the synthetic query sets are drawn from numpy's generator
-# stream, so a re-run under upgraded packages yields numbers that no longer
-# match the committed ones. Floating the versions would quietly break the
-# comparison the repository exists to document.
-#
-# The ignore entries below are the couplings that would break something
-# concrete, kept so the reason travels with the constraint instead of living
-# only in a commit message.
+# Routine version PRs are disabled. Dependency upgrades are reviewed manually;
+# this setting does not lock the installed package versions.
 version: 2
 updates:
   - package-ecosystem: "pip"
@@ -19,13 +8,9 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 0
     ignore:
-      # deploy/space/README.md declares the Space's Gradio runtime in its
-      # sdk_version frontmatter. Raising this floor without editing that field
-      # leaves scripts/19_demo.py and the deployed demo disagreeing about which
-      # Gradio actually runs.
+      # Update together with deploy/space/README.md's sdk_version.
       - dependency-name: "gradio"
-      # The held-out query sets and chunk samples come from numpy's generator
-      # stream, and the committed recall tables were measured against them.
+      # Check numerical compatibility with archived results before upgrading.
       - dependency-name: "numpy"
 
   - package-ecosystem: "pip"
@@ -34,9 +19,7 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 0
     ignore:
-      # The Space serves a prebuilt FAISS index and embeddings from
-      # sfczaa/rag-chunking-ablation-demo-assets. Both the index format and the
-      # embedding numerics have to keep matching what that dataset holds.
+      # Check compatibility with the archived FAISS indices and embeddings.
       - dependency-name: "faiss-cpu"
       - dependency-name: "sentence-transformers"
       - dependency-name: "numpy"
