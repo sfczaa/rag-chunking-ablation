@@ -58,6 +58,10 @@ Full write-up, code and archived results:
 
 ## Notes
 
+- Questions are limited to 2,000 characters and checked before model inference.
+- Dataset and model revisions are pinned in `demo_settings.py`. Custom
+  `ASSETS_REPO` or `FT_REPO` values require a full `ASSETS_REVISION` or
+  `FT_REVISION` commit SHA. The local smoke runner can use a staged model folder.
 - Runs on ZeroGPU: a GPU is attached only while a query is being served, so the
   first query after an idle period waits briefly in a queue.
 - The FAISS indices and bench corpus are prebuilt and downloaded at startup;

@@ -59,15 +59,18 @@ def _prepare_texts(texts: list[str], role: str, is_query: bool,
 
 
 def get_embedder(role: str = "boundary", model_name: str | None = None):
-    """Singleton ``SentenceTransformer`` per role/model (GPU if available)."""
+    """Cache ``SentenceTransformer`` by role, model and revision."""
     name = _model_name(role, model_name)
-    key = (role, name)
+    revision = (C.RETRIEVAL_EMBED_REVISION
+                if role == "retrieval" and name == _model_name("retrieval") else None)
+    key = (role, name, revision)
     if key not in _MODELS:
         import torch
         from sentence_transformers import SentenceTransformer
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        _MODELS[key] = SentenceTransformer(name, device=device)
+        kwargs = {"revision": revision} if revision is not None else {}
+        _MODELS[key] = SentenceTransformer(name, device=device, **kwargs)
         print(f"[embed] loaded {role} model {name} on {device}")
     return _MODELS[key]
 

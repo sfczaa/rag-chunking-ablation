@@ -24,7 +24,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 def assemble(dest: pathlib.Path) -> pathlib.Path:
     """deploy/space/* + config.py + rag_chunk/ -> a self-contained Space dir."""
     dest.mkdir(parents=True, exist_ok=True)
-    for name in ("app.py", "requirements.txt", "README.md"):
+    for name in ("app.py", "demo_settings.py", "requirements.txt", "README.md"):
         shutil.copy2(ROOT / "deploy" / "space" / name, dest / name)
     shutil.copy2(ROOT / "config.py", dest / "config.py")
     shutil.copytree(ROOT / "rag_chunk", dest / "rag_chunk",

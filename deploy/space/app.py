@@ -31,14 +31,18 @@ import re
 import time
 
 from huggingface_hub import snapshot_download
+from demo_settings import MAX_QUERY_CHARS, artifact_location, validate_query
 
-ASSETS_REPO = os.environ.get("ASSETS_REPO", "sfczaa/rag-chunking-ablation-demo-assets")
-FT_REPO = os.environ.get("FT_REPO", "sfczaa/bge-reranker-base-nq-ft")
+ASSETS_REPO, ASSETS_REVISION = artifact_location("assets", "ASSETS_REPO", "ASSETS_REVISION")
+FT_REPO, FT_REVISION = artifact_location("finetuned", "FT_REPO", "FT_REVISION")
+EMBED_REPO, EMBED_REVISION = artifact_location("embedding")
+RERANK_REPO, RERANK_REVISION = artifact_location("reranker")
 GITHUB_URL = "https://github.com/sfczaa/rag-chunking-ablation"
 
 # Local override lets the smoke test point at staged assets without downloading.
 _local = os.environ.get("LOCAL_ASSETS")
-ASSETS = _local or snapshot_download(repo_id=ASSETS_REPO, repo_type="dataset")
+ASSETS = _local or snapshot_download(
+    repo_id=ASSETS_REPO, repo_type="dataset", revision=ASSETS_REVISION)
 print(f"[demo] assets: {ASSETS}", flush=True)
 
 # config.py resolves every path from RAG_DATA_ROOT, so the snapshot layout
@@ -57,7 +61,8 @@ ARM_LABELS = {
     ARM_FT: "+ fine-tuned rerank20",
 }
 
-C.apply(RETRIEVAL_EMBED_MODEL="BAAI/bge-base-en-v1.5",
+C.apply(RETRIEVAL_EMBED_MODEL=EMBED_REPO,
+        RETRIEVAL_EMBED_REVISION=EMBED_REVISION,
         RETRIEVAL_EMBED_NORMALIZE=True)
 _N = int(C.N_NQ_DOCS_LARGE)
 C.apply(N_NQ_DOCS=_N)
@@ -118,8 +123,10 @@ from rag_chunk import embedding  # noqa: E402
 
 embedding.get_embedder(role="retrieval")          # placement only
 _scorers = {
-    ARM_OTS: CrossEncoder(C.RERANKER_MODEL, max_length=_MAXLEN, device=DEVICE),
-    ARM_FT: CrossEncoder(FT_REPO, max_length=_MAXLEN, device=DEVICE),
+    ARM_OTS: CrossEncoder(RERANK_REPO, revision=RERANK_REVISION,
+                          max_length=_MAXLEN, device=DEVICE),
+    ARM_FT: CrossEncoder(FT_REPO, revision=FT_REVISION,
+                         max_length=_MAXLEN, device=DEVICE),
 }
 print(f"[demo] rerankers on {DEVICE}: {C.RERANKER_MODEL} | {FT_REPO}", flush=True)
 
@@ -229,7 +236,10 @@ def build_app():
 
     def run(bench_label, free_text, arm_choice):
         arm = label_to_arm.get(arm_choice, ARM_BGE)
-        free_text = (free_text or "").strip()
+        try:
+            free_text = validate_query(free_text)
+        except ValueError as exc:
+            raise gr.Error(str(exc)) from None
         if free_text:
             qtext, answer, gold_docs = free_text, None, ()
             meta = ("<i>Free-text question — no gold answer/document known, "
@@ -271,7 +281,8 @@ def build_app():
             bench = gr.Dropdown(bench_labels, label="Bench question "
                                 "(NQ validation split)", value=None, scale=3)
             free = gr.Textbox(label="…or your own question (overrides the "
-                              "dropdown)", scale=2)
+                              "dropdown)", scale=2,
+                              info=f"Maximum {MAX_QUERY_CHARS:,} characters.")
         arm = gr.Radio([ARM_LABELS[a] for a in arms],
                        value=ARM_LABELS[ARM_FT], label="Ranking arm")
         go = gr.Button("Retrieve", variant="primary")
