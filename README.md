@@ -33,6 +33,12 @@ python scripts/0_smoke_test.py
 
 Long stages are checkpointed and resumable. Results are written to `artifacts/results/latest/` and archived under `artifacts/results/<stage>/final/`.
 
+Sentence splitting uses an isolated copy of English Punkt inference. The first
+corpus-preparation run downloads a fixed, SHA-256-verified parameter archive;
+later runs use its cache under `artifacts/data/tokenizers/` (or the configured
+data root). The NLTK package is not required. See the
+[source and license notes](rag_chunk/_vendor/README.md).
+
 ## Results
 
 ![Best doc-constrained Recall@5 per stage](artifacts/results/portfolio/best_r5_evolution.png)
@@ -63,4 +69,4 @@ config.py        paths and experiment settings
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE), except the [Apache-2.0 Punkt inference code](rag_chunk/_vendor/LICENSE-NLTK.txt).

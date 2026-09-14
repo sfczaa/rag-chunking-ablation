@@ -37,55 +37,8 @@ import config as C
 # Drop sentence fragments shorter than this (chars) — strip_code leftovers.
 MIN_SENTENCE_CHARS = 20
 
-_NLTK_READY = False
-
-
-def ensure_nltk() -> None:
-    """Load and probe the table-based Punkt tokenizer once."""
-    global _NLTK_READY
-    if _NLTK_READY:
-        return
-    import nltk
-
-    def _have(pkg: str) -> bool:
-        try:
-            nltk.data.find(f"tokenizers/{pkg}")
-            return True
-        except LookupError:
-            return False
-
-    download_errors: dict[str, str] = {}
-    for pkg in ("punkt_tab",):
-        if _have(pkg):
-            continue
-        try:
-            nltk.download(pkg, quiet=True)
-        except Exception as exc:                # network/SSL/etc. — record, verify below
-            download_errors[pkg] = repr(exc)
-
-    # Supported NLTK versions use the table-based tokenizer data.
-    if not _have("punkt_tab"):
-        raise RuntimeError(
-            "NLTK sentence tokenizer is unavailable: could not find or download "
-            f"'punkt_tab'. Download errors: {download_errors or 'none'}. "
-            "On Colab run `import nltk; "
-            "nltk.download('punkt_tab')` in a cell with network access, then retry."
-        )
-    from nltk.tokenize import sent_tokenize
-    try:
-        sent_tokenize("This is a probe. It has two sentences.")
-    except Exception as exc:
-        raise RuntimeError(
-            f"NLTK punkt is present but sent_tokenize failed: {exc!r}. "
-            "The tokenizer data may be partially downloaded — delete the nltk_data "
-            "tokenizers folder and re-download 'punkt_tab'."
-        ) from exc
-    _NLTK_READY = True
-
-
 def split_sentences(text: str) -> list[str]:
-    ensure_nltk()
-    from nltk.tokenize import sent_tokenize
+    from rag_chunk.sentence_tokenizer import sent_tokenize
 
     out = []
     for s in sent_tokenize(text):
