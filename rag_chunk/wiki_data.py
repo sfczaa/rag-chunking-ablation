@@ -17,7 +17,7 @@ Boundary label convention
 ``sentences[i+1]`` (so ``len(labels) == len(sentences) - 1``).  It is ``1``
 iff ``sentences[i+1]`` is the first sentence of a new section.
 
-Everything is cached to Drive and resumable: raw wikitext lives in
+Everything is cached under the data root and resumable: raw wikitext lives in
 ``wiki_raw/<slug>.txt`` and is skipped if already present.
 """
 

@@ -12,7 +12,7 @@ Two modes:
     --dev     go/no-go gate. Scores the held-out NQ-train dev bench (built by
               script 16) at fixed 15/0 (primary) and fixed 6/0 (context) and
               prints the verdict: dev ΔR@1 (ft - off-the-shelf) at fixed 15/0
-              >= STAGE8_GO_THRESHOLD -> GO; <= 0 -> NO-GO (honest negative
+              >= STAGE8_GO_THRESHOLD -> GO; <= 0 -> NO-GO (negative
               result); in between -> judgment call, at most one retry.
     (default) the final eval on the Stage 6 bench (nq/large_n1000 cache, 1032
               questions, the 5 STAGE6_RERANK_CONFIGS). Built-in check
@@ -321,7 +321,7 @@ def _write_stage6_check(stage6_rows, rows, path) -> bool:
               "different chunk count — chunking is NOT identical")
     if ok and d == 0.0:
         print("[stage8] check OK: bge + rerank20 rows reproduce the archived "
-              "Stage 6 rows exactly — the rerank20_ft rows are trustworthy.")
+              "Stage 6 rows exactly — the rerank20_ft rows are comparable.")
     elif ok:
         print(f"[stage8] check: max |recall delta| vs Stage 6 = {d:.4f} "
               "(within one question — inspect before trusting).")
@@ -603,7 +603,7 @@ def main() -> None:
             print("[stage8] -> run the final eval: "
                   "python scripts/18_eval_reranker_ft.py")
         elif gate[0] == "NO-GO":
-            print("[stage8] -> stop-loss: archive this as the honest negative "
+            print("[stage8] -> stop-loss: archive this as the negative "
                   "result (no final run).")
         else:
             print("[stage8] -> gray zone: at most ONE retry (more data / "

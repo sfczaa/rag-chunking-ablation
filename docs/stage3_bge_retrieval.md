@@ -1,6 +1,6 @@
 # Stage 3 - BGE Retrieval Embedding Ablation
 
-**Status: implemented as code.** Stage 3 compares the archived Stage 2 MiniLM
+**Status: complete; archived under `artifacts/results/stage3/final/`.** Stage 3 compares the archived Stage 2 MiniLM
 retrieval results against BGE retrieval embeddings while keeping chunking fair.
 
 ## Scope
@@ -50,12 +50,6 @@ For a faster sanity run:
 python scripts/9_sweep_bge_retrieval.py --quick
 ```
 
-If Colab is slow with BGE base:
-
-```bash
-python scripts/9_sweep_bge_retrieval.py --retrieval-model BAAI/bge-small-en-v1.5
-```
-
 After a successful full run, archive Stage 3 if the outputs look right:
 
 ```bash
@@ -75,5 +69,3 @@ Written to `artifacts/results/latest/`:
 - `recall_vs_chunk_size.png` - Stage 3 BGE recall vs average chunk size.
 - `model_comparison.png` - best fixed vs BiLSTM vs Transformer under BGE retrieval.
 - `stage3_bge_retrieval_summary.md` - run metadata and output notes.
-
-Do not treat Stage 3 as complete until those files exist from an actual run.

@@ -100,9 +100,6 @@ Written to `artifacts/results/latest/`:
 - `stage4_hybrid_retrieval_summary.md` - run metadata, check verdict, and best
   configs.
 
-Do not treat Stage 4 as complete until those files exist from an actual run and
-the Stage 3 check passes.
-
 ## Results (Colab run, 2026-07-03)
 
 The check passed exactly: all 30 configs have `delta_n_chunks = 0` and every

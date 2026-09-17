@@ -162,8 +162,8 @@ def plot(stages: list[dict], path: pathlib.Path) -> None:
                   fontsize=9)
     ax.set_ylabel("Best doc-constrained Recall@5")
     ax.set_title("Best Recall@5 per stage — one controlled change at a time:\n"
-                 "the embedder and in-domain reranker fine-tuning move the "
-                 "ceiling, the chunking method never does",
+                 "the embedder and in-domain reranker fine-tuning moved the "
+                 "ceiling; chunking method stayed within noise",
                  fontsize=12)
     ax.grid(True, axis="y", alpha=0.3)
     lo = min(m - s for m, s in zip(best_vals, ses)) - 0.025

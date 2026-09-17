@@ -1,9 +1,7 @@
 # results/stage2/final/
 
-Reserved archive folder for **Stage 2** (Transformer boundary model) — **not
-implemented yet**. Structure is prepared ahead of the work.
-
-Once Stage 2 produces a sweep, populate it with:
+Archived snapshot of the **Stage 2** (Transformer boundary model) sweep, copied
+from `results/latest/` with:
 
 ```bash
 python scripts/save_stage_results.py --stage stage2

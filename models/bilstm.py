@@ -7,7 +7,7 @@ Given the sentence embeddings of ONE document ``E = [e_1, ..., e_n]`` with
 
 with the probability that a semantic topic change happens there.
 
-Architecture (matches the project spec)::
+Architecture::
 
     E (n, d)
       -> BiLSTM(hidden=H)            -> H_seq (n, 2H)
@@ -15,8 +15,8 @@ Architecture (matches the project spec)::
       -> Linear(4H -> 1)            -> logit_i
       (sigmoid is applied at inference / inside the loss for stability)
 
-The module is intentionally single-document (no padding): the spec trains
-with one article per step, which sidesteps variable-length padding entirely.
+The module is intentionally single-document (no padding): training uses one
+article per step, which sidesteps variable-length padding entirely.
 """
 
 from __future__ import annotations

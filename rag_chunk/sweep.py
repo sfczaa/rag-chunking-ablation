@@ -2,8 +2,7 @@
 
 Sweeps fixed-size and learned **target-size** chunking across chunk sizes and
 overlap settings, scores each on Natural Questions doc-constrained Recall@k, and
-exports the artifacts that turn this project from a single comparison into a real
-optimizer:
+exports:
 
     <results>/sweep_results.csv          one row per (method, config)
     <results>/best_config.json           the validation-best configuration
@@ -54,7 +53,7 @@ def _grids(quick: bool) -> tuple[list[int], list[int], list[int]]:
 
 
 def _semantic_window(target: int) -> tuple[int, int]:
-    """Learned [min, max] window derived from a target size (per the spec)."""
+    """Learned [min, max] window derived from a target size."""
     return max(2, target - 4), target + 4
 
 

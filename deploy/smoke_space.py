@@ -1,9 +1,9 @@
-"""Local CPU smoke test for the Space app — run this BEFORE every push.
+"""Local CPU smoke test for the Space app.
 
 Assembles the exact payload `create_space.py` would deploy, points it at local
 assets instead of the Hub, and exercises the whole boot path: config resolution
 from RAG_DATA_ROOT, prebuilt-index loading, model placement, both ranking arms,
-and HTML rendering. Runs on CPU (slow but correct); `@spaces.GPU` is a no-op off
+and HTML rendering. Runs on CPU; `@spaces.GPU` is a no-op off
 Space.
 
 It is the cheapest check that the shipped indices really are the study's: the

@@ -36,7 +36,7 @@ Per chunking config the chunks are built **once** and the dense index embeds
 them once; the top-50 pool extends the top-20 pool (same dense ranking), so the
 cross-encoder scores each (question, chunk) pair exactly once — pairs for ranks
 1-20 are timed separately from ranks 21-50, keeping the per-depth latency
-honest. All arms are scored by the same `metrics.recall_from_retrieved` code
+attributable to its candidate count. All arms are scored by the same `metrics.recall_from_retrieved` code
 path.
 
 Every row also reports the **candidate-pool ceiling** `pool_recall@{20,50}` —

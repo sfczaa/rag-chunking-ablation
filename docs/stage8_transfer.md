@@ -63,9 +63,10 @@ reranker was neutral there, ots − bge ≈ +0.001).
   on a +0.0567 vs 0.0538 margin — report it as *partial / damage-control
   transfer with a consistent positive direction*, not a clean win.
 - The fine-tuned checkpoint used here was retrained from the same NQ-train data,
-  recipe and seed (42) as the original Stage 8 run (its ~1.1 GB weights had been
-  lost from Drive); the in-domain column is the original Stage 8 archive. They
-  match within training noise.
+  recipe and seed (42) as the original Stage 8 run (the original weights were no
+  longer available); the in-domain column is the original Stage 8 archive. The
+  retrained checkpoint was not re-evaluated on the NQ bench, so variability
+  between the two checkpoints is not quantified.
 
 ## Artifacts
 

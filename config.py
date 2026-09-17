@@ -142,7 +142,7 @@ LEARNING_RATE = 1e-3
 MAX_EPOCHS = 20
 EARLY_STOP_PATIENCE = 3              # epochs without val-loss improvement
 # pos_weight for the weighted BCE.  None -> computed from the training split
-# (= #neg / #pos, ~15 per the spec).  Set a float to override.
+# (= #neg / #pos, ~15 on this data).  Set a float to override.
 POS_WEIGHT = None
 # -- Learned chunking policy ------------------------------------------------- #
 # "threshold": cut wherever boundary prob >= BOUNDARY_THRESHOLD (min/max clamp).

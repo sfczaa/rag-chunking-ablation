@@ -3,7 +3,7 @@
 One article per optimisation step (variable length, no padding).  The loss is
 a weighted BCE (``pos_weight = #neg/#pos`` from the training split, ~15) to
 counter the ~6% positive-boundary rate.  Early stopping watches validation loss
-and the best weights are saved to Drive.
+and the best weights are saved under ``MODELS_DIR``.
 """
 
 from __future__ import annotations

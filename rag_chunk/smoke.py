@@ -30,8 +30,8 @@ def run_smoke() -> dict:
         print("\n=== Phase 4+5 (smoke): build indices + evaluate ===")
         model = training.load_model()
         results = evaluation.evaluate_all(model, rebuild=True)
-        print("\n[smoke] OK — the full pipeline runs end to end. "
-              "Numbers here are meaningless (tiny data); now run the real phases.")
+        print("\n[smoke] OK — phases 1-5 ran on tiny data. "
+              "These numbers are not meaningful.")
         return results
     finally:
         C.apply(**{k: saved[k] for k in _SAVED_KEYS if k != "DATA_ROOT"})
