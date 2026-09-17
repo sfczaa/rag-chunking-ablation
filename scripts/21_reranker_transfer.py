@@ -13,7 +13,7 @@ dataset changes, so a difference in the ft-ots delta is a transfer effect, not a
 protocol difference. The in-domain Stage 8 deltas are read from the archive and
 printed next to the cross-dataset ones.
 
-GPU + Drive assets required (run on Colab):
+Required assets (under the data root):
     - fine-tuned reranker at ``models/bge_reranker_ft/final`` (Stage 8),
     - the TriviaQA bench cache (Stage 7 built it for the same n-questions),
     - the archived ``stage8/final`` for the in-domain comparison.

@@ -1,6 +1,5 @@
 """Upload the fine-tuned reranker to a Hugging Face model repo.
 
-Already run (2026-08-09) — kept so the artifact can be reproduced or refreshed.
 The source directory is the Stage 8 checkpoint: config.json, tokenizer*.json and
 model.safetensors, plus `deploy/model_card.md` uploaded as the repo README.
 

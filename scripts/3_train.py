@@ -1,4 +1,4 @@
-"""Phase 3 — train the BiLSTM boundary detector (saves best weights to Drive).
+"""Phase 3 — train the BiLSTM boundary detector (saves best weights under MODELS_DIR).
 Usage:  python scripts/3_train.py
 """
 

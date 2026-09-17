@@ -245,10 +245,10 @@ def build_app(docs, questions, indices, scorers):
             "Two chunking strategies side by side on the Stage 6 bench "
             f"({len(docs)} Wikipedia docs / {len(questions)} NQ questions), "
             "three ranking arms sharing one BGE top-20 pool. Project "
-            "findings: chunk **size** dominates recall, chunking methods tie "
-            "— and the Stage 8 **fine-tuned** reranker is the only "
-            "intervention that lifts R@1 at the size-15 sweet spot "
-            "(+0.107).")
+            "findings: chunk **size** dominates recall; differences between "
+            "chunking methods stayed below the study's detection limit "
+            "(equivalence was not established). The Stage 8 **fine-tuned** "
+            "reranker improved in-domain R@1 at size 15 by 0.107.")
         with gr.Row():
             bench = gr.Dropdown(bench_labels, label="Bench question "
                                 "(NQ validation split)", value=None, scale=3)

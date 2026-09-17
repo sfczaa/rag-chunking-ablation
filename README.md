@@ -8,7 +8,7 @@ The project compares fixed-size, BiLSTM, and Transformer chunking on Natural Que
 
 ## Key results
 
-- **Chunk size matters more than chunking method.** At matched sizes and overlaps, fixed-size, BiLSTM, and Transformer chunking are effectively tied.
+- **Chunk size mattered more than chunking method.** At matched sizes and overlaps, differences between fixed-size, BiLSTM, and Transformer chunking stayed below the study's detection limit; equivalence was not established.
 - **The retrieval embedder was the main improvement.** Switching MiniLM to BGE improved all 30 matched configurations.
 - **Hybrid retrieval was not consistently better.** BM25/RRF and an off-the-shelf reranker did not beat dense retrieval reliably.
 - **Fine-tuning helped in-domain.** The fine-tuned reranker improved NQ results, but transferred to TriviaQA as parity rather than a lift.

@@ -158,13 +158,13 @@ rerank20 − bge on the 5 selected configs (ΔR@1 / ΔR@3 / ΔR@5):
 
 Findings:
 
-1. **The size effect gets cleaner with scale** (r 0.77 → 0.95): it was never
-   noise, and the method colours stay intermixed along the trend
+1. **The size effect gets cleaner with scale** (r 0.77 → 0.95), consistent with a
+   real size effect, and the method colours stay intermixed along the trend
    (`stage6_size_vs_recall.png`).
 2. **The reranker's small-chunk rescue shrinks at scale** (+0.113 → +0.036 R@1
    at fixed 6/0) but stays above 2 SE — real, just smaller when the pool
    ceiling is lower (0.926 vs 0.951 at n=203).
-3. **Size-15 deltas are zero** (all within ±0.012 vs 2 SE = 0.031), while the
+3. **Size-15 deltas are within noise** (all within ±0.012 vs 2 SE = 0.031), while the
    size-15 pool ceilings remain ≥ 0.95 — the answer chunk is in the top-20 for
    ~96% of questions but the off-the-shelf cross-encoder cannot rank it first
    any better than BGE already does. That gap (R@1 0.63 vs pool 0.96) is the

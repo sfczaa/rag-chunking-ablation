@@ -1,7 +1,7 @@
 # Deployment — Hugging Face ZeroGPU Space
 
 Everything needed to host the interactive demo (`scripts/19_demo.py`'s sibling,
-rebuilt for the Hub) as a free ZeroGPU Space. Three Hub repos are involved:
+rebuilt for the Hub) as a ZeroGPU Space. Three Hub repos are involved:
 
 | repo | type | what it holds |
 |---|---|---|
@@ -11,12 +11,8 @@ rebuilt for the Hub) as a free ZeroGPU Space. Three Hub repos are involved:
 
 ## Status
 
-The model and dataset repos are **uploaded** (private). The Space is **not yet
-created**: hosting a Gradio Space for free requires ZeroGPU, and ZeroGPU free
-hosting needs an account with a **verified email and an age over 30 days**.
-Until then `create_repo` answers `402 Payment Required` on any hardware, private
-or public. This is an account gate, not a configuration problem — the fix is to
-wait, not to subscribe.
+All three repositories are public. The Space pins the dataset and model
+revisions in `space/demo_settings.py`.
 
 ## Layout
 
@@ -27,9 +23,9 @@ deploy/
     requirements.txt  torch deliberately omitted — the ZeroGPU image supplies it
     README.md         Space card (YAML frontmatter pins the Gradio SDK version)
   create_space.py   assemble + create + push the Space
-  smoke_space.py    local CPU test of the exact payload — run before every push
-  upload_model.py   (already run) push the fine-tuned reranker
-  upload_dataset.py (already run) push corpus + indices
+  smoke_space.py    local CPU test of the exact payload
+  upload_model.py   push the fine-tuned reranker
+  upload_dataset.py push corpus + indices
   model_card.md     README shipped with the model repo
   dataset_card.md   README shipped with the dataset repo
 ```
@@ -40,14 +36,13 @@ drift from the study's code.
 
 ## Deploying
 
-Assets live outside the repo (they are gitignored), so pass their location.
-With the Drive data root mounted as `G:`:
+Assets live outside the repo (they are gitignored), so pass their location:
 
 ```bash
 # 1. verify the payload end to end on CPU (must print ALL CHECKS PASSED)
 python deploy/smoke_space.py \
-  --data-root "G:/<drive>/RAG chunk optimize/artifacts" \
-  --ft-model  "G:/<drive>/RAG chunk optimize/artifacts/models/bge_reranker_ft/final"
+  --data-root "<data root>" \
+  --ft-model  "<data root>/models/bge_reranker_ft/final"
 
 # 2. create and push the Space (add --public when it should be world-readable)
 python deploy/create_space.py
@@ -58,16 +53,10 @@ The smoke test asserts the shipped indices are the archived ones (19507 chunks /
 mismatch means the assets were rebuilt rather than reused, and the demo would no
 longer show the study's own retrieval.
 
-## After the Space is created
+## Access
 
-- **Private model/dataset repos need a token.** Either add an `HF_TOKEN` secret
-  in the Space settings, or make the two asset repos public (they contain no
-  secrets — Wikipedia-derived text and MIT-licensed weights). Making them public
-  is simpler and they are portfolio artifacts in their own right.
-- Free Spaces sleep after 48 idle hours and wake on the next visit.
-- ZeroGPU attaches a GPU only while a request is being served; visitors have a
-  daily GPU-seconds quota (2 min unauthenticated, 5 min signed in).
-- Add the Space URL to the root `README.md` once it is live and public.
+The asset repositories are public, so the Space needs no token. Private asset
+repositories would need a read-only `HF_TOKEN` Space secret.
 
 ## Design notes that must not regress
 

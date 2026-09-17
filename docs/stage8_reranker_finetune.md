@@ -23,7 +23,7 @@ From the archived Stage 6 run (1000 docs / 1032 questions):
   fine-tuning" no longer binds: the eval bench is now 1032 questions and the
   NQ **train** split provides unlimited disjoint training data.
 
-An honest possible outcome is "fine-tuning does not help either" — that is a
+A possible outcome is "fine-tuning does not help either" — that is a
 publishable negative result, and the go/no-go gate below is designed to reach
 it cheaply.
 
@@ -85,7 +85,7 @@ top-20 pool: `bge`, `rerank20` (off-the-shelf) and `rerank20_ft`.
 | Dev ΔR@1 (ft − off-the-shelf) at fixed 15/0 | Verdict |
 |---|---|
 | ≥ +0.02 (`STAGE8_GO_THRESHOLD`) | **GO** — run the final eval on the Stage 6 bench |
-| ≤ 0 | **NO-GO** — stop, archive the dev results as an honest negative result |
+| ≤ 0 | **NO-GO** — stop, archive the dev results as a negative result |
 | in between | judgment call: at most **one** retry with more data/epochs, then decide; no threshold-shopping |
 
 The dev bench (~400 questions, 1 SE ≈ 0.024) is for the *decision*, not the
@@ -168,7 +168,7 @@ the validation-split bench — dev makes decisions, never claims.
 
 **Final eval (Stage 6 bench, 1032 questions)**: check vs `stage6/final`
 exact — all 10 bge/rerank20 rows reproduce with every delta 0.0000, so the
-`rerank20_ft` rows are trustworthy.
+`rerank20_ft` rows are compared against a reproduced baseline.
 
 | config | bge R@1 | ots R@1 | ft R@1 | ft−ots ΔR@1 | ft R@5 |
 |---|---|---|---|---|---|
@@ -193,7 +193,7 @@ exact — all 10 bge/rerank20 rows reproduce with every delta 0.0000, so the
    reranker, size still dominates (ft R@1: size 6 = 0.650 vs size 15 =
    0.736) and the size-15 chunking methods still tie within noise
    (ft R@5 spread 0.9099–0.9244 ≈ 2 SE).
-4. **Honest caveats**: (a) the gain is *in-domain* — trained on NQ train
+4. **Caveats**: (a) the gain is *in-domain* — trained on NQ train
    split, evaluated on NQ validation split; nothing here claims transfer to
    other datasets (a TriviaQA transfer arm was added later — see
    [`stage8_transfer.md`](stage8_transfer.md): the gain *partially* transfers,

@@ -1,5 +1,5 @@
 """FAISS dense retrieval over chunks (inner-product on L2-normalised vectors,
-i.e. cosine similarity), per the spec's ``IndexFlatIP``.
+i.e. cosine similarity) with ``IndexFlatIP``.
 
 A ``ChunkIndex`` bundles the FAISS index with the chunk texts, their sizes
 (in sentences) and the **source document id** of each chunk, so Phase 5 can

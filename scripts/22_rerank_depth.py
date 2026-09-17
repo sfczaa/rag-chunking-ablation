@@ -275,7 +275,7 @@ def _write_stage8_check(stage8_rows, rows, depths, path) -> bool | None:
         print(f"[stage9] WARN: {unmatched} row(s) had no Stage 8 counterpart")
     if ok and worst == 0.0:
         print("[stage9] check OK: depth-20 arms reproduce stage8/final exactly "
-              "— the depth-50 rows are trustworthy.")
+              "— the depth-50 rows are comparable.")
     elif ok:
         print(f"[stage9] check: max |delta| vs Stage 8 = {worst:.4f} (within "
               "one question).")

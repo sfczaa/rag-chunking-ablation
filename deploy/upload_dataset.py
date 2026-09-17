@@ -1,6 +1,6 @@
 """Upload the demo assets (bench corpus + prebuilt FAISS indices) to a dataset repo.
 
-Already run (2026-08-09) — kept for reproducibility. The uploaded layout MIRRORS
+The uploaded layout mirrors
 the study's data root, so the Space can point RAG_DATA_ROOT at a snapshot and let
 config.py resolve every path unchanged. Do not flatten it.
 
