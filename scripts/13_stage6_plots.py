@@ -151,7 +151,8 @@ def plot_rerank_delta(small_matched: list[dict], large_matched: list[dict],
             bbox=dict(boxstyle="round", fc="white", alpha=0.8))
     ax.set_xticks(x, labels)
     ax.set_ylabel("Delta Recall@1 (rerank20 - bge)")
-    ax.set_title("Reranker gain: concentrated at small chunks, none at size 15")
+    ax.set_title("Reranker gain: concentrated at small chunks, "
+                 "no detectable gain at size 15")
     ax.legend(loc="upper right", fontsize=9, bbox_to_anchor=(1.0, 0.90))
     ax.grid(True, axis="y", alpha=0.3)
     fig.tight_layout()

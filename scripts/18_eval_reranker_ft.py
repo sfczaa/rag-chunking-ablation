@@ -396,7 +396,8 @@ def _plot_delta(matched, n_questions: int, path) -> None:
     import numpy as np
 
     k1 = min(C.RECALL_KS)
-    labels = [f"{m['method']}\n{m['chunk_config']}" for m in matched]
+    labels = [m["method"] + "\n" + m["chunk_config"].replace(",", "\n")
+              for m in matched]
     d_ots = [m[f"ots_recall@{k1}"] - m[f"bge_recall@{k1}"] for m in matched]
     d_ft = [m[f"ft_recall@{k1}"] - m[f"bge_recall@{k1}"] for m in matched]
     pbar = float(np.mean([m[f"bge_recall@{k1}"] for m in matched]))
@@ -404,7 +405,7 @@ def _plot_delta(matched, n_questions: int, path) -> None:
 
     x = np.arange(len(matched))
     w = 0.38
-    fig, ax = plt.subplots(figsize=(9, 5))
+    fig, ax = plt.subplots(figsize=(9, 5.6))
     for offset, deltas, label, color in (
             (-w / 2, d_ots, "off-the-shelf rerank20", "#9467bd"),
             (+w / 2, d_ft, "fine-tuned rerank20", "#2ca02c")):
@@ -417,7 +418,8 @@ def _plot_delta(matched, n_questions: int, path) -> None:
     ax.set_xticks(x, labels, fontsize=8)
     ax.set_ylabel(f"Δ Recall@{k1} vs bge")
     ax.set_title("Does fine-tuning the cross-encoder move the needle?")
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3,
+              fontsize=9, frameon=False)
     ax.grid(True, axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(path, dpi=150)

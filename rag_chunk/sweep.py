@@ -372,7 +372,9 @@ def plot_model_comparison(rows: list[dict], path) -> None:
     def label_of(method: str, row: dict) -> str:
         if method == "fixed":
             return f"Fixed (size={row['fixed_size']}, ov={row['fixed_overlap']})"
-        return (f"{method.capitalize()} (target={row['semantic_target_size']}, "
+        name = {"bilstm": "BiLSTM", "transformer": "Transformer"}.get(
+            method, method.capitalize())
+        return (f"{name} (target={row['semantic_target_size']}, "
                 f"ov={row['semantic_overlap']})")
 
     present = [(m, best_of(m)) for m in ("fixed", "bilstm", "transformer")]
@@ -383,7 +385,7 @@ def plot_model_comparison(rows: list[dict], path) -> None:
     x = np.arange(len(ks))
     n = len(present)
     w = min(0.38, 0.8 / n)            # n==2 -> 0.38 (Stage 1 chart unchanged)
-    fig, ax = plt.subplots(figsize=(7.5, 4.5))
+    fig, ax = plt.subplots(figsize=(7.5, 5.0))
     for i, (method, row) in enumerate(present):
         offset = (i - (n - 1) / 2) * w
         bars = ax.bar(x + offset, [row[f"recall@{k}"] for k in ks], w,
@@ -393,7 +395,12 @@ def plot_model_comparison(rows: list[dict], path) -> None:
     ax.set_ylabel("Recall (doc-constrained)")
     ax.set_ylim(0, 1.0)
     ax.set_title("Best config per method (ranked by Recall@%d)" % max(ks))
-    ax.legend()
+    # below the axes: at ylim 1.0 an in-axes legend covers the bar value labels;
+    # long entries go one per row so the row is not clipped at the figure edge
+    handles, texts = ax.get_legend_handles_labels()
+    ncol = 1 if max(len(t) for t in texts) > 30 else min(n, 3)
+    ax.legend(handles, texts, loc="upper center", bbox_to_anchor=(0.5, -0.08),
+              ncol=ncol, fontsize=8, frameon=False)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)

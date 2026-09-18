@@ -452,7 +452,7 @@ def plot_retriever_comparison(rows: list[dict], path) -> None:
     x = np.arange(len(ks))
     n = len(present)
     w = min(0.38, 0.8 / n)
-    fig, ax = plt.subplots(figsize=(7.5, 4.5))
+    fig, ax = plt.subplots(figsize=(7.5, 5.0))
     for i, (name, row) in enumerate(present):
         offset = (i - (n - 1) / 2) * w
         bars = ax.bar(x + offset, [row[f"recall@{k}"] for k in ks], w,
@@ -463,7 +463,12 @@ def plot_retriever_comparison(rows: list[dict], path) -> None:
     ax.set_ylabel("Recall (doc-constrained)")
     ax.set_ylim(0, 1.0)
     ax.set_title("Best config per retriever (ranked by Recall@%d)" % max(ks))
-    ax.legend(fontsize=8)
+    # below the axes: at ylim 1.0 an in-axes legend covers the bar value labels;
+    # long entries go one per row so the row is not clipped at the figure edge
+    handles, texts = ax.get_legend_handles_labels()
+    ncol = 1 if max(len(t) for t in texts) > 30 else min(n, 3)
+    ax.legend(handles, texts, loc="upper center", bbox_to_anchor=(0.5, -0.08),
+              ncol=ncol, fontsize=8, frameon=False)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)

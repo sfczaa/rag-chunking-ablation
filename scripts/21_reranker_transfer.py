@@ -319,12 +319,13 @@ def _plot_delta(matched, n_questions: int, se2: float, path) -> None:
     import numpy as np
 
     k1 = min(C.RECALL_KS)
-    labels = [f"{m['method']}\n{m['chunk_config']}" for m in matched]
+    labels = [m["method"] + "\n" + m["chunk_config"].replace(",", "\n")
+              for m in matched]
     d_cross = [m[f"ft_minus_ots@{k1}"] for m in matched]
     d_in = [m.get(f"indomain_ft_minus_ots@{k1}") for m in matched]
 
     x = np.arange(len(matched))
-    fig, ax = plt.subplots(figsize=(9, 5))
+    fig, ax = plt.subplots(figsize=(9, 5.6))
     bars = ax.bar(x, d_cross, 0.55, color="#2ca02c",
                   label=f"TriviaQA ft−ots ΔR@{k1} (n={n_questions})")
     ax.bar_label(bars, fmt="%+.3f", padding=2, fontsize=8)
@@ -341,7 +342,8 @@ def _plot_delta(matched, n_questions: int, se2: float, path) -> None:
     ax.set_xticks(x, labels, fontsize=8)
     ax.set_ylabel(f"Δ Recall@{k1} (ft − off-the-shelf)")
     ax.set_title("Does the NQ-tuned reranker's gain transfer to TriviaQA?")
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3,
+              fontsize=9, frameon=False)
     ax.grid(True, axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
