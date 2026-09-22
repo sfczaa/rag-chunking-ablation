@@ -1,6 +1,6 @@
 # results/stage2/final/
 
-Archived snapshot of the **Stage 2** (Transformer boundary model) sweep, copied
+Archived snapshot of the Stage 2 (Transformer boundary model) sweep, copied
 from `results/latest/` with:
 
 ```bash

@@ -447,20 +447,20 @@ def _write_summary(out_dir, matched, check_ok: bool | None, gate,
     ks = sorted(C.RECALL_KS)
     k1 = min(ks)
     lines = ["# Stage 8 - fine-tuned reranker evaluation", "",
-             f"- Mode: **{mode}** — {n_docs} docs / {n_questions} questions",
+             f"- Mode: {mode} - {n_docs} docs / {n_questions} questions",
              f"- Base reranker: `{C.RERANKER_MODEL}` (off-the-shelf arm)",
              "- Arms share one identical BGE top-20 pool per config.", ""]
     if check_ok is not None:
         lines.append("- Built-in check vs stage6/final: "
-                     + ("**OK (exact)**" if check_ok else "**FAILED — do not "
-                        "trust the ft rows until explained**"))
+                     + ("OK (exact)" if check_ok else "FAILED - do not "
+                        "use the ft rows until explained"))
     if gate[1] is not None:
-        lines.append(f"- Go/no-go gate (fixed 15/0, ΔR@{k1} ft−ots = "
+        lines.append(f"- Go/no-go gate (fixed 15/0, Delta R@{k1} ft-ots = "
                      f"{gate[1]:+.4f}, threshold {C.STAGE8_GO_THRESHOLD}): "
-                     f"**{gate[0]}**")
+                     f"{gate[0]}")
     lines += ["", "## Per-config results", ""]
     header = (f"| config | pool@{DEPTH} | bge R@{k1} | ots R@{k1} "
-              f"| ft R@{k1} | ft−ots ΔR@{k1} | ft−bge ΔR@{k1} | ft R@5 |")
+              f"| ft R@{k1} | ft-ots Delta R@{k1} | ft-bge Delta R@{k1} | ft R@5 |")
     lines += [header, "|" + "---|" * 8]
     for m in matched:
         lines.append(

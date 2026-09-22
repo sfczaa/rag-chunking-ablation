@@ -16,6 +16,6 @@ Outputs in this folder:
 - `hybrid_recall_vs_chunk_size.png` and `hybrid_retriever_comparison.png`: plots
 
 Best config per retriever:
-- bge: `fixed`, `fixed_size=15,overlap=0` — R@1=0.6502 R@3=0.8473 R@5=0.9212
-- bm25: `bilstm`, `target=15,min=11,max=19,overlap=0` — R@1=0.5025 R@3=0.7094 R@5=0.8030
-- rrf: `fixed`, `fixed_size=15,overlap=0` — R@1=0.6404 R@3=0.7980 R@5=0.8867
+- bge: `fixed`, `fixed_size=15,overlap=0` - R@1=0.6502 R@3=0.8473 R@5=0.9212
+- bm25: `bilstm`, `target=15,min=11,max=19,overlap=0` - R@1=0.5025 R@3=0.7094 R@5=0.8030
+- rrf: `fixed`, `fixed_size=15,overlap=0` - R@1=0.6404 R@3=0.7980 R@5=0.8867

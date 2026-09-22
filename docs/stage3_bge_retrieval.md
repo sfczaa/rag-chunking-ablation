@@ -1,6 +1,6 @@
 # Stage 3 - BGE Retrieval Embedding Ablation
 
-**Status: complete; archived under `artifacts/results/stage3/final/`.** Stage 3 compares the archived Stage 2 MiniLM
+Status: complete; archived under `artifacts/results/stage3/final/`. Stage 3 compares the archived Stage 2 MiniLM
 retrieval results against BGE retrieval embeddings while keeping chunking fair.
 
 ## Scope

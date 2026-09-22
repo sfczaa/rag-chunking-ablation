@@ -241,18 +241,18 @@ def build_app(docs, questions, indices, scorers):
 
     with gr.Blocks(title="RAG chunking demo") as app:
         gr.Markdown(
-            "# Retrieval-aware RAG chunking — interactive demo\n"
+            "# Retrieval-aware RAG chunking - interactive demo\n"
             "Two chunking strategies side by side on the Stage 6 bench "
             f"({len(docs)} Wikipedia docs / {len(questions)} NQ questions), "
             "three ranking arms sharing one BGE top-20 pool. Project "
-            "findings: chunk **size** dominates recall; differences between "
+            "findings: chunk size had the largest modeled effect; differences between "
             "chunking methods stayed below the study's detection limit "
-            "(equivalence was not established). The Stage 8 **fine-tuned** "
+            "(equivalence was not established). The Stage 8 fine-tuned "
             "reranker improved in-domain R@1 at size 15 by 0.107.")
         with gr.Row():
             bench = gr.Dropdown(bench_labels, label="Bench question "
                                 "(NQ validation split)", value=None, scale=3)
-            free = gr.Textbox(label="…or your own question (overrides the "
+            free = gr.Textbox(label="...or your own question (overrides the "
                               "dropdown)", scale=2)
         arm = gr.Radio([ARM_LABELS[a] for a in arms],
                        value=ARM_LABELS[arms[-1]], label="Ranking arm")

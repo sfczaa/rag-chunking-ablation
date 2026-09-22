@@ -1,4 +1,4 @@
-# Deployment — Hugging Face ZeroGPU Space
+# Deployment - Hugging Face ZeroGPU Space
 
 Everything needed to host the interactive demo (`scripts/19_demo.py`'s sibling,
 rebuilt for the Hub) as a ZeroGPU Space. Three Hub repos are involved:
@@ -30,7 +30,7 @@ deploy/
   dataset_card.md   README shipped with the dataset repo
 ```
 
-`config.py` and `rag_chunk/` are **not** duplicated here. `create_space.py`
+`config.py` and `rag_chunk/` are not duplicated here. `create_space.py`
 copies them from the repo root at assembly time, so the deployed app cannot
 drift from the study's code.
 
@@ -60,12 +60,12 @@ repositories would need a read-only `HF_TOKEN` Space secret.
 
 ## Design notes that must not regress
 
-- `import spaces` is the **first** import in `app.py` — it patches torch.
-- `RAG_DATA_ROOT` is set **before** `import config`, so every path resolves out
+- `import spaces` is the first import in `app.py` - it patches torch.
+- `RAG_DATA_ROOT` is set before `import config`, so every path resolves out
   of the downloaded snapshot.
-- Models are placed on the device at **module scope** (ZeroGPU requirement);
+- Models are placed on the device at module scope (ZeroGPU requirement);
   only inference runs inside `@spaces.GPU`, and nothing infers at import time.
-- Indices are **loaded, never built**. A missing index raises instead of
+- Indices are loaded, never built. A missing index raises instead of
   silently embedding ~40k chunks at boot.
 - The bench is read straight from JSONL, bypassing the dataset-streaming loader,
   so the Space can never try to re-download Natural Questions.

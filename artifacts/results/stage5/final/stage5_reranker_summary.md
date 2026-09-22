@@ -16,6 +16,6 @@ Outputs in this folder:
 - `rerank_recall_vs_chunk_size.png` and `rerank_comparison.png`: plots
 
 Best config per arm:
-- bge: `fixed`, `fixed_size=15,overlap=0` — R@1=0.6502 R@3=0.8473 R@5=0.9212
-- rerank20: `fixed`, `fixed_size=15,overlap=1` — R@1=0.6404 R@3=0.8621 R@5=0.9310
-- rerank50: `fixed`, `fixed_size=15,overlap=1` — R@1=0.6404 R@3=0.8473 R@5=0.9163
+- bge: `fixed`, `fixed_size=15,overlap=0` - R@1=0.6502 R@3=0.8473 R@5=0.9212
+- rerank20: `fixed`, `fixed_size=15,overlap=1` - R@1=0.6404 R@3=0.8621 R@5=0.9310
+- rerank50: `fixed`, `fixed_size=15,overlap=1` - R@1=0.6404 R@3=0.8473 R@5=0.9163
