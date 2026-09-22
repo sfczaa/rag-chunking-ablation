@@ -18,9 +18,9 @@ without embedding a corpus at boot.
 | path | what it is |
 |---|---|
 | `data/nq/large_n1000/docs.jsonl` | 1000 Natural Questions Wikipedia documents, pre-split into sentences (`id`, `title`, `sentences`) |
-| `data/nq/large_n1000/questions.jsonl` | 1032 NQ **validation** questions with short answers and gold document titles |
-| `data/nq/large_n1000/indices/demo/index_fixed.{faiss,json}` | FAISS index over the corpus chunked at a fixed 15 sentences / overlap 0 — 19507 chunks, mean 14.65 sentences |
-| `data/nq/large_n1000/indices/demo/index_bilstm.{faiss,json}` | FAISS index over the same corpus chunked by a learned BiLSTM boundary model at target size 15 — 19306 chunks, mean 14.80 sentences |
+| `data/nq/large_n1000/questions.jsonl` | 1032 NQ validation questions with short answers and gold document titles |
+| `data/nq/large_n1000/indices/demo/index_fixed.{faiss,json}` | FAISS index over the corpus chunked at a fixed 15 sentences / overlap 0 - 19507 chunks, mean 14.65 sentences |
+| `data/nq/large_n1000/indices/demo/index_bilstm.{faiss,json}` | FAISS index over the same corpus chunked by a learned BiLSTM boundary model at target size 15 - 19306 chunks, mean 14.80 sentences |
 
 Both indices are `IndexFlatIP` over `BAAI/bge-base-en-v1.5` embeddings,
 L2-normalised so inner product equals cosine similarity. The `.json` sidecar
@@ -33,7 +33,7 @@ unchanged.
 
 ## Provenance
 
-These are the exact indices behind the study's large-scale evaluation — their
+These are the exact indices behind the study's large-scale evaluation - their
 chunk counts and mean chunk sizes match the archived results row for row. Study,
 code and full write-up: https://github.com/sfczaa/rag-chunking-ablation
 

@@ -17,14 +17,14 @@ datasets:
   - sfczaa/rag-chunking-ablation-demo-assets
 ---
 
-# Retrieval-aware RAG chunking — interactive demo
+# Retrieval-aware RAG chunking - interactive demo
 
 Side-by-side retrieval over a 1000-document Wikipedia bench with 1032 Natural
 Questions. Pick a bench question (or type your own), choose a ranking arm, and
 compare two chunking strategies on an identical BGE top-20 candidate pool:
 
-- **fixed 15 sentences / overlap 0** — the deployment configuration;
-- **BiLSTM boundary model, target size 15** — a learned semantic chunker.
+- fixed 15 sentences / overlap 0 - the deployment configuration;
+- BiLSTM boundary model, target size 15 - a learned semantic chunker.
 
 Ranking arms:
 
@@ -40,21 +40,22 @@ chunk shows how far reranking moved it (`dense #7 → #1`).
 
 ## What the study behind it found
 
-- **Chunk size had the largest modeled effect on recall.** Across 30 configs
-  (3 methods × 5 sizes × 2 overlaps, n=1032), the size effect over 6→15
-  sentences is +0.064 R@5 (p ≈ 3e-16) — roughly **18×** the largest
-  chunking-method coefficient, which is not significant. The largest observed
+- Chunk size had the largest modeled effect on recall. Across 30 configs
+  (3 methods x 5 sizes x 2 overlaps, n=1032), the size effect over 6->15
+  sentences is +0.064 R@5 (p ~ 3e-16) - roughly 18x the largest
+  chunking-method coefficient, whose nominal OLS result does not meet the conventional threshold. The largest observed
   between-method gap (0.023) sits *below* the 0.032 detection floor at this
   sample size. Differences below that limit remain unresolved; this does not
-  establish equivalence between methods.
-- **The embedder was the big lever** (MiniLM → BGE lifted all 30 matched
-  configs), while BM25/RRF hybrid retrieval did not help.
-- **Fine-tuning the reranker was the one intervention that moved the size-15
-  sweet spot** (+0.107 R@1 in-domain). Cross-dataset it only recovers parity
-  with plain dense retrieval, without an observed improvement over it.
+  establish equivalence between methods. The OLS fit is descriptive because
+  configs share questions, and the detection floor uses an unpaired
+  approximation rather than a paired test.
+- Switching MiniLM to BGE raised recall in all 30 matched configs;
+  BM25/RRF did not improve the BGE baseline in this evaluation.
+- Fine-tuning raised in-domain R@1 by 0.107 at the size-15 setting. On the
+  tested TriviaQA bench, the result remained approximately equal to dense retrieval.
 
 Full write-up, code and archived results:
-**https://github.com/sfczaa/rag-chunking-ablation**
+https://github.com/sfczaa/rag-chunking-ablation
 
 ## Notes
 

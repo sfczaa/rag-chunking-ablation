@@ -1,8 +1,8 @@
 """Stage 7 - cross-dataset robustness check (TriviaQA rc.wikipedia, bge-only).
 
 Re-runs the Stage 3 protocol on a different QA dataset to test whether the
-headline conclusion — chunk size dominates Recall, chunking method ties —
-survives a change of dataset. Nothing else changes: same chunking grids (30
+observed size association and small matched-size method differences persist.
+Nothing else changes: same chunking grids (30
 configs), same boundary models/weights, same BGE dense retriever and query
 instruction, same doc-constrained Recall@k. bge arm only: no BM25/RRF, no
 reranking, no fine-tuning.
@@ -12,8 +12,8 @@ Two modes:
     --check   NQ sanity mode. Runs the 30-config bge-only sweep on the same
               cached 200-doc NQ corpus as Stage 3 and compares every row
               against the archived stage3/final rows — all deltas must be
-              0.0000. This proves the Stage 7 code path (including the
-              multi-gold metric extension) IS the Stage 3 pipeline. Run this
+              0.0000. This checks that the Stage 7 code path (including the
+              multi-gold metric extension) reproduces Stage 3. Run this
               BEFORE the TriviaQA run.
     (default) the TriviaQA rc.wikipedia eval (STAGE7_N_QUESTIONS kept
               questions; loader stats and actual counts are reported in every
@@ -529,18 +529,18 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
         "# Stage 7 - cross-dataset robustness check (TriviaQA rc.wikipedia)",
         "",
         f"- Dataset: `{C.STAGE7_DATASET}` / `{C.STAGE7_DATASET_CONFIG}` / "
-        f"`{C.STAGE7_SPLIT}` — full Wikipedia entity pages bundled in the "
+        f"`{C.STAGE7_SPLIT}` - full Wikipedia entity pages bundled in the "
         "dataset (no fetching).",
-        f"- Eval set: **{n_docs} docs / {n_questions} questions** "
+        f"- Eval set: {n_docs} docs / {n_questions} questions "
         f"(requested {n_requested} kept questions).",
         "- Gold documents: the question's entity pages whose sentence-joined "
         "text contains the kept answer string (`answer.value` first, then "
-        "aliases). **Distant supervision** — known to contain the answer, "
+        "aliases). Distant supervision - known to contain the answer, "
         "not human-verified to support it (weaker than NQ's annotated gold).",
         f"- Boundary/chunking embedding model: `{C.BOUNDARY_EMBED_MODEL}` "
         "(Stage 2 weights, unchanged)",
         f"- Dense retrieval embedding model: `{C.RETRIEVAL_EMBED_MODEL}`",
-        "- Arm: **bge only** (no BM25/RRF, no reranking, no fine-tuning)",
+        "- Arm: bge only (no BM25/RRF, no reranking, no fine-tuning)",
         "",
     ]
     if loader_meta:
@@ -567,7 +567,7 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
     best = max(rows, key=_rank_key)
     recalls = " ".join(f"R@{k}={best[f'recall@{k}']:.4f}" for k in ks)
     lines += [f"Best bge config: `{best['method']}`, "
-              f"`{config_label(best)}` — {recalls}", ""]
+              f"`{config_label(best)}` - {recalls}", ""]
     lines += [f"## Methods side by side (recall@{topk} per size x overlap)", ""]
     header = "| size | overlap |" + "".join(f" {m} |" for m in METHOD_COLORS)
     header += " spread |"
@@ -582,12 +582,12 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
         lines.append(cells)
     lines += ["", "## Direction checks (does the NQ headline transfer?)", ""]
     for c in checks:
-        val = "" if c["value"] is None else f" — observed {c['value']}"
-        lines.append(f"- **{c['replicates']}** — {c['claim']}: {c['metric']}"
+        val = "" if c["value"] is None else f" - observed {c['value']}"
+        lines.append(f"- {c['replicates']} - {c['claim']}: {c['metric']}"
                      f"{val} (rule: {c['rule']}; NQ reference: "
                      f"{c['reference_nq']})")
     n_yes = sum(1 for c in checks if c["replicates"] == "yes")
-    lines += ["", f"**{n_yes}/{len(checks)} direction checks replicate.**", ""]
+    lines += ["", f"{n_yes}/{len(checks)} direction checks replicate.", ""]
     path = out_dir / C.STAGE7_SUMMARY_MD
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"[stage7] wrote {path}")

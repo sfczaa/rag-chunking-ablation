@@ -244,7 +244,7 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
     lines = [
         "# Stage 6 - larger-scale robustness evaluation",
         "",
-        f"- Eval set: **{n_docs} docs / {n_questions} questions** "
+        f"- Eval set: {n_docs} docs / {n_questions} questions "
         f"(requested ~{n_requested} docs; the stream stops at the N-th usable "
         "document, so the counts are reported, not assumed)",
         f"- Boundary/chunking embedding model: `{C.BOUNDARY_EMBED_MODEL}`",
@@ -259,7 +259,7 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
     if best:
         recalls = " ".join(f"R@{k}={best[f'recall@{k}']:.4f}" for k in ks)
         lines += [f"Best bge config: `{best['method']}`, "
-                  f"`{config_label(best)}` — {recalls}", ""]
+                  f"`{config_label(best)}` - {recalls}", ""]
     if matched:
         lines += [f"## {arm} vs bge on the selected configs", ""]
         header = "| config | pool_recall@%d |" % rerank_depth()
@@ -274,12 +274,12 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
     lines += ["## Direction checks (do the Stage 1-5 conclusions replicate?)",
               ""]
     for c in checks:
-        val = "" if c["value"] is None else f" — observed {c['value']}"
-        lines.append(f"- **{c['replicates']}** — {c['claim']}: {c['metric']}"
+        val = "" if c["value"] is None else f" - observed {c['value']}"
+        lines.append(f"- {c['replicates']} - {c['claim']}: {c['metric']}"
                      f"{val} (rule: {c['rule']}; small-eval reference: "
                      f"{c['reference_small_eval']})")
     n_yes = sum(1 for c in checks if c["replicates"] == "yes")
-    lines += ["", f"**{n_yes}/{len(checks)} direction checks replicate.**", ""]
+    lines += ["", f"{n_yes}/{len(checks)} direction checks replicate.", ""]
     path = out_dir / C.STAGE6_SUMMARY_MD
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"[stage6] wrote {path}")

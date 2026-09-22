@@ -1,20 +1,20 @@
 # results/stage1/final/
 
-Archived snapshot of the **Stage 1** chunking sweep optimizer.
+Archived snapshot of the Stage 1 chunking sweep optimizer.
 
 ## Archive status (recorded 2026-07-06): original artifacts lost
 
-The Stage 1 run's CSV/JSON/plots were **never archived here** — `results/latest/`
+The Stage 1 run's CSV/JSON/plots were never archived here - `results/latest/`
 was overwritten by later sweeps before `save_stage_results.py --stage stage1`
 was run. A search on 2026-07-06 found no copy of the original files.
 
-**The numbers themselves are not lost.** The pipeline is deterministic (frozen
+The numbers themselves are not lost. The pipeline is deterministic (frozen
 MiniLM embeddings, fixed model weights, exact FAISS search), and Stage 2 re-ran
 the identical fixed + BiLSTM grid unchanged while adding the Transformer arm.
 The `method in {fixed, bilstm}` rows (20 of 30) of
 [`../../stage2/final/sweep_results.csv`](../../stage2/final/sweep_results.csv)
-match the Stage 1 headline numbers recorded at the time (e.g. fixed 15/1 →
-R@5 0.8571; bilstm target 15/0 → R@5 0.8670). Use that subset as the Stage 1 record; no reconstructed files are
+match the Stage 1 headline numbers recorded at the time (e.g. fixed 15/1 ->
+R@5 0.8571; bilstm target 15/0 -> R@5 0.8670). Use that subset as the Stage 1 record; no reconstructed files are
 placed here to avoid passing a derivation off as the original archive.
 
 Populate it by running, after a sweep:
@@ -23,7 +23,7 @@ Populate it by running, after a sweep:
 python scripts/save_stage_results.py --stage stage1
 ```
 
-That copies everything from `results/latest/` here (copy only — `latest/`,
+That copies everything from `results/latest/` here (copy only - `latest/`,
 `runs/`, and `data/` are never moved or deleted). `latest/` keeps being
 overwritten by new runs; this folder is the kept snapshot.
 

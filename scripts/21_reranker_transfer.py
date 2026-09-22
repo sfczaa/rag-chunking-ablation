@@ -356,30 +356,30 @@ def _write_summary(out_dir, matched, indomain, verdict, se2,
     ks = sorted(C.RECALL_KS)
     k1 = min(ks)
     lines = [
-        "# Stage 8 addendum — cross-dataset transfer of the fine-tuned reranker",
+        "# Stage 8 addendum - cross-dataset transfer of the fine-tuned reranker",
         "",
-        f"- Eval set: **TriviaQA rc.wikipedia — {n_docs} docs / {n_questions} "
-        "questions** (Stage 7 bench; distant-supervised gold).",
-        f"- Reranker fine-tuned on **NQ-train** (Stage 8) — a different dataset; "
+        f"- Eval set: TriviaQA rc.wikipedia - {n_docs} docs / {n_questions} "
+        "questions (Stage 7 bench; distant-supervised gold).",
+        f"- Reranker fine-tuned on NQ-train (Stage 8) - a different dataset; "
         "this measures transfer, not in-domain fit.",
         f"- Same 5 configs / 3 arms / one shared BGE top-{DEPTH} pool as the "
         "Stage 8 final eval; only the eval dataset changed.",
-        f"- 2 SE at n={n_questions} ≈ **{se2:.4f}** (wide — small eval set).",
+        f"- 2 SE at n={n_questions} ~ {se2:.4f} (wide - small eval set).",
         "",
-        f"**Verdict (fixed 15/0): {verdict[0]}** "
-        + (f"(cross-dataset ft−ots ΔR@{k1} = {verdict[1]:+.4f})"
+        f"Verdict (fixed 15/0): {verdict[0]} "
+        + (f"(cross-dataset ft-ots Delta R@{k1} = {verdict[1]:+.4f})"
            if verdict[1] is not None else ""),
         "",
-        "## ft − off-the-shelf, cross-dataset vs in-domain",
+        "## ft - off-the-shelf, cross-dataset vs in-domain",
         "",
         f"| config | pool@{DEPTH} | bge R@{k1} | ots R@{k1} | ft R@{k1} "
-        f"| TriviaQA ft−ots ΔR@{k1} | NQ (in-domain) ΔR@{k1} |",
+        f"| TriviaQA ft-ots Delta R@{k1} | NQ (in-domain) Delta R@{k1} |",
         "|" + "---|" * 7,
     ]
     for m in matched:
         label = f"{m['method']} {m['chunk_config']}"
         ind = indomain.get(label, {}).get(f"ft_minus_ots@{k1}")
-        ind_s = f"{ind:+.4f}" if ind is not None else "—"
+        ind_s = f"{ind:+.4f}" if ind is not None else "-"
         lines.append(
             f"| {label} | {m[f'pool_recall@{DEPTH}']:.4f} "
             f"| {m[f'bge_recall@{k1}']:.4f} | {m[f'ots_recall@{k1}']:.4f} "
@@ -389,14 +389,14 @@ def _write_summary(out_dir, matched, indomain, verdict, se2,
         "",
         "## How to read this",
         "",
-        "- **TRANSFERS** — ft still beats the off-the-shelf reranker on a "
+        "- TRANSFERS - ft still beats the off-the-shelf reranker on a "
         "dataset it was never tuned on, above the reported noise band.",
-        "- **DIRECTIONAL** — ft is still ahead but the gap is within 2 SE at "
+        "- DIRECTIONAL - ft is still ahead but the gap is within 2 SE at "
         f"n={n_questions}; the difference is unresolved at this evaluation size.",
-        "- **NO-TRANSFER** — no positive transfer was observed on this bench. "
+        "- NO-TRANSFER - no positive transfer was observed on this bench. "
         "This result alone does not establish why the gain changed.",
         "",
-        "> **Limitations.** TriviaQA gold is distant-supervised "
+        "> Limitations. TriviaQA gold is distant-supervised "
         "(answer-string match on entity pages), weaker than NQ's annotated "
         f"gold; n={n_questions} makes the 2 SE band ~{se2:.3f}; absolute "
         "recall is not comparable to the NQ bench. This evaluates reranker "
