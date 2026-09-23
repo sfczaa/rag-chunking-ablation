@@ -1,14 +1,4 @@
-"""Interactive demo: retrieval-aware RAG chunking (ZeroGPU Space).
-
-Two chunking strategies side by side on the study's 1000-doc / 1032-question
-Natural Questions bench — fixed 15 sentences vs a learned BiLSTM boundary model
-at target size 15 — ranked by one of three arms that share the same BGE top-20
-pool: dense only, the off-the-shelf cross-encoder, and the NQ-fine-tuned one.
-
-This runs the study's own pipeline (`config.py` + `rag_chunk/`, copied in
-unchanged); only the entry point differs. The FAISS indices and the bench corpus
-are prebuilt and downloaded from a dataset repo, so nothing is embedded at boot.
-"""
+"""Compare retrieval and reranking over the archived Natural Questions corpus."""
 
 # `spaces` patches torch and must be imported before it. The fallback keeps the
 # app runnable off-Space (local CPU smoke test), where the decorator is a no-op.
@@ -69,9 +59,7 @@ C.apply(N_NQ_DOCS=_N)
 C.apply(NQ_DIR=C.NQ_DIR / f"large_n{_N}")
 
 
-# --------------------------------------------------------------------------- #
 # Corpus + indices (read-only; never built here)
-# --------------------------------------------------------------------------- #
 def _read_jsonl(path: pathlib.Path) -> list[dict]:
     with open(path, encoding="utf-8") as fh:
         return [json.loads(line) for line in fh if line.strip()]
@@ -109,10 +97,7 @@ indices = _load_indices()
 print(f"[demo] bench: {len(docs)} docs / {len(questions)} questions", flush=True)
 
 
-# --------------------------------------------------------------------------- #
-# Models — placed on the device at module scope (ZeroGPU requirement); no
-# inference happens here, only weight placement.
-# --------------------------------------------------------------------------- #
+# ZeroGPU requires model placement at module scope.
 import torch  # noqa: E402
 from sentence_transformers import CrossEncoder  # noqa: E402
 
@@ -131,9 +116,6 @@ _scorers = {
 print(f"[demo] rerankers on {DEVICE}: {C.RERANKER_MODEL} | {FT_REPO}", flush=True)
 
 
-# --------------------------------------------------------------------------- #
-# Pure helpers (same hit rule and rendering as the study's local demo)
-# --------------------------------------------------------------------------- #
 def is_hit(chunk: dict, answer: str, gold_docs: tuple) -> bool:
     """The metric's own hit rule: normalized answer substring AND gold doc."""
     from rag_chunk.metrics import normalize_text
@@ -273,8 +255,9 @@ def build_app():
             "ranking arms sharing one BGE top-20 pool.\n\n"
             "The modeled size effect was about 18x the largest chunking-method "
             "coefficient. "
-            "Observed differences between methods were below the study's "
-            "detection limit; equivalence was not established. Fine-tuning "
+            "The fit is descriptive because configurations share questions. "
+            "Observed method differences were below an approximate unpaired "
+            "detection threshold; equivalence was not established. Fine-tuning "
             "the cross-encoder reranker improved in-domain R@1 by 0.107.\n\n"
             f"[Code, data and full write-up]({GITHUB_URL})")
         with gr.Row():
