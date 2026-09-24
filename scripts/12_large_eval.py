@@ -11,7 +11,7 @@ Two modes:
     --check   N=200 sanity mode. Uses the same cached corpus as Stages 3/5 and
               compares every row (bge on all 30 configs, rerank20 on the
               STAGE6_RERANK_CONFIGS subset) against the archived Stage 5 rows
-              — all deltas should be 0.0000. Run this BEFORE the large run.
+              - expected deltas are 0.0000.
     (default) the large eval. The bigger corpus caches under a separate
               nq/large_n<N>/ folder, so the 200-doc cache is never touched.
               The eval set differs from Stages 3/5, so no exact-delta check is

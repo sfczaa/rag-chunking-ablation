@@ -55,7 +55,7 @@ def _ensure_stage2_archived() -> pathlib.Path:
         raise SystemExit(
             "[stage3] Stage 2 latest results are not archived yet.\n"
             f"[stage3] Missing from {stage2_dir}: {', '.join(missing)}\n\n"
-            "Run this first:\n"
+            "Archive command:\n"
             "  python scripts/save_stage_results.py --stage stage2"
         )
     return stage2_dir
