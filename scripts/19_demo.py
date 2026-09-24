@@ -1,8 +1,7 @@
 """Route D - interactive retrieval demo (Gradio).
 
-One question in, two chunking strategies side by side — **fixed 15/0** vs
-**BiLSTM t15/0** (the Stage 6/8 deployment-size configs) on the Stage 6 bench
-corpus (1000 docs / 1032 questions) — ranked by one of three arms that share
+Compares fixed 15/0 and BiLSTM t15/0 (the Stage 6/8 deployment-size configs)
+on the Stage 6 bench corpus (1000 docs / 1032 questions), ranked by three arms sharing
 the same BGE top-20 pool:
 
     bge          the dense order (no reranking);
@@ -12,10 +11,10 @@ the same BGE top-20 pool:
 
 Bench questions carry their gold answer + document, so the demo highlights
 the answer string, badges chunks from the gold document, and shows each
-chunk's dense-rank movement (e.g. "dense #7 -> #1") — the rerank
-before/after in one glance. Free-text questions just show retrieval.
+chunk's dense-rank movement (e.g. "dense #7 -> #1"). Free-text
+questions show retrieval without gold-answer annotations.
 
-The demo runs no experiments and writes nothing under ``results/`` — the two
+The demo runs no experiments and writes nothing under ``results/``. The two
 FAISS indices it needs are built once and cached under
 ``data/nq/large_n<N>/indices/demo/`` (the first build embeds ~40k chunks;
 later launches load the cache).

@@ -62,7 +62,7 @@ def _ensure_stage3_archived() -> pathlib.Path:
         raise SystemExit(
             "[stage4] Stage 3 latest results are not archived yet.\n"
             f"[stage4] Missing from {stage3_dir}: {', '.join(missing)}\n\n"
-            "Run this first (copy-only, does not rerun Stage 3):\n"
+            "Copy-only archive command:\n"
             "  python scripts/save_stage_results.py --stage stage3"
         )
     return stage3_dir

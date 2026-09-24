@@ -13,8 +13,7 @@ Two modes:
               cached 200-doc NQ corpus as Stage 3 and compares every row
               against the archived stage3/final rows — all deltas must be
               0.0000. This checks that the Stage 7 code path (including the
-              multi-gold metric extension) reproduces Stage 3. Run this
-              BEFORE the TriviaQA run.
+              multi-gold metric extension) reproduces Stage 3.
     (default) the TriviaQA rc.wikipedia eval (STAGE7_N_QUESTIONS kept
               questions; loader stats and actual counts are reported in every
               output). The eval set differs from NQ, so no exact-delta check
