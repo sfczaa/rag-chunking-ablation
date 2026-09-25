@@ -1,4 +1,4 @@
-"""Phase 6 — chunking sweep optimizer (CLI wrapper).
+"""Phase 6 - chunking sweep optimizer (CLI wrapper).
 
 Sweeps fixed-size and learned target-size chunking across chunk sizes and
 overlaps, scores each on NQ Recall@k, and writes the optimizer artifacts under

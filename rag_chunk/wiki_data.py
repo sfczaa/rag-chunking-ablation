@@ -1,8 +1,8 @@
-"""Phase 1 — Wikipedia data preparation with reliable section pseudo-labels.
+"""Phase 1 - Wikipedia data preparation with reliable section pseudo-labels.
 
 Why the MediaWiki API instead of the cleaned ``text`` field?
 -----------------------------------------------------------
-The cleaned ``text`` in ``wikimedia/wikipedia`` does **not** preserve the
+The cleaned ``text`` in ``wikimedia/wikipedia`` does not preserve the
 ``== Section ==`` markers, so section boundaries cannot be recovered reliably
 from it.  We therefore:
 
@@ -34,7 +34,7 @@ from typing import Iterable, Iterator
 
 import config as C
 
-# Drop sentence fragments shorter than this (chars) — strip_code leftovers.
+# Drop sentence fragments shorter than this (chars) - strip_code leftovers.
 MIN_SENTENCE_CHARS = 20
 
 def split_sentences(text: str) -> list[str]:
@@ -49,7 +49,7 @@ def split_sentences(text: str) -> list[str]:
 
 
 # --------------------------------------------------------------------------- #
-# Title selection (deterministic, streamed — no full dump download)
+# Title selection (deterministic, streamed - no full dump download)
 # --------------------------------------------------------------------------- #
 def get_article_titles(n: int = C.N_WIKI_ARTICLES) -> list[str]:
     from datasets import load_dataset
@@ -249,7 +249,7 @@ def prepare_dataset(n_articles: int | None = None) -> dict:
 def load_split(split: str) -> list[dict]:
     path = _split_path(split)
     if not path.exists():
-        raise FileNotFoundError(f"{path} not found — run prepare_dataset() first")
+        raise FileNotFoundError(f"{path} not found - run prepare_dataset() first")
     with path.open(encoding="utf-8") as f:
         return [json.loads(line) for line in f]
 

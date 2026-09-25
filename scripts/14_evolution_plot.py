@@ -96,13 +96,13 @@ def load_stages() -> list[dict]:
              n=SMALL_EVAL_QUESTIONS),
         dict(label="Stage 2", change="+ Transformer\nboundary",
              rows=rows["stage2"], n=SMALL_EVAL_QUESTIONS),
-        dict(label="Stage 3", change="embedder\nMiniLM → BGE",
+        dict(label="Stage 3", change="embedder\nMiniLM -> BGE",
              rows=rows["stage3"], n=SMALL_EVAL_QUESTIONS),
         dict(label="Stage 4", change="+ BM25 / RRF\n(no gain)",
              rows=rows["stage4"], n=SMALL_EVAL_QUESTIONS),
         dict(label="Stage 5", change="+ CE rerank\ntop-20",
              rows=rows["stage5"], n=SMALL_EVAL_QUESTIONS),
-        dict(label="Stage 6", change="5× eval scale\n(new eval set)",
+        dict(label="Stage 6", change="5x eval scale\n(new eval set)",
              rows=rows["stage6"], n=n_large),
         dict(label="Stage 8", change="+ fine-tuned\nCE reranker",
              rows=rows["stage8"], n=n_large),
@@ -161,7 +161,7 @@ def plot(stages: list[dict], path: pathlib.Path) -> None:
     ax.set_xticks(xs, [f"{st['label']}\n{st['change']}" for st in stages],
                   fontsize=9)
     ax.set_ylabel("Best doc-constrained Recall@5")
-    ax.set_title("Best Recall@5 per stage — one controlled change at a time:\n"
+    ax.set_title("Best Recall@5 per stage - one controlled change at a time:\n"
                  "the embedder and in-domain reranker fine-tuning moved the "
                  "ceiling; chunking method stayed within noise",
                  fontsize=12)
@@ -171,8 +171,8 @@ def plot(stages: list[dict], path: pathlib.Path) -> None:
     ax.set_ylim(min(lo, 0.84), hi)
     ax.text(0.99, 0.02,
             "Stages 6 and 8 share one 1000-doc / 1032-question eval set "
-            "(Stages 1–5: 200 / 203); Stage 6's absolute drop reflects\n"
-            "5× more distractor documents, not a code change (35/35 rows "
+            "(Stages 1-5: 200 / 203); Stage 6's absolute drop reflects\n"
+            "5x more distractor documents, not a code change (35/35 rows "
             "exact). Stage 8 changes only the reranker weights\n(10/10 "
             "baseline rows exact). Stage 7 (TriviaQA) is a different dataset "
             "and is not drawn on this axis.",

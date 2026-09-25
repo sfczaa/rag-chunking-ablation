@@ -19,7 +19,7 @@ compared per chunking config:
    `log(1 + (N - df + 0.5)/(df + 0.5))`, `k1=1.5`, `b=0.75`; no stemming or
    stopwords - a standard, fully deterministic baseline with no new dependency).
 3. `rrf` - Reciprocal Rank Fusion of the two rankings:
-   `score(d) = Σ 1/(RRF_K + rank_retriever(d))` over the top
+   `score(d) = sum 1/(RRF_K + rank_retriever(d))` over the top
    `HYBRID_FUSE_DEPTH` candidates from each retriever (`RRF_K=60`, depth 50).
 
 Held fixed (identical to Stage 3):
@@ -112,10 +112,10 @@ recall delta is 0.0000, so the `bge` arm is byte-for-byte the Stage 3 baseline.
 | bm25 | 0.803 | bilstm target 15, overlap 0 |
 
 Hybrid does not help on this benchmark. Across the 30 matched configs at
-R@5, `rrf − bge` has mean -0.021 (range -0.054...+0.035; 24 negative / 2 zero /
-4 positive; an unadjusted config-level sign test gives P ~ 2x10⁻⁴, but the
+R@5, `rrf - bge` has mean -0.021 (range -0.054...+0.035; 24 negative / 2 zero /
+4 positive; an unadjusted config-level sign test gives P ~ 2e-4, but the
 configurations are dependent; each delta is within ~1 SE ~ 0.027), while
-`rrf − bm25` is +0.100 on average and positive 30/30. BM25 trails BGE by
+`rrf - bm25` is +0.100 on average and positive 30/30. BM25 trails BGE by
 ~0.12 R@5 on average, and equal-weight RRF lets that weaker lexical ranking
 dilute the dense one. At R@1 rrf vs bge is a wash (mean -0.007, 15 worse /
 13 better / 2 ties). These configuration counts are descriptive because all

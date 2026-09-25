@@ -3,8 +3,8 @@
 Status: complete - executed on Colab 2026-07-08 and archived
 (`artifacts/results/stage8/final/`, read-only: 9 files from this stage, plus
 5 more added later by the transfer addendum). Dev gate verdict: GO
-(ΔR@1 +0.0468 >= +0.02). Final eval: built-in check vs `stage6/final` OK
-(exact); headline ft - off-the-shelf ΔR@1 = +0.107 at fixed 15/0
+(delta R@1 +0.0468 >= +0.02). Final eval: built-in check vs `stage6/final` OK
+(exact); headline ft - off-the-shelf delta R@1 = +0.107 at fixed 15/0
 (2 SE = 0.030, n = 1032). Results below in "Results (executed)".
 
 Stage 8 asks one question: can a fine-tuned cross-encoder close part of the
@@ -18,7 +18,7 @@ From the archived Stage 6 run (1000 docs / 1032 questions):
 - At the size-15 configs, `pool_recall@20` = 0.957-0.964 - the answer chunk
   is in the BGE top-20 for ~96% of questions. The pool is not the bottleneck.
 - Yet R@1 ~ 0.63, and the off-the-shelf `BAAI/bge-reranker-base` adds
-  ~nothing there (max size-15 ΔR@1 = +0.001). Ranking is the bottleneck.
+  ~nothing there (max size-15 delta R@1 = +0.001). Ranking is the bottleneck.
 - Stage 5's earlier verdict "203 questions is too small to justify
   fine-tuning" no longer binds: the eval bench is now 1032 questions and the
   NQ train split provides unlimited disjoint training data.
@@ -81,7 +81,7 @@ sequence-classification checkpoint directory):
 (primary) and fixed 6/0 (context) with three arms sharing one identical BGE
 top-20 pool: `bge`, `rerank20` (off-the-shelf) and `rerank20_ft`.
 
-| Dev ΔR@1 (ft - off-the-shelf) at fixed 15/0 | Verdict |
+| Dev delta R@1 (ft - off-the-shelf) at fixed 15/0 | Verdict |
 |---|---|
 | >= +0.02 (`STAGE8_GO_THRESHOLD`) | GO - run the final eval on the Stage 6 bench |
 | <= 0 | NO-GO - stop, archive the dev results as a negative result |
@@ -104,7 +104,7 @@ Stage 6 pipeline on the same corpus, so they must reproduce the archived
 delta 0.0000). Only then does the `rerank20_ft` row mean anything - same
 pattern as Stages 4-7, but the check rides along in the same run.
 
-Headline test: ft - off-the-shelf ΔR@1 at the size-15 configs vs
+Headline test: ft - off-the-shelf delta R@1 at the size-15 configs vs
 2 SE ~ 0.031 (n=1032). Secondary: how much of the R@1 0.63 -> pool 0.96 gap
 closes; whether the fixed 6/0 small-chunk rescue grows; R@3/R@5 side effects.
 If the dev gain does not survive the larger bench, that is the finding.
@@ -120,12 +120,12 @@ fine-tuning, TriviaQA training data.
 ## Run (Colab, two sessions)
 
 ```bash
-# Session 1 — data + training + go/no-go:
+# Session 1 - data + training + go/no-go:
 python scripts/16_build_rerank_train_data.py      # stream train split, mine groups
 python scripts/17_train_reranker.py               # fine-tune (fp16)
 python scripts/18_eval_reranker_ft.py --dev       # go/no-go verdict printed
 
-# Session 2 — ONLY if the gate says GO:
+# Session 2 - ONLY if the gate says GO:
 python scripts/18_eval_reranker_ft.py             # Stage 6 bench, built-in check
 python scripts/save_stage_results.py --stage stage8
 ```
@@ -140,13 +140,13 @@ Written to `artifacts/results/latest/`, archived to
 `artifacts/results/stage8/final/` after review:
 
 - `stage8_dev_results.csv` - dev bench, 3 arms x 2 configs, + gate verdict.
-- `stage8_dev_gate.md` - the gate record: dev bench counts, ΔR@1, threshold,
+- `stage8_dev_gate.md` - the gate record: dev bench counts, delta R@1, threshold,
   2 SE and verdict.
 - `stage8_ft_eval_results.csv` - Stage 6 bench, 5 configs x 3 arms.
 - `stage8_matched_summary.csv` - per config: pool@20, bge / ots / ft R@k side
   by side, ft-ots and ft-bge deltas.
 - `stage8_check_vs_stage6.csv` - the built-in exact-reproduction check.
-- `stage8_ft_delta.png` - ΔR@1 (ots vs ft) per config with the ±2 SE band.
+- `stage8_ft_delta.png` - delta R@1 (ots vs ft) per config with the +/-2 SE band.
 - `stage8_summary.md` - data/training provenance, gate history, verdicts.
 - `models/bge_reranker_ft/` - the fine-tuned weights + `training_meta.json`
   (model weights live under `models/`, not in the results archive).
@@ -160,7 +160,7 @@ train `pool_recall@20` = 0.950; dev bench 400 docs / 406 questions.
 Training: 2 epochs x 1018 steps, fp16 T4, 16.6 min. Mean epoch loss
 0.904 -> 0.513.
 
-Dev gate: ΔR@1 (ft - ots) at fixed 15/0 = +0.0468 >= +0.02 -> GO
+Dev gate: delta R@1 (ft - ots) at fixed 15/0 = +0.0468 >= +0.02 -> GO
 (no retry needed). Side observation, decision-only: on the dev bench (train
 split docs) even the off-the-shelf reranker helped at 15/0 (+0.081), unlike
 the validation-split bench - dev makes decisions, never claims.
@@ -169,7 +169,7 @@ Final eval (Stage 6 bench, 1032 questions): check vs `stage6/final`
 exact - all 10 bge/rerank20 rows reproduce with every delta 0.0000, so the
 `rerank20_ft` rows are compared against a reproduced baseline.
 
-| config | bge R@1 | ots R@1 | ft R@1 | ft-ots ΔR@1 | ft R@5 |
+| config | bge R@1 | ots R@1 | ft R@1 | ft-ots delta R@1 | ft R@5 |
 |---|---|---|---|---|---|
 | fixed 6/0 | 0.5087 | 0.5446 | 0.6502 | +0.1056 | 0.8585 |
 | fixed 15/0 | 0.6279 | 0.6289 | 0.7355 | +0.1066 | 0.9215 |
@@ -180,7 +180,7 @@ exact - all 10 bge/rerank20 rows reproduce with every delta 0.0000, so the
 ### Findings
 
 1. In-domain fine-tuning raised recall at the size-15 sweet spot.
-   ΔR@1 (ft - ots) = +0.087...+0.107 across all 5
+   delta R@1 (ft - ots) = +0.087...+0.107 across all 5
    configs, ~3.5x the 2 SE = 0.030 band, where the off-the-shelf reranker
    gave at most +0.001. R@3 (+0.05...+0.06) and R@5 (+0.03...+0.05) improve too -
    no metric trades down.

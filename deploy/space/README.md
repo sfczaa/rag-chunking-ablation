@@ -36,7 +36,7 @@ Ranking arms:
 
 Bench questions show their gold answer and document, so retrieved chunks are
 badged (`gold doc`, `answer hit`), the answer string is highlighted, and each
-chunk shows how far reranking moved it (`dense #7 → #1`).
+chunk shows how far reranking moved it (`dense #7 -> #1`).
 
 ## What the study behind it found
 

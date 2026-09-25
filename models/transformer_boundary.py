@@ -12,7 +12,7 @@ Architecture::
 
     E (n, d)
       -> LayerNorm(E)                          (rescale the *frozen* MiniLM vectors
-                                               so content and PE are comparable —
+                                               so content and PE are comparable -
                                                see note below)
       + sinusoidal positional encoding        (self-attention is order-agnostic,
                                                so positions must be injected)
@@ -23,8 +23,8 @@ Architecture::
       (sigmoid is applied at inference / inside the loss for stability)
 
 The absolute-difference and element-wise product terms give the head an explicit
-view of how *dissimilar* two adjacent sentence states are — the natural signal
-for a topic change — instead of leaving it to recover that from the raw concat.
+view of how *dissimilar* two adjacent sentence states are - the natural signal
+for a topic change - instead of leaving it to recover that from the raw concat.
 
 Why the input LayerNorm matters
 -------------------------------
@@ -35,11 +35,11 @@ rather than *topic* and the encoder collapses to a near-constant predictor (the
 first cut of this model reported Boundary F1 = 0 / a degenerate "cut-everywhere"
 baseline). LayerNorm rescales each sentence vector to unit per-component variance
 first, so content and PE sit at a comparable scale and the boundary signal
-survives — independent of the embedder's output magnitude.
+survives - independent of the embedder's output magnitude.
 
 Like the BiLSTM, the module is single-document (no padding): one article per
-training step, which sidesteps variable-length padding. It is a **drop-in**
-boundary model — ``forward`` / ``predict_proba`` / ``predict_boundaries`` match
+training step, which sidesteps variable-length padding. It is a drop-in
+boundary model - ``forward`` / ``predict_proba`` / ``predict_boundaries`` match
 ``BiLSTMBoundary`` exactly, so chunking, retrieval and the sweep treat both the
 same way.
 """

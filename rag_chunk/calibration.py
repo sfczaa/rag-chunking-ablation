@@ -1,4 +1,4 @@
-"""Stage 2.1 — boundary-threshold calibration + probability diagnostics.
+"""Stage 2.1 - boundary-threshold calibration + probability diagnostics.
 
 The retrieval sweep cuts with the target-size (argmax) policy and never reads a
 probability threshold, so a boundary model can drive perfectly good chunks yet
@@ -14,7 +14,7 @@ the choice is auditable instead of a magic number:
     results/latest/transformer_boundary_diagnostics.json prob distribution + summary
     results/latest/transformer_boundary_threshold_f1.png F1 / precision / recall
 
-Nothing here touches retrieval, the sweep or the BiLSTM — it only changes which
+Nothing here touches retrieval, the sweep or the BiLSTM - it only changes which
 threshold the Boundary F1 *number* is read at.
 """
 
@@ -56,7 +56,7 @@ def calibrate_boundary_threshold(
 
     best = metrics.best_threshold(sweep_rows)
     if not best or int(val_labels.sum()) == 0:
-        # No positive val boundaries to fit — keep the configured default.
+        # No positive val boundaries to fit - keep the configured default.
         threshold = float(C.TRANSFORMER_BOUNDARY_THRESHOLD)
         print(f"[calib] WARN no positive val boundaries to calibrate on; "
               f"falling back to TRANSFORMER_BOUNDARY_THRESHOLD={threshold}")

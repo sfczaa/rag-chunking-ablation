@@ -1,4 +1,4 @@
-"""Phase 2 — pre-compute and cache per-article sentence embeddings.
+"""Phase 2 - pre-compute and cache per-article sentence embeddings.
 Usage:  python scripts/2_embed_offline.py
 """
 

@@ -71,7 +71,7 @@ def _load_bench():
     qs_p = C.NQ_DIR / "questions.jsonl"
     for p in (docs_p, qs_p):
         if not p.exists():
-            raise SystemExit(f"[demo] missing bench file {p} — the assets repo "
+            raise SystemExit(f"[demo] missing bench file {p} - the assets repo "
                              "layout must mirror the study's data root")
     return _read_jsonl(docs_p), _read_jsonl(qs_p)
 
@@ -157,7 +157,7 @@ mark {background:#ffd54f; color:#000; padding:0 1px;}
 
 def _render_side(title, avg_size, ranked, answer, gold_docs, arm) -> str:
     parts = [f"<h3 style='margin:4px 0'>{html.escape(title)}</h3>",
-             f"<div class='demo-doc'>avg chunk size {avg_size:.1f} sentences · "
+             f"<div class='demo-doc'>avg chunk size {avg_size:.1f} sentences | "
              f"top-{len(ranked)} of the shared BGE top-{DEPTH} pool</div>"]
     for shown_rank, (dense_rank, chunk) in enumerate(ranked, 1):
         hit = bool(answer) and is_hit(chunk, answer, gold_docs)
@@ -180,7 +180,7 @@ def _render_side(title, avg_size, ranked, answer, gold_docs, arm) -> str:
 
 
 # --------------------------------------------------------------------------- #
-# Inference — the only place that touches the GPU
+# Inference - the only place that touches the GPU
 # --------------------------------------------------------------------------- #
 @spaces.GPU(duration=30)
 def _retrieve_and_rank(qtext: str, arm: str):
@@ -224,13 +224,13 @@ def build_app():
             raise gr.Error(str(exc)) from None
         if free_text:
             qtext, answer, gold_docs = free_text, None, ()
-            meta = ("<i>Free-text question — no gold answer/document known, "
+            meta = ("<i>Free-text question - no gold answer/document known, "
                     "so nothing is highlighted.</i>")
         elif bench_label in by_label:
             q = by_label[bench_label]
             qtext, answer = q["question"], q["answer"]
             gold_docs = (tuple(q.get("doc_titles") or ()) or (q.get("doc_title"),))
-            meta = (f"<b>Answer:</b> {html.escape(answer)} &nbsp;·&nbsp; "
+            meta = (f"<b>Answer:</b> {html.escape(answer)} &nbsp;|&nbsp; "
                     f"<b>Gold doc:</b> "
                     f"{html.escape(', '.join(map(str, gold_docs)))}")
         else:
@@ -243,7 +243,7 @@ def build_app():
             title = (f"fixed size={size}, overlap={overlap}" if method == "fixed"
                      else f"{method} target={size}, overlap={overlap}")
             sides.append(_render_side(title, avg, ranked, answer, gold_docs, arm))
-        meta += (f" &nbsp;·&nbsp; <span class='demo-doc'>{ARM_LABELS[arm]} · "
+        meta += (f" &nbsp;|&nbsp; <span class='demo-doc'>{ARM_LABELS[arm]} | "
                  f"{' / '.join(timing)}</span>")
         return meta, sides[0], sides[1]
 

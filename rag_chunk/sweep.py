@@ -1,6 +1,6 @@
-"""Phase 6 — chunking sweep optimizer.
+"""Phase 6 - chunking sweep optimizer.
 
-Sweeps fixed-size and learned **target-size** chunking across chunk sizes and
+Sweeps fixed-size and learned target-size chunking across chunk sizes and
 overlap settings, scores each on Natural Questions doc-constrained Recall@k, and
 exports:
 
@@ -12,13 +12,13 @@ exports:
 
 Design notes
 ------------
-* The question it answers is *not* "does learned chunking win?" but: **at the
+* The question it answers is *not* "does learned chunking win?" but: at the
   same approximate chunk size and overlap, does learned semantic cutting pick
-  better boundaries than fixed-size cutting?** Hence every learned config is
+  better boundaries than fixed-size cutting? Hence every learned config is
   size-matched to a fixed config in the fair table.
-* Per-config FAISS indices are built **in memory and discarded** — nothing is
+* Per-config FAISS indices are built in memory and discarded - nothing is
   persisted under ``nq/`` unless ``save_sweep_index`` is enabled.
-* The boundary model runs **once per document**; all learned configs reuse those
+* The boundary model runs once per document; all learned configs reuse those
   probabilities (cheap pure-Python re-chunking), which is what keeps the full
   grid Colab-friendly.
 
@@ -155,9 +155,9 @@ def run_sweep(
 ) -> list[dict]:
     """Run the sweep and write all artifacts. Returns the rows.
 
-    Sweeps **fixed-size + BiLSTM** by default (Stage 1). Pass
-    ``transformer_model`` to also sweep the **Transformer** boundary model
-    (Stage 2) — fixed + bilstm + transformer — under the same MiniLM embeddings,
+    Sweeps fixed-size + BiLSTM by default (Stage 1). Pass
+    ``transformer_model`` to also sweep the Transformer boundary model
+    (Stage 2) - fixed + bilstm + transformer - under the same MiniLM embeddings,
     the same NQ corpus, the same Recall@k metric and the same target-size policy,
     so the only thing that differs is the boundary model.
 
@@ -165,12 +165,12 @@ def run_sweep(
     ----------
     model : trained BiLSTM, or ``None`` to ``training.load_model("bilstm")``.
     transformer_model : trained Transformer to also include, or ``None`` to skip
-        it (Stage 1 behaviour — fixed + bilstm only).
+        it (Stage 1 behaviour - fixed + bilstm only).
     quick : use the smaller ``QUICK_*`` grids for a fast sanity sweep.
     save_run : also snapshot the artifacts to a timestamped
         ``results/runs/<ts>_sweep/`` folder (off by default).
     save_sweep_index : persist each per-config FAISS index under
-        ``nq/indices/sweep/`` (off by default — normally in-memory only).
+        ``nq/indices/sweep/`` (off by default - normally in-memory only).
     out_dir : where the "latest" artifacts go (default ``RESULTS_LATEST_DIR``).
     docs, questions : reuse an already-prepared NQ corpus (else prepared here).
     """
@@ -248,7 +248,7 @@ def run_sweep(
 
 
 # --------------------------------------------------------------------------- #
-# Best config + fair table (pure Python — no heavy deps)
+# Best config + fair table (pure Python - no heavy deps)
 # --------------------------------------------------------------------------- #
 def _rank_key(row: dict) -> tuple:
     """Ranking key: maximise doc-constrained recall@k (largest k first), then
@@ -359,7 +359,7 @@ def plot_recall_vs_chunk_size(rows: list[dict], path) -> None:
 
 def plot_model_comparison(rows: list[dict], path) -> None:
     """Optional: grouped Recall@k bars for the best config of each method present
-    — fixed vs bilstm (Stage 1), plus transformer when its rows exist (Stage 2)."""
+    - fixed vs bilstm (Stage 1), plus transformer when its rows exist (Stage 2)."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -410,9 +410,9 @@ def plot_model_comparison(rows: list[dict], path) -> None:
 def plot_size_vs_recall_scatter(rows: list[dict], path, n_questions: int | None = None) -> None:
     """Scatter Recall@max(k) vs average chunk size, coloured by method.
 
-    Built to show the Stage 2 finding in one glance: recall tracks chunk **size**
+    Built to show the Stage 2 finding in one glance: recall tracks chunk size
     (a clear upward trend, with the Pearson ``r`` annotated) while the chunking
-    **method** colours stay intermixed along that trend — i.e. method differences
+    method colours stay intermixed along that trend - i.e. method differences
     sit inside the size effect and the per-question sampling noise. ``n_questions``
     (if given) annotates the 1-SE noise floor so the eye can judge significance.
     """
@@ -438,7 +438,7 @@ def plot_size_vs_recall_scatter(rows: list[dict], path, n_questions: int | None 
                    marker=markers.get(_overlap_of(r), "o"),
                    s=80, edgecolor="white", linewidth=0.6, zorder=3)
 
-    # Global trend line + Pearson r — the "size dominates" evidence.
+    # Global trend line + Pearson r - the "size dominates" evidence.
     annot = ""
     if xs.size >= 2 and xs.std() > 0:
         slope, intercept = np.polyfit(xs, ys, 1)
@@ -450,7 +450,7 @@ def plot_size_vs_recall_scatter(rows: list[dict], path, n_questions: int | None 
     if n_questions:
         pbar = float(ys.mean())
         se = (pbar * (1 - pbar) / n_questions) ** 0.5
-        annot += f"\n1 SE ≈ {se:.3f}  (n={n_questions} questions)"
+        annot += f"\n1 SE ~ {se:.3f}  (n={n_questions} questions)"
     if annot:
         ax.text(0.02, 0.98, annot, transform=ax.transAxes, va="top", ha="left",
                 fontsize=9, bbox=dict(boxstyle="round", fc="white", alpha=0.8))
@@ -555,7 +555,7 @@ def _print_summary(rows: list[dict], best: dict, out_dir) -> None:
     ks = sorted(C.RECALL_KS)
     topk = max(ks)
     ordered = sorted(rows, key=_rank_key, reverse=True)
-    print(f"\n[sweep] {len(rows)} configs scored — ranked by doc-constrained "
+    print(f"\n[sweep] {len(rows)} configs scored - ranked by doc-constrained "
           f"Recall@{topk}:\n")
     head = f"{'method':11} {'size':>5} {'ov':>3} {'avg':>6} " + \
            " ".join(f"R@{k:<4}" for k in ks)

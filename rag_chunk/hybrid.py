@@ -1,16 +1,16 @@
-"""Stage 4 — hybrid retrieval ablation: BM25 + dense (BGE) + RRF fusion.
+"""Stage 4 - hybrid retrieval ablation: BM25 + dense (BGE) + RRF fusion.
 
-Reuses the Stage 3 protocol unchanged — the same NQ corpus and questions, the
+Reuses the Stage 3 protocol unchanged - the same NQ corpus and questions, the
 same fixed / BiLSTM / Transformer chunking grids, the same boundary models and
-weights, the same BGE dense retrieval — and adds two retrievers over the
+weights, the same BGE dense retrieval - and adds two retrievers over the
 *identical* chunks:
 
-* ``bm25`` — classic lexical Okapi BM25 (pure numpy, no extra dependency);
-* ``rrf``  — Reciprocal Rank Fusion of the BGE and BM25 rankings.
+* ``bm25`` - classic lexical Okapi BM25 (pure numpy, no extra dependency);
+* ``rrf``  - Reciprocal Rank Fusion of the BGE and BM25 rankings.
 
 For every chunking config the sweep builds ONE set of chunks, embeds it once
 for the dense FAISS index, builds one BM25 index over the same texts, and
-scores all three retrievers with the same doc-constrained Recall@k — so within
+scores all three retrievers with the same doc-constrained Recall@k - so within
 a config the only thing that differs between the three rows is the retriever.
 
 Artifacts (written under ``RESULTS_LATEST_DIR`` by :func:`run_hybrid_sweep`):
@@ -40,7 +40,7 @@ _TOKEN_RE = re.compile(r"[a-z0-9]+")
 
 
 def tokenize(text: str) -> list[str]:
-    """Lower-case alphanumeric word tokens — applied identically to chunks and
+    """Lower-case alphanumeric word tokens - applied identically to chunks and
     queries. Deliberately simple (no stemming / stopwords): a standard, fully
     deterministic BM25 baseline with no extra dependency."""
     return _TOKEN_RE.findall(text.lower())
@@ -53,7 +53,7 @@ class BM25Index:
     """Okapi BM25 with the Lucene idf ``log(1 + (N - df + 0.5) / (df + 0.5))``
     (always positive) and ``C.BM25_K1`` / ``C.BM25_B`` read at build time.
 
-    Chunk ids are the row indices of ``chunk_texts`` — the same id space as the
+    Chunk ids are the row indices of ``chunk_texts`` - the same id space as the
     dense ``ChunkIndex`` built from the same texts, so RRF can fuse the two.
     """
 
@@ -138,7 +138,7 @@ def _num(val):
 
 
 def config_key(row: dict) -> tuple:
-    """Chunking-config identity of a row — works on both native sweep rows and
+    """Chunking-config identity of a row - works on both native sweep rows and
     rows read back from a CSV (string cells)."""
     method = str(row["method"]).strip()
     if method == "fixed":
@@ -268,7 +268,7 @@ def run_hybrid_sweep(
 ) -> list[dict]:
     """Run the Stage 4 hybrid sweep and write all artifacts. Returns the rows.
 
-    Same grids, boundary models, corpus and metric as the Stage 3 sweep — the
+    Same grids, boundary models, corpus and metric as the Stage 3 sweep - the
     added dimension is the retriever (bge / bm25 / rrf), so each chunking
     config yields three rows instead of one.
     """
@@ -326,7 +326,7 @@ def run_hybrid_sweep(
 
 
 # --------------------------------------------------------------------------- #
-# Best configs + matched table (pure Python — no heavy deps)
+# Best configs + matched table (pure Python - no heavy deps)
 # --------------------------------------------------------------------------- #
 def best_configs(rows: list[dict]) -> dict:
     """Best row per retriever plus the overall best, using the same ranking as
@@ -382,7 +382,7 @@ _RETRIEVER_COLORS = {"bge": "#1f77b4", "bm25": "#ff7f0e", "rrf": "#2ca02c"}
 def plot_recall_vs_size_by_retriever(rows: list[dict], path,
                                      n_questions: int | None = None) -> None:
     """Scatter Recall@max(k) vs average chunk size, coloured by retriever, with
-    a per-retriever trend line — the retriever separation across all configs in
+    a per-retriever trend line - the retriever separation across all configs in
     one glance (the Stage 4 analogue of the Stage 2 size scatter)."""
     import matplotlib
     matplotlib.use("Agg")
@@ -415,7 +415,7 @@ def plot_recall_vs_size_by_retriever(rows: list[dict], path,
         ys_all = np.array([r[f"recall@{topk}"] for r in rows], dtype=float)
         pbar = float(ys_all.mean())
         se = (pbar * (1 - pbar) / n_questions) ** 0.5
-        ax.text(0.02, 0.98, f"1 SE ≈ {se:.3f}  (n={n_questions} questions)",
+        ax.text(0.02, 0.98, f"1 SE ~ {se:.3f}  (n={n_questions} questions)",
                 transform=ax.transAxes, va="top", ha="left", fontsize=9,
                 bbox=dict(boxstyle="round", fc="white", alpha=0.8))
     handles = [Line2D([0], [0], marker="o", linestyle="--",
@@ -531,7 +531,7 @@ def _print_summary(rows: list[dict], best: dict, out_dir) -> None:
     topk = max(ks)
     print(f"\n[hybrid] {len(rows)} rows scored "
           f"({len(rows) // len(RETRIEVERS)} configs x {len(RETRIEVERS)} retrievers) "
-          f"— top 10 by doc-constrained Recall@{topk}:\n")
+          f"- top 10 by doc-constrained Recall@{topk}:\n")
     head = (f"{'retriever':9} {'method':11} {'config':>28} {'avg':>6} "
             + " ".join(f"R@{k:<4}" for k in ks))
     print(head)

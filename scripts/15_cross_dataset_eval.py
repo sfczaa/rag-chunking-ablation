@@ -11,7 +11,7 @@ Two modes:
 
     --check   NQ sanity mode. Runs the 30-config bge-only sweep on the same
               cached 200-doc NQ corpus as Stage 3 and compares every row
-              against the archived stage3/final rows — all deltas must be
+              against the archived stage3/final rows - all deltas must be
               0.0000. This checks that the Stage 7 code path (including the
               multi-gold metric extension) reproduces Stage 3.
     (default) the TriviaQA rc.wikipedia eval (STAGE7_N_QUESTIONS kept
@@ -269,19 +269,19 @@ def _write_stage3_check(stage3_rows, stage7_rows, path: pathlib.Path) -> None:
               "Stage 3 row (was the archived Stage 3 run the full grid?)")
     if stats["n_chunks_mismatch"]:
         print(f"[stage7] WARN: {stats['n_chunks_mismatch']} config(s) produced "
-              "a different chunk count than Stage 3 — chunking is NOT "
+              "a different chunk count than Stage 3 - chunking is NOT "
               "identical, do not trust this run.")
     d = stats["max_abs_recall_delta"]
     if stats["unmatched"] == 0 and stats["n_chunks_mismatch"] == 0 and d == 0.0:
         print("[stage7] check OK: Stage 7 reproduces the archived Stage 3 rows "
-              "exactly — proceed to the TriviaQA run.")
+              "exactly - proceed to the TriviaQA run.")
     elif d <= CHECK_TOLERANCE and stats["n_chunks_mismatch"] == 0:
         print(f"[stage7] check: max |recall delta| vs Stage 3 = {d:.4f} "
-              "(within one question — acceptable, but inspect "
+              "(within one question - acceptable, but inspect "
               f"{STAGE7_CHECK_CSV} before the TriviaQA run).")
     else:
         print(f"[stage7] WARN: max |recall delta| vs Stage 3 = {d:.4f} exceeds "
-              f"{CHECK_TOLERANCE} — Stage 7 does not reproduce the baseline. "
+              f"{CHECK_TOLERANCE} - Stage 7 does not reproduce the baseline. "
               "Fix this before the TriviaQA run.")
 
 
@@ -290,7 +290,7 @@ def _write_stage3_check(stage3_rows, stage7_rows, path: pathlib.Path) -> None:
 # --------------------------------------------------------------------------- #
 def _matched_summary(rows: list[dict]) -> list[dict]:
     """Per (nominal size, overlap) cell: the three methods' R@5 side by side
-    with the method spread — claims 1b/2 at a glance."""
+    with the method spread - claims 1b/2 at a glance."""
     from rag_chunk.large_eval import _nominal_size
 
     topk = max(C.RECALL_KS)
@@ -482,7 +482,7 @@ def _scatter_panel(ax, rows: list[dict], topk: int, title: str,
 
 def _plot_scatter(nq_rows: list[dict], trivia_rows: list[dict],
                   n_docs: int, n_questions: int, path: pathlib.Path) -> None:
-    """Claim 1 in one glance: NQ (Stage 3 archive) and TriviaQA side by side —
+    """Claim 1 in one glance: NQ (Stage 3 archive) and TriviaQA side by side -
     does the upward size trend transfer, with the method colours intermixed?"""
     import matplotlib
     matplotlib.use("Agg")
@@ -492,10 +492,10 @@ def _plot_scatter(nq_rows: list[dict], trivia_rows: list[dict],
     topk = max(C.RECALL_KS)
     fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
     _scatter_panel(ax_l, nq_rows, topk,
-                   f"NQ — {NQ_SMALL_DOCS} docs / {NQ_SMALL_QUESTIONS} questions "
+                   f"NQ - {NQ_SMALL_DOCS} docs / {NQ_SMALL_QUESTIONS} questions "
                    "(Stage 3 archive)", NQ_SMALL_QUESTIONS)
     _scatter_panel(ax_r, trivia_rows, topk,
-                   f"TriviaQA rc.wikipedia — {n_docs} docs / "
+                   f"TriviaQA rc.wikipedia - {n_docs} docs / "
                    f"{n_questions} questions", n_questions)
     ax_l.set_ylabel(f"Doc-constrained Recall@{topk}")
 
@@ -613,7 +613,7 @@ def _print_summary(rows, checks, n_docs: int, n_questions: int) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Stage 7: cross-dataset robustness check — the 30-config "
+        description="Stage 7: cross-dataset robustness check - the 30-config "
                     "bge-only sweep on TriviaQA rc.wikipedia.")
     ap.add_argument("--check", action="store_true",
                     help="NQ sanity mode: reproduce the archived Stage 3 rows "

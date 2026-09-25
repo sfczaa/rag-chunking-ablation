@@ -30,7 +30,7 @@ def run_smoke() -> dict:
         print("\n=== Phase 4+5 (smoke): build indices + evaluate ===")
         model = training.load_model()
         results = evaluation.evaluate_all(model, rebuild=True)
-        print("\n[smoke] OK — phases 1-5 ran on tiny data. "
+        print("\n[smoke] OK - phases 1-5 ran on tiny data. "
               "These numbers are not meaningful.")
         return results
     finally:

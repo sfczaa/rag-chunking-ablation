@@ -1,4 +1,4 @@
-"""Phase 1 — download Wikipedia (titles), fetch wikitext, build (sentences,
+"""Phase 1 - download Wikipedia (titles), fetch wikitext, build (sentences,
 labels) splits.  Usage:  python scripts/1_prepare_data.py
 """
 

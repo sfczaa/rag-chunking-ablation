@@ -1,12 +1,12 @@
-"""Stage 8 — training data for fine-tuning the cross-encoder reranker.
+"""Stage 8 - training data for fine-tuning the cross-encoder reranker.
 
-Everything here uses the NQ **train** split; all eval benches (Stages 1-7)
+Everything here uses the NQ train split; all eval benches (Stages 1-7)
 use the validation split (or TriviaQA), so train/eval stay disjoint by
 construction. One streaming pass builds both:
 
-* the **training corpus** — the first ``STAGE8_N_TRAIN_DOCS`` usable
+* the training corpus - the first ``STAGE8_N_TRAIN_DOCS`` usable
   documents and their questions (same collection rule as ``nq_data``);
-* the **dev bench** — the *next* ``STAGE8_N_DEV_DOCS`` documents and the
+* the dev bench - the *next* ``STAGE8_N_DEV_DOCS`` documents and the
   questions whose gold doc lies in that window. Dev questions never point at
   a training document, so the go/no-go decision never touches the final
   (Stage 6) bench.
@@ -14,14 +14,14 @@ construction. One streaming pass builds both:
 Mining is deployment-matched: the training corpus is chunked with the
 deployment config (fixed ``STAGE8_TRAIN_CHUNK_SIZE`` / overlap
 ``STAGE8_TRAIN_CHUNK_OVERLAP``), BGE retrieves each question's
-top-``STAGE8_MINE_DEPTH`` pool — exactly what the reranker sees at eval time
-— and per question:
+top-``STAGE8_MINE_DEPTH`` pool - exactly what the reranker sees at eval time
+- and per question:
 
-* **positive** = the highest-dense-ranked pool chunk that is answer-bearing
+* positive = the highest-dense-ranked pool chunk that is answer-bearing
   *and* from the gold document (the metric's own hit rule);
-* **hard negatives** = the first ``STAGE8_NUM_NEGATIVES`` remaining pool
+* hard negatives = the first ``STAGE8_NUM_NEGATIVES`` remaining pool
   chunks by dense rank (the distractors BGE currently ranks high);
-* questions with no positive in the pool are dropped and counted — the
+* questions with no positive in the pool are dropped and counted - the
   reranker cannot rescue them at eval time either.
 
 Groups are fixed-width (1 positive + exactly ``STAGE8_NUM_NEGATIVES``
@@ -140,7 +140,7 @@ def prepare_train_and_dev(force: bool = False):
                   f"{len(out[1][1])} q")
             return out[0][0], out[0][1], out[1][0], out[1][1]
     if not force and _docs_path("train").exists() and not meta_ok:
-        print("[stage8-data] cache was built with different settings — "
+        print("[stage8-data] cache was built with different settings - "
               "rebuilding")
 
     n_train, n_dev = int(C.STAGE8_N_TRAIN_DOCS), int(C.STAGE8_N_DEV_DOCS)

@@ -131,11 +131,11 @@ constraint, so reranking had room to work at both depths.
 
 Mean paired deltas over the 30 configs:
 
-| Comparison | ΔR@1 | ΔR@3 | ΔR@5 | R@1 config counts |
+| Comparison | delta R@1 | delta R@3 | delta R@5 | R@1 config counts |
 |---|---|---|---|---|
-| rerank20 - bge | +0.0440 | +0.0278 | +0.0177 | 26 better / 3 worse / 1 tie; unadjusted *P* ~ 1.5x10⁻⁵ |
+| rerank20 - bge | +0.0440 | +0.0278 | +0.0177 | 26 better / 3 worse / 1 tie; unadjusted *P* ~ 1.5e-5 |
 | rerank50 - bge | +0.0235 | +0.0187 | +0.0126 | 20 better / 8 worse / 2 ties |
-| rerank50 - rerank20 | -0.0205 | - | - | 0 better / 28 worse / 2 ties; unadjusted *P* ~ 7x10⁻⁹ |
+| rerank50 - rerank20 | -0.0205 | - | - | 0 better / 28 worse / 2 ties; unadjusted *P* ~ 7e-9 |
 
 Best config per arm (ranked by R@5 then R@3/R@1, as in Stages 1-4):
 
@@ -152,7 +152,7 @@ Findings:
    the configurations reuse the same questions and are not independent trials.
    Stage 3 supplies the dense baseline; Stage 4 reports the preceding RRF ablation.
 2. The gain concentrates at small chunks and vanishes at the sweet spot.
-   Mean ΔR@1 by size: +0.075 (size ~6), +0.042 (8), +0.059 (10),
+   Mean delta R@1 by size: +0.075 (size ~6), +0.042 (8), +0.059 (10),
    +0.043 (12), +0.002 (15). At the Stage 3 best config (fixed 15/0) the
    deltas are +0.010 R@1 / -0.010 R@3 / -0.025 R@5 - inside 1 SE ~ 0.034.
    The rerank20 trend line in `rerank_recall_vs_chunk_size.png` is nearly

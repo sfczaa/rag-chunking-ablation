@@ -11,14 +11,14 @@ Two modes:
 
     --dev     go/no-go gate. Scores the held-out NQ-train dev bench (built by
               script 16) at fixed 15/0 (primary) and fixed 6/0 (context) and
-              prints the verdict: dev ΔR@1 (ft - off-the-shelf) at fixed 15/0
+              prints the verdict: dev delta R@1 (ft - off-the-shelf) at fixed 15/0
               >= STAGE8_GO_THRESHOLD -> GO; <= 0 -> NO-GO (negative
               result); in between -> judgment call, at most one retry.
     (default) the final eval on the Stage 6 bench (nq/large_n1000 cache, 1032
               questions, the 5 STAGE6_RERANK_CONFIGS). Built-in check
               discipline: the bge and rerank20 rows re-run the exact Stage 6
               pipeline, so they must reproduce the archived stage6/final rows
-              exactly (stage8_check_vs_stage6.csv) — only then does the
+              exactly (stage8_check_vs_stage6.csv) - only then does the
               rerank20_ft row mean anything.
 
 The final mode checkpoints per config to results/latest/ and is resume-safe;
@@ -318,15 +318,15 @@ def _write_stage6_check(stage6_rows, rows, path) -> bool:
               "Stage 6 row")
     if stats["n_chunks_mismatch"]:
         print(f"[stage8] WARN: {stats['n_chunks_mismatch']} config(s) with a "
-              "different chunk count — chunking is NOT identical")
+              "different chunk count - chunking is NOT identical")
     if ok and d == 0.0:
         print("[stage8] check OK: bge + rerank20 rows reproduce the archived "
-              "Stage 6 rows exactly — the rerank20_ft rows are comparable.")
+              "Stage 6 rows exactly - the rerank20_ft rows are comparable.")
     elif ok:
         print(f"[stage8] check: max |recall delta| vs Stage 6 = {d:.4f} "
-              "(within one question — inspect before trusting).")
+              "(within one question - inspect before trusting).")
     else:
-        print(f"[stage8] WARN: check FAILED (max |recall delta| = {d:.4f}) — "
+        print(f"[stage8] WARN: check FAILED (max |recall delta| = {d:.4f}) - "
               "do NOT trust the rerank20_ft rows until this is explained.")
     return ok
 
@@ -388,8 +388,8 @@ def _two_se(rows, n_questions: int) -> float:
 
 
 def _plot_delta(matched, n_questions: int, path) -> None:
-    """ΔR@1 vs bge for the off-the-shelf and fine-tuned rerankers per config,
-    with the ±2 SE band — the Stage 8 question in one picture."""
+    """delta R@1 vs bge for the off-the-shelf and fine-tuned rerankers per config,
+    with the +/-2 SE band - the Stage 8 question in one picture."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -414,9 +414,9 @@ def _plot_delta(matched, n_questions: int, path) -> None:
     ax.axhline(0, color="#333333", linewidth=0.8)
     for y in (se2, -se2):
         ax.axhline(y, color="#888888", linestyle="--", linewidth=1,
-                   label=f"±2 SE (n={n_questions})" if y > 0 else None)
+                   label=f"+/-2 SE (n={n_questions})" if y > 0 else None)
     ax.set_xticks(x, labels, fontsize=8)
-    ax.set_ylabel(f"Δ Recall@{k1} vs bge")
+    ax.set_ylabel(f"delta Recall@{k1} vs bge")
     ax.set_title("Does fine-tuning the cross-encoder move the needle?")
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3,
               fontsize=9, frameon=False)
@@ -495,7 +495,7 @@ def main() -> None:
     mode = "dev" if args.dev else "final"
     ft_dir = pathlib.Path(args.ft_model) if args.ft_model else _default_ft_dir()
     if not (ft_dir / "config.json").exists():
-        raise SystemExit(f"[stage8] no fine-tuned model at {ft_dir} — run "
+        raise SystemExit(f"[stage8] no fine-tuned model at {ft_dir} - run "
                          "`python scripts/17_train_reranker.py` first")
 
     stage6_rows = None
@@ -503,7 +503,7 @@ def main() -> None:
         stage6_dir = _stage_final_dir("stage6")
         s6_csv = stage6_dir / C.STAGE6_RESULTS_CSV
         if not s6_csv.exists():
-            raise SystemExit(f"[stage8] missing {s6_csv} — the final mode "
+            raise SystemExit(f"[stage8] missing {s6_csv} - the final mode "
                              "checks itself against the Stage 6 archive")
         stage6_rows = _read_csv(s6_csv)
         retr = {r.get("retrieval_embedding_model", "") for r in stage6_rows}
@@ -539,7 +539,7 @@ def main() -> None:
     else:
         docs, questions = rf.load_bench("dev")
         if not docs or not questions:
-            raise SystemExit("[stage8] dev bench missing — run "
+            raise SystemExit("[stage8] dev bench missing - run "
                              "`python scripts/16_build_rerank_train_data.py` "
                              "first")
         dataset = "nq-train-dev"
@@ -597,10 +597,10 @@ def main() -> None:
                   f"bge R@{k1}={m[f'bge_recall@{k1}']:.4f}  "
                   f"ots={m[f'ots_recall@{k1}']:.4f}  "
                   f"ft={m[f'ft_recall@{k1}']:.4f}  "
-                  f"ft−ots={m[f'ft_minus_ots@{k1}']:+.4f}")
+                  f"ft-ots={m[f'ft_minus_ots@{k1}']:+.4f}")
         print(f"\n[stage8] GO/NO-GO verdict (fixed 15/0, threshold "
               f"+{C.STAGE8_GO_THRESHOLD}): {gate[0]} "
-              f"(ΔR@{k1} ft−ots = {gate[1]:+.4f})")
+              f"(delta R@{k1} ft-ots = {gate[1]:+.4f})")
         if gate[0] == "GO":
             print("[stage8] -> run the final eval: "
                   "python scripts/18_eval_reranker_ft.py")
@@ -614,9 +614,9 @@ def main() -> None:
         gate_md.write_text(
             f"# Stage 8 go/no-go (dev bench)\n\n- dev bench: {len(docs)} docs"
             f" / {len(questions)} questions (NQ train split, disjoint)\n"
-            f"- ΔR@{k1} (ft − off-the-shelf) at fixed 15/0: {gate[1]:+.4f}\n"
+            f"- delta R@{k1} (ft - off-the-shelf) at fixed 15/0: {gate[1]:+.4f}\n"
             f"- threshold: +{C.STAGE8_GO_THRESHOLD}; 2 SE = {se2:.4f}\n"
-            f"- verdict: **{gate[0]}**\n", encoding="utf-8")
+            f"- verdict: {gate[0]}\n", encoding="utf-8")
         print(f"[stage8] wrote {gate_md}")
         return
 
@@ -632,7 +632,7 @@ def main() -> None:
     se2 = _two_se(rows, len(questions))
     size15 = [m[f"ft_minus_ots@{k1}"] for m in matched
               if "15" in m["chunk_config"]]
-    print(f"\n[stage8] headline: max size-15 ΔR@{k1} (ft−ots) = "
+    print(f"\n[stage8] headline: max size-15 delta R@{k1} (ft-ots) = "
           f"{max(size15):+.4f} vs 2 SE = {se2:.4f}"
           if size15 else "\n[stage8] no size-15 configs found")
     print("[stage8] complete. Review, then archive:")

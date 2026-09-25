@@ -1,14 +1,14 @@
 """Stage 8 addendum - does the fine-tuned reranker's gain TRANSFER cross-dataset?
 
 Stage 8 fine-tuned ``BAAI/bge-reranker-base`` on NQ-train hard negatives and
-measured ft-ots ΔR@1 = +0.087..+0.107 on the NQ (Stage 6) bench. That gain is
+measured ft-ots delta R@1 = +0.087..+0.107 on the NQ (Stage 6) bench. That gain is
 in-domain (NQ train -> NQ val). The transfer evaluation measures the gain
 on a different evaluation dataset.
 
 It re-runs the EXACT Stage 8 final protocol -- the same 5 STAGE6_RERANK_CONFIGS,
 the same three arms sharing one BGE top-20 pool (``bge`` / off-the-shelf
 ``rerank20`` / fine-tuned ``rerank20_ft``), the same fine-tuned checkpoint -- but
-on the **Stage 7 TriviaQA rc.wikipedia bench** instead of NQ. Only the eval
+on the Stage 7 TriviaQA rc.wikipedia bench instead of NQ. Only the eval
 dataset changes, so a difference in the ft-ots delta is a transfer effect, not a
 protocol difference. The in-domain Stage 8 deltas are read from the archive and
 printed next to the cross-dataset ones.
@@ -231,7 +231,7 @@ def _read_indomain_deltas() -> dict[str, dict[str, float]]:
     """From stage8/final matched summary: {config_label: {ft_minus_ots@k: v}}."""
     path = _stage_final_dir("stage8") / C.STAGE8_MATCHED_CSV
     if not path.exists():
-        print(f"[transfer] WARN: {path} not found — in-domain column omitted")
+        print(f"[transfer] WARN: {path} not found - in-domain column omitted")
         return {}
     out: dict[str, dict[str, float]] = {}
     with open(path, newline="", encoding="utf-8") as fh:
@@ -311,7 +311,7 @@ def _write_matched_csv(table, indomain, path) -> None:
 
 
 def _plot_delta(matched, n_questions: int, se2: float, path) -> None:
-    """Cross-dataset ft-ots ΔR@1 per config vs the ±2 SE band, with the
+    """Cross-dataset ft-ots delta R@1 per config vs the +/-2 SE band, with the
     in-domain (NQ) delta drawn as a hollow marker for contrast."""
     import matplotlib
     matplotlib.use("Agg")
@@ -327,20 +327,20 @@ def _plot_delta(matched, n_questions: int, se2: float, path) -> None:
     x = np.arange(len(matched))
     fig, ax = plt.subplots(figsize=(9, 5.6))
     bars = ax.bar(x, d_cross, 0.55, color="#2ca02c",
-                  label=f"TriviaQA ft−ots ΔR@{k1} (n={n_questions})")
+                  label=f"TriviaQA ft-ots delta R@{k1} (n={n_questions})")
     ax.bar_label(bars, fmt="%+.3f", padding=2, fontsize=8)
     have_in = [(xi, v) for xi, v in zip(x, d_in) if v is not None]
     if have_in:
         ax.scatter([xi for xi, _ in have_in], [v for _, v in have_in],
                    marker="D", s=70, facecolors="none", edgecolors="#9467bd",
                    linewidths=1.6, zorder=4,
-                   label="in-domain NQ ft−ots (Stage 8)")
+                   label="in-domain NQ ft-ots (Stage 8)")
     ax.axhline(0, color="#333", lw=0.8)
     for y in (se2, -se2):
         ax.axhline(y, color="#888", ls="--", lw=1,
-                   label=f"±2 SE (n={n_questions})" if y > 0 else None)
+                   label=f"+/-2 SE (n={n_questions})" if y > 0 else None)
     ax.set_xticks(x, labels, fontsize=8)
-    ax.set_ylabel(f"Δ Recall@{k1} (ft − off-the-shelf)")
+    ax.set_ylabel(f"delta Recall@{k1} (ft - off-the-shelf)")
     ax.set_title("Does the NQ-tuned reranker's gain transfer to TriviaQA?")
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3,
               fontsize=9, frameon=False)
@@ -429,7 +429,7 @@ def main() -> None:
 
     ft_dir = pathlib.Path(args.ft_model) if args.ft_model else _default_ft_dir()
     if not (ft_dir / "config.json").exists():
-        raise SystemExit(f"[transfer] no fine-tuned model at {ft_dir} — train "
+        raise SystemExit(f"[transfer] no fine-tuned model at {ft_dir} - train "
                          "it first (scripts/17_train_reranker.py) or pass "
                          "--ft-model")
 
@@ -456,7 +456,7 @@ def main() -> None:
     except ImportError:
         device = None
     if device != "cuda":
-        print("[transfer] WARN: no GPU — reranking on CPU is slow but correct")
+        print("[transfer] WARN: no GPU - reranking on CPU is slow but correct")
     max_len = int(C.RERANK_MAX_LENGTH)
     ots_model = CrossEncoder(C.RERANKER_MODEL, max_length=max_len, device=device)
     ft_model = CrossEncoder(str(ft_dir), max_length=max_len, device=device)
@@ -503,11 +503,11 @@ def main() -> None:
     for m in matched:
         label = f"{m['method']} {m['chunk_config']}"
         ind = indomain.get(label, {}).get(f"ft_minus_ots@{k1}")
-        ind_s = f"{ind:+.4f}" if ind is not None else "  —  "
-        print(f"[transfer]   {label:<22} TriviaQA ft−ots@{k1}="
+        ind_s = f"{ind:+.4f}" if ind is not None else "  -  "
+        print(f"[transfer]   {label:<22} TriviaQA ft-ots@{k1}="
               f"{m[f'ft_minus_ots@{k1}']:+.4f}   NQ in-domain={ind_s}")
     print(f"\n[transfer] VERDICT (fixed 15/0): {verdict[0]}"
-          + (f"  (ft−ots ΔR@{k1} = {verdict[1]:+.4f} vs 2 SE {se2:.4f})"
+          + (f"  (ft-ots delta R@{k1} = {verdict[1]:+.4f} vs 2 SE {se2:.4f})"
              if verdict[1] is not None else ""))
     print("[transfer] review stage8_transfer_summary.md, then archive if kept.")
 

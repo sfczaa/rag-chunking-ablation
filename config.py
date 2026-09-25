@@ -78,7 +78,7 @@ def ensure_dirs() -> None:
 
 
 # --------------------------------------------------------------------------- #
-# Phase 1 — Wikipedia data preparation
+# Phase 1 - Wikipedia data preparation
 # --------------------------------------------------------------------------- #
 WIKI_DUMP = "wikimedia/wikipedia"
 WIKI_DUMP_CONFIG = "20231101.en"     # used (streamed) only to pick article titles
@@ -104,7 +104,7 @@ SPLIT_RATIOS = (0.8, 0.1, 0.1)
 SEED = 42
 
 # --------------------------------------------------------------------------- #
-# Phase 2 — Offline embedding
+# Phase 2 - Offline embedding
 # --------------------------------------------------------------------------- #
 EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 EMBED_DIM = 384
@@ -128,7 +128,7 @@ BGE_QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages
 RETRIEVAL_QUERY_INSTRUCTION = None
 
 # --------------------------------------------------------------------------- #
-# Phase 3 — BiLSTM training
+# Phase 3 - BiLSTM training
 # --------------------------------------------------------------------------- #
 # Boundary model family. Both "bilstm" (Stage 1) and "transformer" (Stage 2) are
 # implemented and share one interface + the target-size cutting policy. This stays
@@ -147,7 +147,7 @@ POS_WEIGHT = None
 # -- Learned chunking policy ------------------------------------------------- #
 # "threshold": cut wherever boundary prob >= BOUNDARY_THRESHOLD (min/max clamp).
 #              This is the original Phase 4/5 behaviour, kept for back-compat.
-# "target":    target-size semantic cutting — within a [min,max] window the model
+# "target":    target-size semantic cutting - within a [min,max] window the model
 #              picks its most confident boundary, so learned chunks stay size-
 #              comparable to the fixed-size baseline (used by the Phase 6 sweep).
 SEMANTIC_CHUNK_POLICY = "target"     # "target" | "threshold"
@@ -176,7 +176,7 @@ TRANSFORMER_DROPOUT = 0.1
 # so the shared BOUNDARY_THRESHOLD (0.8, tuned for the BiLSTM) can score its
 # Boundary F1 at ~0 even when the learned boundaries are fine. This *separate*
 # threshold is calibrated on the validation split (max boundary F1) by Phase 7
-# training. It is used ONLY for the Boundary F1 diagnostic — the retrieval sweep
+# training. It is used ONLY for the Boundary F1 diagnostic - the retrieval sweep
 # uses the target-size (argmax) policy and ignores any threshold, so Stage 1 /
 # Stage 2 retrieval behaviour is unchanged.
 TRANSFORMER_BOUNDARY_THRESHOLD = 0.5     # fallback; overwritten by val calibration
@@ -196,7 +196,7 @@ MODEL_FILENAMES = {
 }                                         # "transformer", different objective
 
 # --------------------------------------------------------------------------- #
-# Phase 4 — RAG retrieval pipeline (Natural Questions)
+# Phase 4 - RAG retrieval pipeline (Natural Questions)
 # --------------------------------------------------------------------------- #
 NQ_DATASET = "google-research-datasets/natural_questions"
 NQ_CONFIG = "default"
@@ -206,12 +206,12 @@ FIXED_CHUNK_SIZE = 10                # baseline: sentences per fixed chunk
 FIXED_CHUNK_OVERLAP = 1              # sentence overlap between fixed chunks
 
 # --------------------------------------------------------------------------- #
-# Phase 5 — Evaluation
+# Phase 5 - Evaluation
 # --------------------------------------------------------------------------- #
 RECALL_KS = (1, 3, 5)
 
 # --------------------------------------------------------------------------- #
-# Phase 6 — Chunking sweep optimizer
+# Phase 6 - Chunking sweep optimizer
 # --------------------------------------------------------------------------- #
 # Full grid: every (size, overlap) for fixed-size and (target_size, overlap) for
 # learned target-size cutting. The learned min/max window is derived per target
@@ -226,10 +226,10 @@ QUICK_TARGET_SIZE_GRID = [8, 10, 12]
 QUICK_OVERLAP_GRID = [0, 1]
 
 # --------------------------------------------------------------------------- #
-# Stage 4 — hybrid retrieval ablation (BM25 + BGE + RRF)
+# Stage 4 - hybrid retrieval ablation (BM25 + BGE + RRF)
 # --------------------------------------------------------------------------- #
 # Okapi BM25 over the exact same chunks the dense index embeds (pure-numpy
-# implementation in rag_chunk/hybrid.py — no extra Colab dependency).
+# implementation in rag_chunk/hybrid.py - no extra Colab dependency).
 BM25_K1 = 1.5
 BM25_B = 0.75
 # Reciprocal Rank Fusion: fused score(d) = sum over retrievers of 1/(RRF_K + rank).
@@ -243,7 +243,7 @@ HYBRID_SCATTER_PNG = "hybrid_recall_vs_chunk_size.png"
 HYBRID_RETRIEVER_PLOT_PNG = "hybrid_retriever_comparison.png"
 
 # --------------------------------------------------------------------------- #
-# Stage 5 — cross-encoder reranking (BGE top-k + off-the-shelf reranker)
+# Stage 5 - cross-encoder reranking (BGE top-k + off-the-shelf reranker)
 # --------------------------------------------------------------------------- #
 # BGE dense retrieval fetches a candidate pool per question; a pretrained
 # cross-encoder (no training / fine-tuning) rescores the (question, chunk)
@@ -260,7 +260,7 @@ RERANK_SCATTER_PNG = "rerank_recall_vs_chunk_size.png"
 RERANK_COMPARISON_PNG = "rerank_comparison.png"
 
 # --------------------------------------------------------------------------- #
-# Stage 6 — larger-scale robustness evaluation
+# Stage 6 - larger-scale robustness evaluation
 # --------------------------------------------------------------------------- #
 # Same dataset source / chunking / models as Stages 3-5; the only change is the
 # corpus scale. The large corpus caches under a separate nq/large_n<N>/ folder
@@ -287,7 +287,7 @@ STAGE6_SIZE_PLOT_PNG = "stage6_size_vs_recall.png"
 STAGE6_DELTA_PLOT_PNG = "stage6_rerank_delta.png"
 
 # --------------------------------------------------------------------------- #
-# Stage 7 — cross-dataset robustness check (TriviaQA rc.wikipedia, bge-only)
+# Stage 7 - cross-dataset robustness check (TriviaQA rc.wikipedia, bge-only)
 # --------------------------------------------------------------------------- #
 # Same pipeline, grids, boundary weights and BGE retriever as Stage 3; the only
 # change is the QA dataset. TriviaQA rc.wikipedia bundles full Wikipedia pages
@@ -305,10 +305,10 @@ STAGE7_SUMMARY_MD = "stage7_dataset_summary.md"
 STAGE7_SCATTER_PNG = "stage7_recall_vs_chunk_size.png"
 
 # --------------------------------------------------------------------------- #
-# Stage 8 — fine-tune the cross-encoder reranker (Route C)
+# Stage 8 - fine-tune the cross-encoder reranker (Route C)
 # --------------------------------------------------------------------------- #
 # Trigger (Stage 6): at the size-15 sweet spot pool_recall@20 ~ 0.96 but
-# R@1 ~ 0.63 and the off-the-shelf reranker adds ~0 — ranking, not pool
+# R@1 ~ 0.63 and the off-the-shelf reranker adds ~0 - ranking, not pool
 # recall, is the remaining bottleneck. Training data comes from the NQ *train*
 # split; every eval bench uses the validation split, so they stay disjoint.
 # See docs/stage8_reranker_finetune.md.
@@ -326,7 +326,7 @@ STAGE8_WEIGHT_DECAY = 0.01
 STAGE8_GROUPS_PER_STEP = 4       # batch = groups x (1 + negatives) pairs
 STAGE8_SEED = 42
 STAGE8_FT_MODEL_DIRNAME = "bge_reranker_ft"   # under MODELS_DIR
-# Go/no-go gate on the dev bench at fixed 15/0: dev ΔR@1 (ft - off-the-shelf)
+# Go/no-go gate on the dev bench at fixed 15/0: dev delta R@1 (ft - off-the-shelf)
 # >= threshold -> GO; <= 0 -> NO-GO; in between ->
 # at most one retry, no threshold-shopping.
 STAGE8_GO_THRESHOLD = 0.02
@@ -450,13 +450,13 @@ BEST_CONFIG_JSON = "best_config.json"
 FAIR_TABLE_CSV = "fair_comparison_table.csv"
 RECALL_PLOT_PNG = "recall_vs_chunk_size.png"
 MODEL_PLOT_PNG = "model_comparison.png"
-# Scatter of Recall@k vs avg chunk size, coloured by method — shows that recall
+# Scatter of Recall@k vs avg chunk size, coloured by method - shows that recall
 # tracks chunk *size*, not chunk *method* (the Stage 2 headline finding).
 SIZE_SCATTER_PNG = "recall_vs_size_scatter.png"
 
 # Cross-stage portfolio figure (scripts/14_evolution_plot.py): best R@5 per
 # stage, read from the archived stage finals only. Written under
-# RESULTS_DIR / "portfolio" — not latest/, because it is derived from the
+# RESULTS_DIR / "portfolio" - not latest/, because it is derived from the
 # archives rather than produced by a new experiment.
 PORTFOLIO_DIRNAME = "portfolio"
 EVOLUTION_PLOT_PNG = "best_r5_evolution.png"

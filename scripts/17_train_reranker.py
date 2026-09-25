@@ -7,7 +7,7 @@ checkpoint directory, so the fine-tuned model plugs into the existing eval
 path unchanged).
 
 Objective: listwise softmax cross-entropy over each (1 positive +
-STAGE8_NUM_NEGATIVES hard negatives) group — the standard reranker loss.
+STAGE8_NUM_NEGATIVES hard negatives) group - the standard reranker loss.
 Pairs are tokenized with the same ``RERANK_MAX_LENGTH`` truncation the eval
 uses, so training and inference see identical inputs.
 
@@ -56,7 +56,7 @@ def _save(model, tokenizer, out_dir: pathlib.Path) -> None:
         tokenizer.save_pretrained(out_dir)
     except Exception as exc:
         print(f"[stage8-train] WARN: direct save to {out_dir} failed "
-              f"({exc!r}) — retrying via local staging")
+              f"({exc!r}) - retrying via local staging")
         tmp = pathlib.Path(tempfile.mkdtemp(prefix="stage8_save_"))
         model.save_pretrained(tmp)
         tokenizer.save_pretrained(tmp)
@@ -76,7 +76,7 @@ def _save(model, tokenizer, out_dir: pathlib.Path) -> None:
 
 
 def _prune_previous_epoch(epoch: int) -> None:
-    """Keep only the newest epoch checkpoint (~1.1 GB each — Drive quota).
+    """Keep only the newest epoch checkpoint (~1.1 GB each - Drive quota).
     The freshly saved epoch fully supersedes the previous one for resuming."""
     import shutil
 
@@ -98,12 +98,12 @@ def train(groups: list[dict], *, init_model: str, epochs: int, lr: float,
     bad = [g for g in groups if 1 + len(g["negs"]) != group_width]
     if bad:
         raise SystemExit(f"[stage8-train] {len(bad)} group(s) have a "
-                         f"different width than {group_width} — rebuild the "
+                         f"different width than {group_width} - rebuild the "
                          "training data (script 16)")
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if device == "cpu":
-        print("[stage8-train] WARN: no GPU — fine for a --max-groups smoke "
+        print("[stage8-train] WARN: no GPU - fine for a --max-groups smoke "
               "run, far too slow for real training")
     use_amp = device == "cuda"
 
@@ -169,7 +169,7 @@ def train(groups: list[dict], *, init_model: str, epochs: int, lr: float,
                       f"lr {scheduler.get_last_lr()[0]:.2e} "
                       f"({el / 60:.1f} min)")
         last_epoch_loss = epoch_loss / max(epoch_batches, 1)
-        print(f"[stage8-train] epoch {epoch}/{epochs} done — "
+        print(f"[stage8-train] epoch {epoch}/{epochs} done - "
               f"mean loss {last_epoch_loss:.4f}")
         _save(model, tokenizer, ft_model_dir() / f"epoch{epoch}")
         _prune_previous_epoch(epoch)
@@ -206,7 +206,7 @@ def main() -> None:
 
     groups = rf.load_groups()
     if not groups:
-        raise SystemExit("[stage8-train] no training groups found — run "
+        raise SystemExit("[stage8-train] no training groups found - run "
                          "`python scripts/16_build_rerank_train_data.py` first")
 
     init_model = args.init_model or C.RERANKER_MODEL

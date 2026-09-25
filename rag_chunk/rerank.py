@@ -1,27 +1,27 @@
-"""Stage 5 — cross-encoder reranking on top of the BGE dense retrieval baseline.
+"""Stage 5 - cross-encoder reranking on top of the BGE dense retrieval baseline.
 
-Reuses the Stage 3/4 protocol unchanged — the same NQ corpus and questions, the
+Reuses the Stage 3/4 protocol unchanged - the same NQ corpus and questions, the
 same fixed / BiLSTM / Transformer chunking grids, the same boundary models and
-weights, the same BGE dense retriever — and adds one new step over the
+weights, the same BGE dense retriever - and adds one new step over the
 *identical* chunks: BGE retrieves a top-``d`` candidate pool per question, and
 an off-the-shelf pretrained cross-encoder (``C.RERANKER_MODEL``, no training or
 fine-tuning) rescores the (question, chunk) pairs and reorders the pool.
 
 Arms compared per chunking config (one row each):
 
-* ``bge``       — dense-only baseline, exactly the Stage 3/4 bge path;
-* ``rerank<d>`` — BGE top-``d`` candidates reordered by the cross-encoder,
+* ``bge``       - dense-only baseline, exactly the Stage 3/4 bge path;
+* ``rerank<d>`` - BGE top-``d`` candidates reordered by the cross-encoder,
                   one arm per depth in ``C.RERANK_DEPTHS`` (default 20 and 50).
 
 For every chunking config the chunks are built ONE time and the dense index
 embeds them once; the deeper pools extend the shallower ones (same dense
 ranking), so the cross-encoder scores each (question, chunk) pair exactly once
-— the pairs for ranks 1..20 are timed separately from ranks 21..50, keeping
+- the pairs for ranks 1..20 are timed separately from ranks 21..50, keeping
 the per-depth latency attributable to its candidate count. All arms are scored by the same
 ``metrics.recall_from_retrieved`` code path.
 
 Each row also records the candidate-pool ceiling ``pool_recall@d`` (was the
-answer chunk present in the BGE top-``d`` pool at all?) — reranking can never
+answer chunk present in the BGE top-``d`` pool at all?) - reranking can never
 recall a chunk the pool missed.
 
 Artifacts (written under ``RESULTS_LATEST_DIR`` by :func:`run_rerank_sweep`):
@@ -73,7 +73,7 @@ _RERANKER_NAME = None
 
 def load_reranker(model_name: str | None = None):
     """Load the pretrained cross-encoder once (cached singleton). Stage 5 does
-    no reranker training or fine-tuning — the weights are used as published."""
+    no reranker training or fine-tuning - the weights are used as published."""
     global _RERANKER, _RERANKER_NAME
 
     from sentence_transformers import CrossEncoder
@@ -108,7 +108,7 @@ def score_pairs(pairs: list[tuple[str, str]]):
 
 def rerank_order(scores) -> list[int]:
     """Candidate order after reranking: score desc, ties broken by the original
-    dense rank (ascending) — fully deterministic. ``scores[i]`` is the score of
+    dense rank (ascending) - fully deterministic. ``scores[i]`` is the score of
     the candidate at dense rank ``i``."""
     import numpy as np
 
@@ -166,7 +166,7 @@ def _eval_config_rerank(
     # Candidate-pool ceiling: reranking cannot recover a chunk the pool missed.
     pool_rec = metrics.recall_from_retrieved(pool, questions, tuple(depths))
 
-    # Score each pool tier once — ranks (prev, d] across all questions in one
+    # Score each pool tier once - ranks (prev, d] across all questions in one
     # batched call. The tier for ranks 1..20 is exactly what a depth-20-only
     # run would score, so the cumulative timings correspond to each depth.
     scores_by_q: list[list[float]] = [[] for _ in questions]
@@ -258,7 +258,7 @@ def run_rerank_sweep(
 ) -> list[dict]:
     """Run the Stage 5 rerank sweep and write all artifacts. Returns the rows.
 
-    Same grids, boundary models, corpus and metric as the Stage 3/4 sweeps —
+    Same grids, boundary models, corpus and metric as the Stage 3/4 sweeps -
     the added dimension is the arm (bge / rerank20 / rerank50), so each
     chunking config yields one row per arm.
     """
@@ -316,7 +316,7 @@ def run_rerank_sweep(
 
 
 # --------------------------------------------------------------------------- #
-# Best configs + matched table (pure Python — no heavy deps)
+# Best configs + matched table (pure Python - no heavy deps)
 # --------------------------------------------------------------------------- #
 def best_configs(rows: list[dict]) -> dict:
     """Best row per arm plus the overall best, using the same ranking as the
@@ -379,7 +379,7 @@ def _arm_colors() -> dict[str, str]:
 def plot_recall_vs_size_by_arm(rows: list[dict], path,
                                n_questions: int | None = None) -> None:
     """Scatter Recall@1 vs average chunk size, coloured by arm, with a per-arm
-    trend line. Recall@1 is the Stage 5 goal metric — reranking targets the top
+    trend line. Recall@1 is the Stage 5 goal metric - reranking targets the top
     of the ranking, where the dense baseline has the most headroom."""
     import matplotlib
     matplotlib.use("Agg")
@@ -412,7 +412,7 @@ def plot_recall_vs_size_by_arm(rows: list[dict], path,
         ys_all = np.array([r[f"recall@{k1}"] for r in rows], dtype=float)
         pbar = float(ys_all.mean())
         se = (pbar * (1 - pbar) / n_questions) ** 0.5
-        ax.text(0.02, 0.98, f"1 SE ≈ {se:.3f}  (n={n_questions} questions)",
+        ax.text(0.02, 0.98, f"1 SE ~ {se:.3f}  (n={n_questions} questions)",
                 transform=ax.transAxes, va="top", ha="left", fontsize=9,
                 bbox=dict(boxstyle="round", fc="white", alpha=0.8))
     handles = [Line2D([0], [0], marker="o", linestyle="--",

@@ -1,4 +1,4 @@
-"""Phase 8 (Stage 2) — sweep Fixed vs BiLSTM vs Transformer chunking.
+"""Phase 8 (Stage 2) - sweep Fixed vs BiLSTM vs Transformer chunking.
 
 Runs the same fair sweep as Phase 6 (``scripts/6_sweep_chunking.py``) but adds the
 Transformer boundary model as a third method, so all three are compared under the

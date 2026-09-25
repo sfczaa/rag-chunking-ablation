@@ -38,10 +38,10 @@ Every evaluation below uses the NQ validation split, disjoint from training.
 
 ## Results
 
-In-domain (NQ, 1000 docs / 1032 questions). Δ vs the off-the-shelf reranker,
+In-domain (NQ, 1000 docs / 1032 questions). delta vs the off-the-shelf reranker,
 with all arms reranking one identical BGE top-20 pool (2 SE = 0.030):
 
-| chunking config | dense R@1 | off-the-shelf R@1 | this model R@1 | Δ vs off-the-shelf |
+| chunking config | dense R@1 | off-the-shelf R@1 | this model R@1 | delta vs off-the-shelf |
 |---|---|---|---|---|
 | fixed 6/0 | 0.509 | 0.545 | 0.650 | +0.106 |
 | fixed 15/0 | 0.628 | 0.629 | 0.736 | +0.107 |
@@ -55,7 +55,7 @@ the pool ceiling (0.964). R@3 and R@5 rise too; no metric trades down.
 Cross-dataset (TriviaQA rc.wikipedia, 472 docs / 300 questions, 2 SE = 0.054).
 Cross-dataset limitations:
 
-| | Δ vs off-the-shelf R@1 | Δ vs no reranking (dense) |
+| | delta vs off-the-shelf R@1 | delta vs no reranking (dense) |
 |---|---|---|
 | in-domain (NQ), fixed 15/0 | +0.107 | +0.107 |
 | cross-dataset (TriviaQA), fixed 15/0 | +0.057 | +0.003 |
