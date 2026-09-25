@@ -30,6 +30,7 @@ venv/
 ~$*.docx
 NEXT_STEPS.md
 PROGRESS.md
+/notebook_runs/
 
 # --------------------------------------------------------------------------- #
 # Editor / tooling local state
