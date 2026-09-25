@@ -192,7 +192,8 @@ MODEL_FILENAME = "bilstm_best.pt"     # back-compat default (BiLSTM)
 MODEL_FILENAMES = {
     "bilstm": "bilstm_best.pt",
     "transformer": "transformer_best.pt",
-}
+    "rl": "rl_boundary_best.pt",          # Stage 10: same architecture as
+}                                         # "transformer", different objective
 
 # --------------------------------------------------------------------------- #
 # Phase 4 — RAG retrieval pipeline (Natural Questions)
@@ -338,6 +339,95 @@ STAGE8_SUMMARY_MD = "stage8_summary.md"
 STAGE8_DELTA_PNG = "stage8_ft_delta.png"
 # Training-data filenames (written under DATA_DIR / "nq_train").
 STAGE8_TRAIN_GROUPS_JSONL = "stage8_train_groups.jsonl"
+
+# --------------------------------------------------------------------------- #
+# Stage 10 - train the boundary model against retrieval recall (RL)
+# --------------------------------------------------------------------------- #
+# The learned chunkers from Stages 1-2 were trained on Wikipedia section
+# pseudo-labels with a weighted BCE loss and scored on doc-constrained Recall@k.
+# At a matched size they tie with fixed-size chunking. Stage 10 keeps the same
+# architecture and warm start and changes only the objective, optimising the
+# retrieval metric directly, so a null result says something about the objective
+# and not about the architecture.
+#
+# The decode is the sweep's target-size walk (chunking.semantic_target_chunks):
+# inside each [min, max] window the model picks one cut point. Each action is a
+# choice among about 9 boundaries instead of n-1 independent binary decisions,
+# and the window keeps average chunk size in the same band as the baseline.
+# Without that, a recall reward could grow the chunks and reproduce the Stage 1
+# size effect. See docs/stage10_rl_chunking.md.
+STAGE10_N_TRAIN_DOCS = 1000      # RL corpus (a prefix of the Stage 8 train docs)
+STAGE10_TARGET_SIZE = 15         # training decode window = _semantic_window(15)
+STAGE10_OVERLAP = 0
+STAGE10_REF_SIZE = 15            # frozen distractor corpus: fixed 15/0 chunking
+STAGE10_REF_OVERLAP = 0
+STAGE10_REWARD_DEPTH = 10        # reward = 1/rank of the first gold hit in top-d
+STAGE10_STEPS = 400
+STAGE10_DOCS_PER_STEP = 32
+STAGE10_LR = 1e-5
+STAGE10_TEMPERATURE = 1.0        # softmax temperature over the in-window logits
+STAGE10_ENTROPY_COEF = 0.01      # keeps the policy from collapsing to one offset
+STAGE10_GRAD_CLIP = 1.0
+STAGE10_SEED = 42
+STAGE10_EVAL_EVERY = 50          # dev evaluations also give the training curve
+# Gate on the Stage 8 dev bench (NQ train split, disjoint from every eval bench):
+# dev delta R@5 (RL policy - supervised transformer, matched size) >= threshold -> GO.
+STAGE10_GO_THRESHOLD = 0.01
+# Pre-registered thresholds for the final Stage 6 bench run. MDE is the 80%-power
+# minimum detectable effect from scripts/20_effect_size.py at n=1032; a gap below
+# it is reported as directional but undetectable. The size tolerance stops a
+# policy from gaining recall by making chunks larger.
+STAGE10_MDE = 0.046
+STAGE10_SIZE_TOLERANCE = 0.3     # |avg chunk size - matched baseline|, sentences
+# Stage 10 output filenames (written under RESULTS_LATEST_DIR).
+STAGE10_TRAIN_LOG_CSV = "stage10_train_log.csv"
+STAGE10_DEV_CSV = "stage10_dev_results.csv"
+STAGE10_RESULTS_CSV = "stage10_rl_eval_results.csv"
+STAGE10_MATCHED_CSV = "stage10_matched_summary.csv"
+STAGE10_CHECK_CSV = "stage10_check_vs_stage6.csv"
+STAGE10_SUMMARY_MD = "stage10_summary.md"
+STAGE10_CURVE_PNG = "stage10_reward_curve.png"
+STAGE10_DELTA_PNG = "stage10_rl_delta.png"
+
+# --------------------------------------------------------------------------- #
+# Stage 11 - the reranker under an RL objective, against its listwise control
+# --------------------------------------------------------------------------- #
+# At fixed 15/0 the BGE top-20 pool holds the answer for 96% of questions, but the
+# Stage 8 reranker's R@1 is 0.736. Stage 11 continues from the Stage 8 weights with
+# two arms that differ only in the loss: Stage 8's listwise cross-entropy (control)
+# and a policy gradient over sampled Plackett-Luce rankings rewarded by the
+# positive's reciprocal rank (RL). Both use the same groups, data order, steps and
+# schedule. The primary comparison is RL minus CE; Stage 8 is the reference point.
+# See docs/stage11_reranker_rl.md.
+STAGE11_EPOCHS = 1                 # continuation epochs per arm (495 steps in run 1)
+STAGE11_LR = 2e-5
+STAGE11_WARMUP_FRAC = 0.1
+STAGE11_SEED = 11                  # continuation data order, shared by both arms
+STAGE11_RL_SAMPLES = 8             # sampled rankings per group
+STAGE11_RL_TEMPERATURE = 1.0       # Plackett-Luce temperature; fixed before any run
+STAGE11_MODEL_DIRNAME = "bge_reranker_stage11"   # under MODELS_DIR, one dir per arm
+STAGE11_LOG_EVERY = 25
+# Fresh training data (scripts/26_build_stage11_data.py). The Stage 8 model already
+# ranks the positive first in 92% of its own training groups, so Stage 11 trains
+# on the next STAGE11_N_TRAIN_DOCS NQ-train documents after Stage 8's window, with
+# every Stage 8 train and dev title excluded, mined with Stage 8's rule.
+STAGE11_N_TRAIN_DOCS = 2000
+STAGE11_DATA_DIRNAME = "nq_train_stage11"          # under DATA_DIR
+STAGE11_GROUPS_JSONL = "stage11_train_groups.jsonl"
+# Dev gate (fixed 15/0, Stage 8 dev bench, R@1): the final bench runs only if the
+# RL arm trained at all and is not behind the CE arm. The gate only controls cost.
+STAGE11_GO_THRESHOLD = 0.0
+# Final claim (fixed 15/0, Stage 6 bench, n = 1032, paired over questions).
+STAGE11_PRACTICAL_FLOOR = 0.02     # R@1, the same magnitude as Stage 8's gate
+STAGE11_MIN_LIVE_FRACTION = 0.05   # RL groups with a non-zero advantage
+# Stage 11 output filenames (written under RESULTS_LATEST_DIR).
+STAGE11_TRAIN_LOG_CSV = "stage11_train_log.csv"     # suffixed _ce / _rl
+STAGE11_DEV_CSV = "stage11_dev_results.csv"
+STAGE11_RESULTS_CSV = "stage11_eval_results.csv"
+STAGE11_PAIRED_CSV = "stage11_paired_deltas.csv"
+STAGE11_CHECK_CSV = "stage11_check_vs_stage8.csv"
+STAGE11_SUMMARY_MD = "stage11_summary.md"
+STAGE11_DELTA_PNG = "stage11_delta.png"
 
 # Sweep output filenames (written under RESULTS_LATEST_DIR, snapshotted under
 # RESULTS_RUNS_DIR only with --save-run).
