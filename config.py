@@ -429,6 +429,20 @@ STAGE11_CHECK_CSV = "stage11_check_vs_stage8.csv"
 STAGE11_SUMMARY_MD = "stage11_summary.md"
 STAGE11_DELTA_PNG = "stage11_delta.png"
 
+# --------------------------------------------------------------------------- #
+# Stage 12 - one extra CE epoch vs the Stage 8 reranker, Stage 6 bench
+# --------------------------------------------------------------------------- #
+# In the Stage 11 dev gate the CE control arm was ahead of the Stage 8 weights it
+# started from (R@1 +0.022, CI lower bound +0.0001, n = 406). Stage 12 tests this
+# once on the Stage 6 bench with the existing weights. No training.
+# See docs/stage12_ce_epoch.md.
+STAGE12_PRACTICAL_FLOOR = 0.02     # R@1, same threshold as the Stage 8 gate and Stage 11
+# Stage 12 output filenames (written under RESULTS_LATEST_DIR).
+STAGE12_RESULTS_CSV = "stage12_eval_results.csv"
+STAGE12_PAIRED_CSV = "stage12_paired_deltas.csv"
+STAGE12_CHECK_CSV = "stage12_check_vs_stage8.csv"
+STAGE12_SUMMARY_MD = "stage12_summary.md"
+
 # Sweep output filenames (written under RESULTS_LATEST_DIR, snapshotted under
 # RESULTS_RUNS_DIR only with --save-run).
 SWEEP_RESULTS_CSV = "sweep_results.csv"
@@ -558,3 +572,52 @@ def summary() -> str:
         f"TRANSFORMER_BOUNDARY_THRESHOLD = {TRANSFORMER_BOUNDARY_THRESHOLD} "
         f"(calibrated on val by Phase 7; diagnostic only)\n"
     )
+
+# --------------------------------------------------------------------------- #
+# Stage 13 - the RL reranker at a matched training budget
+# --------------------------------------------------------------------------- #
+# Stage 11 gave both objectives the same number of steps, but the RL estimator is
+# silent on a group whose sampled rankings agree, which was 68% of them, so the
+# two arms saw different amounts of usable signal. Stage 13 matches the budget
+# instead of the step count: four epochs per arm, then a continuation to eight,
+# with cross-entropy controls at both budgets. See docs/stage13_rl_budget.md.
+STAGE13_EPOCHS = 4                 # per arm, before the continuation
+STAGE13_MODEL_DIRNAME = "bge_reranker_stage13"     # under MODELS_DIR, one dir per arm
+# Budget condition: the RL arm must accumulate at least this many live groups
+# (groups with a non-zero advantage). One CE epoch sees 1977, the group count.
+STAGE13_MIN_LIVE_GROUPS = 1977
+STAGE13_PRACTICAL_FLOOR = 0.02     # R@1, the Stage 8 gate, Stage 11 and Stage 12 threshold
+# Stage 13 output filenames (written under RESULTS_LATEST_DIR).
+STAGE13_TRAIN_LOG_CSV = "stage13_train_log.csv"     # suffixed _ce4 / _rl4 / _ce8 / _rl8
+STAGE13_DEV_CSV = "stage13_dev_results.csv"
+STAGE13_RESULTS_CSV = "stage13_eval_results.csv"
+STAGE13_PAIRED_CSV = "stage13_paired_deltas.csv"
+STAGE13_CHECK_CSV = "stage13_check_vs_stage8.csv"
+STAGE13_SUMMARY_MD = "stage13_summary.md"
+
+# --------------------------------------------------------------------------- #
+# Stage 14 - more training data for the fine-tuned reranker
+# --------------------------------------------------------------------------- #
+# Stages 11-13 changed the objective or the training length on about 2000 groups
+# and none beat the Stage 8 weights. Stage 14 keeps the Stage 8 recipe and trains
+# from the base model on nested sets of 2034, 4011 and about 10,000 groups.
+# See docs/stage14_data_scale.md.
+STAGE14_N_NEW_DOCS = 6000          # new NQ-train documents after the Stage 11 window
+STAGE14_SHARD_DOCS = 2000          # mined per shard, the Stage 8/11 corpus size
+STAGE14_DATA_DIRNAME = "nq_train_stage14"          # under DATA_DIR
+STAGE14_MODEL_DIRNAME = "bge_reranker_stage14"     # under MODELS_DIR, one dir per arm
+STAGE14_MIN_GROUPS_10K = 9000      # size condition for the 10k arm
+STAGE14_PRACTICAL_FLOOR = 0.02     # R@1, the Stage 8 gate and Stages 11-13 threshold
+# Stage 14 output filenames (written under RESULTS_LATEST_DIR).
+STAGE14_DEV_CSV = "stage14_dev_results.csv"
+STAGE14_RESULTS_CSV = "stage14_eval_results.csv"
+STAGE14_PAIRED_CSV = "stage14_paired_deltas.csv"     # suffixed _dev / _final
+STAGE14_CHECK_CSV = "stage14_check_vs_stage8.csv"
+STAGE14_SUMMARY_MD = "stage14_summary.md"
+# Several Colab accounts may continue Stage 14 in one shared Drive folder.
+# artifacts/RUN_ROOT_ID.json must hold this id, or every Stage 14 script stops:
+# a missing or different id means the mount is not the shared project folder.
+STAGE14_ROOT_ID = "566b0bd5-de24-4cb9-ae35-93e3fff2c3b1"
+STAGE14_RUN_VERSION = "stage14-v1"
+STAGE14_LOCK_FILE = "stage14_run.lock.json"         # under DATA_ROOT; never auto-deleted
+STAGE14_CKPT_EVERY = 500           # training steps between resumable checkpoints
