@@ -1,4 +1,4 @@
-"""Phase 5 — compare BiLSTM chunking vs fixed-size baseline on NQ.
+"""Phase 5 - compare BiLSTM chunking vs fixed-size baseline on NQ.
 
 Produces:
   * a printed comparison table,
@@ -37,7 +37,7 @@ def evaluate_all(model, rebuild: bool = False) -> dict:
         print("[eval] loaded cached FAISS indices (manifest matches config)")
     else:
         if not rebuild and have is not None and have != want:
-            print("[eval] config changed since indices were built — rebuilding")
+            print("[eval] config changed since indices were built - rebuilding")
         # pass threshold explicitly so the rebuilt indices match `want`'s signature
         built = retrieval.build_indexes(model, threshold=C.BOUNDARY_THRESHOLD)
         bilstm, fixed, questions = built["bilstm"], built["fixed"], built["questions"]
@@ -82,7 +82,7 @@ def _print_table(r: dict) -> None:
         row = r[key]
         cells = " | ".join(f"{row['recall'][k]:.3f}" for k in ks)
         print(f"| {name} | {cells} | {row['avg_chunk_size']:.2f} |")
-    print("\n(reference) unconstrained Recall@k — answer may match any document, "
+    print("\n(reference) unconstrained Recall@k - answer may match any document, "
           "so these over-count:")
     for name, key in (("Fixed-size", "fixed"), ("BiLSTM", "bilstm")):
         cells = " | ".join(f"{r[key]['recall_unconstrained'][k]:.3f}" for k in ks)

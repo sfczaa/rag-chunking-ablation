@@ -13,7 +13,7 @@ retriever are all unchanged; the reranker is off-the-shelf (no training or
 fine-tuning). Before writing ``artifacts/results/latest/``, this script
 requires the Stage 3 archive (``results/stage3/final/``) as the bge-arm
 consistency baseline, and refuses to delete anything from ``latest/`` that has
-no byte-identical copy in a stage archive — so Stage 3/4 finals are only ever
+no byte-identical copy in a stage archive - so Stage 3/4 finals are only ever
 read, never modified.
 
 Usage:
@@ -95,7 +95,7 @@ def _sha1(path: pathlib.Path) -> str:
 
 
 def _clean_latest() -> None:
-    """Remove files from ``results/latest/`` so the Stage 5 archive stays pure —
+    """Remove files from ``results/latest/`` so the Stage 5 archive stays pure -
     but only files whose byte-identical copy exists in *some* stage archive
     (stage3/stage4/stage5 final), so nothing unarchived is ever deleted."""
     latest = C.RESULTS_LATEST_DIR
@@ -190,7 +190,7 @@ def _write_stage3_check(stage3_rows, stage5_rows, path: pathlib.Path) -> dict:
               "Stage 3 row (was the archived Stage 3 run the full grid?)")
     if stats["n_chunks_mismatch"]:
         print(f"[stage5] WARN: {stats['n_chunks_mismatch']} config(s) produced a "
-              "different chunk count than Stage 3 — chunking is NOT identical, "
+              "different chunk count than Stage 3 - chunking is NOT identical, "
               "do not trust this run.")
     d = stats["max_abs_recall_delta"]
     if stats["unmatched"] == 0 and stats["n_chunks_mismatch"] == 0 and d == 0.0:
@@ -198,11 +198,11 @@ def _write_stage3_check(stage3_rows, stage5_rows, path: pathlib.Path) -> dict:
               "baseline exactly.")
     elif d <= CHECK_TOLERANCE and stats["n_chunks_mismatch"] == 0:
         print(f"[stage5] check: max |recall delta| vs Stage 3 = {d:.4f} "
-              "(within one question — acceptable, but inspect "
+              "(within one question - acceptable, but inspect "
               f"{STAGE3_CHECK_CSV} before archiving).")
     else:
         print(f"[stage5] WARN: max |recall delta| vs Stage 3 = {d:.4f} exceeds "
-              f"{CHECK_TOLERANCE} — the bge arm does not reproduce the baseline. "
+              f"{CHECK_TOLERANCE} - the bge arm does not reproduce the baseline. "
               "Inspect before archiving.")
     return stats
 
@@ -249,7 +249,7 @@ def _write_summary(stage3_dir: pathlib.Path, out_dir: pathlib.Path,
                 recalls = " ".join(
                     f"R@{k}={cfg[f'recall@{k}']:.4f}" for k in sorted(C.RECALL_KS))
                 lines.append(f"- {name}: `{cfg['method']}`, "
-                             f"`{config_label(cfg)}` — {recalls}")
+                             f"`{config_label(cfg)}` - {recalls}")
     path = out_dir / STAGE5_SUMMARY_MD
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"[stage5] wrote {path}")

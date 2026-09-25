@@ -37,7 +37,7 @@ BENCH_SUBDIR = pathlib.Path("data/nq/large_n1000")
 def _ascii_safe_data_root(data_root: pathlib.Path,
                           tmp: pathlib.Path) -> pathlib.Path:
     """FAISS reads indices through a C++ ``const char*``, which on Windows
-    cannot open a path containing non-ASCII characters — and a localised Drive
+    cannot open a path containing non-ASCII characters - and a localised Drive
     mount produces exactly that. Python-side loads (JSONL, safetensors) handle
     Unicode fine, so only the bench subtree needs relocating; staging it under an
     ASCII temp dir keeps the smoke test usable without remounting anything.
@@ -50,7 +50,7 @@ def _ascii_safe_data_root(data_root: pathlib.Path,
         raise SystemExit(f"[smoke] bench dir not found: {src}")
     dest_root = tmp / "assets"
     dest = dest_root / BENCH_SUBDIR
-    print(f"[smoke] non-ASCII data root detected — staging the bench to an "
+    print(f"[smoke] non-ASCII data root detected - staging the bench to an "
           f"ASCII path so FAISS can read it\n[smoke]   {src}\n[smoke]   -> {dest}")
     shutil.copytree(src, dest)
     mb = sum(p.stat().st_size for p in dest.rglob("*") if p.is_file()) / 1024 / 1024
@@ -91,7 +91,7 @@ def main() -> None:
                   f"(archive: {n_exp} / {avg_exp}) {'OK' if ok else 'MISMATCH'}")
             if not ok:
                 raise SystemExit(f"[smoke] {method} index does not match the "
-                                 "Stage 6 archive — wrong or rebuilt assets")
+                                 "Stage 6 archive - wrong or rebuilt assets")
 
         q = app.questions[args.question_index]
         gold = tuple(q.get("doc_titles") or ()) or (q.get("doc_title"),)

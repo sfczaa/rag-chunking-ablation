@@ -1,4 +1,4 @@
-"""Stage 6 — larger-scale robustness evaluation.
+"""Stage 6 - larger-scale robustness evaluation.
 
 Re-runs the Stage 3/5 protocol at a larger corpus scale (``N_NQ_DOCS_LARGE``,
 ~1000 docs/questions) to test whether the Stage 1-5 *directions* replicate.
@@ -8,13 +8,13 @@ boundary models/weights, same BGE dense retriever, same off-the-shelf reranker
 
 Per chunking config:
 
-* ``bge``      — dense-only, on every config of the full 30-config grid;
-* ``rerank20`` — BGE top-20 reordered by the cross-encoder, only on the
+* ``bge``      - dense-only, on every config of the full 30-config grid;
+* ``rerank20`` - BGE top-20 reordered by the cross-encoder, only on the
                  ``C.STAGE6_RERANK_CONFIGS`` subset (small-chunk + size-15
-                 configs — enough to test the Stage 5 direction claims).
+                 configs - enough to test the Stage 5 direction claims).
 
 Because a large run can outlast a Colab free-tier session, :func:`run_stage6` is
-**resume-safe**: every finished config is appended to a JSONL checkpoint, and
+resume-safe: every finished config is appended to a JSONL checkpoint, and
 a restarted run skips finished configs (boundary probabilities are recomputed
 only for the model types that still have pending configs).
 
@@ -47,7 +47,7 @@ def rerank_depth() -> int:
     depths = rerank_depths()
     if len(depths) != 1:
         raise ValueError(
-            f"Stage 6 expects exactly one rerank depth, got {depths} — "
+            f"Stage 6 expects exactly one rerank depth, got {depths} - "
             "set RERANK_DEPTHS=(20,) (rerank50 is out of scope)")
     return depths[0]
 
@@ -193,7 +193,7 @@ def run_stage6(
               "configs already in the checkpoint")
 
     # Boundary probabilities only for model types that still have pending
-    # configs — a resumed run with only fixed configs left skips this entirely.
+    # configs - a resumed run with only fixed configs left skips this entirely.
     needed = {m for m, _, _ in remaining if m in ("bilstm", "transformer")}
     models = {}
     for mtype, model in (("bilstm", bilstm), ("transformer", transformer_model)):
@@ -291,7 +291,7 @@ def matched_summary(rows: list[dict]) -> list[dict]:
 
 
 # --------------------------------------------------------------------------- #
-# Direction checks — do the Stage 1-5 conclusions replicate at large N?
+# Direction checks - do the Stage 1-5 conclusions replicate at large N?
 # --------------------------------------------------------------------------- #
 def _nominal_size(row: dict) -> int:
     return (row["fixed_size"] if row["method"] == "fixed"

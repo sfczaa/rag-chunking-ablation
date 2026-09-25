@@ -1,4 +1,4 @@
-"""rag_chunk — shared logic for the semantic-chunking RAG project.
+"""rag_chunk - shared logic for the semantic-chunking RAG project.
 
 Submodules:
   wiki_data   Phase 1  Wikipedia -> (sentences, labels)

@@ -1,4 +1,4 @@
-"""Phase 4 — chunk NQ docs (BiLSTM + fixed-size) and build both FAISS indices.
+"""Phase 4 - chunk NQ docs (BiLSTM + fixed-size) and build both FAISS indices.
 Usage:  python scripts/4_build_index.py
 """
 

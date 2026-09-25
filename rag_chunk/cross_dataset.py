@@ -1,4 +1,4 @@
-"""Stage 7 — TriviaQA ``rc.wikipedia`` corpus (cross-dataset robustness check).
+"""Stage 7 - TriviaQA ``rc.wikipedia`` corpus (cross-dataset robustness check).
 
 Mirrors the ``nq_data`` interface: :func:`prepare_trivia` returns
 ``(docs, questions)`` where each doc is ``{"id", "title", "sentences"}`` and
@@ -9,13 +9,13 @@ stays the first of them, so code written against the NQ schema keeps working.
 Gold-document definition (doc-constrained recall)
 -------------------------------------------------
 TriviaQA's ``entity_pages`` are full Wikipedia pages about entities in the
-question — distant supervision, not human-annotated support (weaker than NQ's
+question - distant supervision, not human-annotated support (weaker than NQ's
 gold docs; every report of Stage 7 numbers must say so). The loader:
 
-1. splits each entity page into sentences (>= 2 sentences to be usable —
+1. splits each entity page into sentences (>= 2 sentences to be usable -
    same rule as the NQ loader);
-2. normalizes the answer candidates — ``answer.value`` first, then
-   ``answer.aliases`` in dataset order — with the *same* ``normalize_text``
+2. normalizes the answer candidates - ``answer.value`` first, then
+   ``answer.aliases`` in dataset order - with the *same* ``normalize_text``
    the metric uses;
 3. keeps the first candidate that appears as a substring of some page's
    sentence-joined normalized text. That candidate becomes the question's
@@ -23,8 +23,8 @@ gold docs; every report of Stage 7 numbers must say so). The loader:
    the gold set is every page containing it;
 4. drops the question when no candidate appears anywhere (counted, reported).
 
-The candidate is checked against the *sentence-joined* text — exactly what
-chunks are built from — so the NQ answer-matching invariant holds: a doc-constrained
+The candidate is checked against the *sentence-joined* text - exactly what
+chunks are built from - so the NQ answer-matching invariant holds: a doc-constrained
 miss means chunking split the answer span or retrieval missed the chunk.
 
 Corpus = every usable entity page of every kept question, gold or not (a
@@ -32,7 +32,7 @@ non-gold page of a kept question is a natural distractor), deduplicated by
 title.
 
 Comparability guard: :func:`prepare_trivia` aborts if the median corpus
-document is shorter than twice the largest grid chunk size — the
+document is shorter than twice the largest grid chunk size - the
 degenerate-sweep trap that disqualified raw HotpotQA paragraphs (see
 ``docs/stage7_cross_dataset.md``).
 
@@ -112,7 +112,7 @@ def _entity_pages(row) -> list[tuple[str, str]]:
 
 
 def _answer_candidates(row) -> list[str]:
-    """``answer.value`` first, then aliases in dataset order, de-duplicated —
+    """``answer.value`` first, then aliases in dataset order, de-duplicated -
     a fixed order so the kept answer string is deterministic."""
     ans = row.get("answer") or {}
     cands: list[str] = []
@@ -143,7 +143,7 @@ def prepare_trivia(n_questions: int | None = None, force: bool = False):
                   f"{len(questions)} questions")
             return docs, questions
     if not force and _docs_path(n_questions).exists() and not meta_ok:
-        print("[trivia] cached corpus was built with different settings — "
+        print("[trivia] cached corpus was built with different settings - "
               "rebuilding")
 
     ds = _load_stream()
@@ -208,7 +208,7 @@ def prepare_trivia(n_questions: int | None = None, force: bool = False):
         raise RuntimeError(
             f"TriviaQA yielded 0 usable questions after scanning "
             f"{stats['scanned']} rows ({n_err} schema errors). The feature "
-            "layout may differ from what cross_dataset.py expects — inspect "
+            "layout may differ from what cross_dataset.py expects - inspect "
             "one row with `next(iter(_load_stream()))` and adjust the "
             "accessors.")
 
@@ -224,7 +224,7 @@ def prepare_trivia(n_questions: int | None = None, force: bool = False):
         raise SystemExit(
             f"[trivia] median document length is {median_len} sentences "
             f"(< {guard} = 2x the largest grid chunk size). The chunk-size "
-            "sweep would degenerate on this corpus — pick another dataset "
+            "sweep would degenerate on this corpus - pick another dataset "
             "instead of running an incomparable sweep.")
 
     docs_list = list(docs.values())

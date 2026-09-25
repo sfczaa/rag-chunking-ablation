@@ -26,8 +26,8 @@ MiniLM (`EMBED_DIM = 384`).
   each sentence vector to unit per-component variance before PE is added, so the
   topic-change signal survives independent of the embedder's output magnitude.
 - Pairwise boundary head. Each boundary's logit is read from a richer view of
-  the two adjacent encoded states - `[h_i ; h_{i+1} ; |h_i − h_{i+1}| ; h_i · h_{i+1}]`
-  -> `Linear(4d → 1)`. The absolute-difference and element-wise product give the
+  the two adjacent encoded states - `[h_i ; h_{i+1} ; |h_i - h_{i+1}| ; h_i * h_{i+1}]`
+  -> `Linear(4d -> 1)`. The absolute-difference and element-wise product give the
   classifier an explicit *dissimilarity* signal (the natural cue for a topic
   change) rather than asking a plain `concat` to recover it. *(This changes the
   saved weight shape, so retrain the Transformer before sweeping - see below.)*
@@ -79,7 +79,7 @@ Phase 7 training now calibrates the threshold automatically (transformer only):
 
 1. collect per-boundary probabilities over the validation split (one forward
    pass per article),
-2. sweep thresholds `0.01 … 0.99` and pick the one with the max boundary F1
+2. sweep thresholds `0.01 ... 0.99` and pick the one with the max boundary F1
    (ties -> higher threshold),
 3. re-report the held-out test F1 at that threshold and stash it in
    `C.TRANSFORMER_BOUNDARY_THRESHOLD`,

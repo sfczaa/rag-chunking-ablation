@@ -161,7 +161,7 @@ def _render_side(title: str, avg_size: float, ranked: list[tuple[int, dict]],
                  answer: str | None, gold_docs: tuple, arm: str) -> str:
     parts = [f"<h3 style='margin:4px 0'>{html.escape(title)}</h3>",
              f"<div class='demo-doc'>avg chunk size "
-             f"{avg_size:.1f} sentences · top-{len(ranked)} of the shared "
+             f"{avg_size:.1f} sentences | top-{len(ranked)} of the shared "
              f"BGE top-{DEPTH} pool</div>"]
     for shown_rank, (dense_rank, chunk) in enumerate(ranked, 1):
         hit = bool(answer) and is_hit(chunk, answer, gold_docs)
@@ -173,7 +173,7 @@ def _render_side(title: str, avg_size: float, ranked: list[tuple[int, dict]],
         move = ""
         if arm != ARM_BGE:
             arrow = ("=" if dense_rank + 1 == shown_rank else
-                     f"dense&nbsp;#{dense_rank + 1}&nbsp;→&nbsp;#{shown_rank}")
+                     f"dense&nbsp;#{dense_rank + 1}&nbsp;->&nbsp;#{shown_rank}")
             move = f"<span class='demo-move'>{arrow}</span>"
         parts.append(
             f"<div class='demo-card{' hit' if hit else ''}'>"
@@ -202,14 +202,14 @@ def build_app(docs, questions, indices, scorers):
         free_text = (free_text or "").strip()
         if free_text:
             qtext, answer, gold_docs = free_text, None, ()
-            meta = ("<i>Free-text question — no gold answer/document known, "
+            meta = ("<i>Free-text question - no gold answer/document known, "
                     "so nothing is highlighted.</i>")
         elif bench_label in by_label:
             q = by_label[bench_label]
             qtext, answer = q["question"], q["answer"]
             gold_docs = (tuple(q.get("doc_titles") or ())
                          or (q.get("doc_title"),))
-            meta = (f"<b>Answer:</b> {html.escape(answer)} &nbsp;·&nbsp; "
+            meta = (f"<b>Answer:</b> {html.escape(answer)} &nbsp;|&nbsp; "
                     f"<b>Gold doc:</b> "
                     f"{html.escape(', '.join(map(str, gold_docs)))}")
         else:
@@ -234,8 +234,8 @@ def build_app(docs, questions, indices, scorers):
                                       top_with_dense_ranks(pool, order,
                                                            TOP_SHOW),
                                       answer, gold_docs, arm))
-        meta += (f" &nbsp;·&nbsp; <span class='demo-doc'>"
-                 f"{ARM_LABELS[arm]} · {' / '.join(timing)}</span>")
+        meta += (f" &nbsp;|&nbsp; <span class='demo-doc'>"
+                 f"{ARM_LABELS[arm]} | {' / '.join(timing)}</span>")
         return meta, sides[0], sides[1]
 
     with gr.Blocks(title="RAG chunking demo") as app:
@@ -286,7 +286,7 @@ def main() -> None:
     try:
         import gradio  # noqa: F401
     except ImportError:
-        raise SystemExit("[demo] gradio is not installed — "
+        raise SystemExit("[demo] gradio is not installed - "
                          "pip install gradio")
 
     # Same corpus redirect as Stage 6/8: reuse the archived bench cache.
@@ -309,7 +309,7 @@ def main() -> None:
     except ImportError:
         device = None
     if device != "cuda":
-        print(f"[demo] WARN: no GPU — reranking {2 * DEPTH} pairs/question "
+        print(f"[demo] WARN: no GPU - reranking {2 * DEPTH} pairs/question "
               "runs on CPU; the bge arm does not rerank")
 
     max_len = int(C.RERANK_MAX_LENGTH)
@@ -329,7 +329,7 @@ def main() -> None:
                                                max_length=max_len,
                                                device=device))
     else:
-        print(f"[demo] WARN: no fine-tuned reranker at {ft_dir} — "
+        print(f"[demo] WARN: no fine-tuned reranker at {ft_dir} - "
               "the rerank20_ft arm is hidden")
 
     app = build_app(docs, questions, indices, scorers)

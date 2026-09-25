@@ -3,7 +3,7 @@
 Re-runs the Stage 3/5 protocol at ~1000 NQ docs/questions (``N_NQ_DOCS_LARGE``)
 to test whether the Stage 1-5 conclusions replicate at larger N. Nothing else
 changes: same dataset source, same chunking grids, same boundary models and
-weights, same BGE dense retriever, same off-the-shelf reranker (top-20 only —
+weights, same BGE dense retriever, same off-the-shelf reranker (top-20 only -
 no rerank50, no fine-tuning).
 
 Two modes:
@@ -115,7 +115,7 @@ def _clean_latest() -> None:
     """Remove archived files from ``results/latest/`` so the Stage 6 archive
     stays pure. Only files with a byte-identical copy in some stage archive are
     deleted, and the ``stage6_*`` working files (checkpoints + outputs of an
-    in-progress Stage 6) are always left alone — resume depends on them."""
+    in-progress Stage 6) are always left alone - resume depends on them."""
     latest = C.RESULTS_LATEST_DIR
     if not latest.exists():
         return
@@ -207,19 +207,19 @@ def _write_stage5_check(stage5_rows, stage6_rows, path: pathlib.Path) -> dict:
               "Stage 5 row (was the archived Stage 5 run the full grid?)")
     if stats["n_chunks_mismatch"]:
         print(f"[stage6] WARN: {stats['n_chunks_mismatch']} config(s) produced "
-              "a different chunk count than Stage 5 — chunking is NOT "
+              "a different chunk count than Stage 5 - chunking is NOT "
               "identical, do not trust this run.")
     d = stats["max_abs_recall_delta"]
     if stats["unmatched"] == 0 and stats["n_chunks_mismatch"] == 0 and d == 0.0:
         print("[stage6] check OK: Stage 6 reproduces the archived Stage 5 rows "
-              "exactly — proceed to the large run.")
+              "exactly - proceed to the large run.")
     elif d <= CHECK_TOLERANCE and stats["n_chunks_mismatch"] == 0:
         print(f"[stage6] check: max |recall delta| vs Stage 5 = {d:.4f} "
-              "(within one question — acceptable, but inspect "
+              "(within one question - acceptable, but inspect "
               f"{STAGE6_CHECK_CSV} before the large run).")
     else:
         print(f"[stage6] WARN: max |recall delta| vs Stage 5 = {d:.4f} exceeds "
-              f"{CHECK_TOLERANCE} — Stage 6 does not reproduce the baseline. "
+              f"{CHECK_TOLERANCE} - Stage 6 does not reproduce the baseline. "
               "Fix this before the large run.")
     return stats
 
@@ -263,7 +263,7 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
     if matched:
         lines += [f"## {arm} vs bge on the selected configs", ""]
         header = "| config | pool_recall@%d |" % rerank_depth()
-        header += "".join(f" ΔR@{k} |" for k in ks)
+        header += "".join(f" delta R@{k} |" for k in ks)
         lines += [header, "|" + "---|" * (2 + len(ks))]
         for m in matched:
             cells = f"| {m['method']} {m['chunk_config']} " \

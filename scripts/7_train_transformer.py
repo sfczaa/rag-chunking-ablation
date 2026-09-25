@@ -1,4 +1,4 @@
-"""Phase 7 (Stage 2) — train the Transformer boundary detector.
+"""Phase 7 (Stage 2) - train the Transformer boundary detector.
 
 Trains a 2-layer Transformer boundary model on the SAME cached MiniLM sentence
 embeddings + Wikipedia section labels used for the BiLSTM, so no Phase 1/2 rerun

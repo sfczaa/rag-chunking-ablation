@@ -20,7 +20,7 @@ revisions in `space/demo_settings.py`.
 deploy/
   space/            payload unique to the Space
     app.py            Gradio entry point (ZeroGPU-aware)
-    requirements.txt  torch deliberately omitted — the ZeroGPU image supplies it
+    requirements.txt  torch deliberately omitted - the ZeroGPU image supplies it
     README.md         Space card (YAML frontmatter pins the Gradio SDK version)
   create_space.py   assemble + create + push the Space
   smoke_space.py    local CPU test of the exact payload

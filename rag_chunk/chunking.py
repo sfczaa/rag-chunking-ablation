@@ -36,7 +36,7 @@ def _strip_redundant_tail(chunks: list[list[str]], overlap: int) -> list[list[st
     sentences (e.g. size=10, overlap=1 on a 10-sentence doc -> a phantom
     1-sentence chunk). Such a chunk sits entirely inside its predecessor, so it
     adds a near-duplicate vector and quietly deflates ``avg_chunk_size`` /
-    inflates ``n_chunks`` — both inputs to the sweep's fair ranking. Remove it.
+    inflates ``n_chunks`` - both inputs to the sweep's fair ranking. Remove it.
     """
     if overlap > 0 and len(chunks) >= 2 and len(chunks[-1]) <= overlap:
         chunks = chunks[:-1]
@@ -176,7 +176,7 @@ def bilstm_chunks(
     threshold: float | None = None,
 ) -> list[list[str]]:
     """Chunk a document using the trained BiLSTM boundary detector (threshold
-    policy — the original Phase 4/5 behaviour).
+    policy - the original Phase 4/5 behaviour).
 
     ``threshold`` defaults to the *current* ``C.BOUNDARY_THRESHOLD`` (read at
     call time, so ``C.apply(...)`` overrides take effect).
@@ -203,8 +203,8 @@ def chunks_from_probs(
     """Turn *precomputed* boundary probabilities into chunks under ``policy``.
 
     Split out from :func:`learned_chunks` so the sweep can run the model forward
-    **once** per document (see :func:`predict_boundary_probs`) and then re-chunk
-    it under many size/overlap configs cheaply — pure-Python slicing, no
+    once per document (see :func:`predict_boundary_probs`) and then re-chunk
+    it under many size/overlap configs cheaply - pure-Python slicing, no
     re-encoding.
 
     * ``"threshold"`` -> :func:`probs_to_constrained_chunks` (size-clamped

@@ -1,4 +1,4 @@
-"""Phase 5 — evaluate Recall@k + Boundary F1, write comparison table & figure.
+"""Phase 5 - evaluate Recall@k + Boundary F1, write comparison table & figure.
 Usage:  python scripts/5_evaluate.py
 """
 

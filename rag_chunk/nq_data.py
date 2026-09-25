@@ -147,7 +147,7 @@ def prepare_nq(n_docs: int | None = None, force: bool = False):
             print(f"[nq] cached: {len(docs)} docs, {len(questions)} questions")
             return docs, questions
     if not force and _docs_path().exists() and not meta_ok:
-        print("[nq] cached corpus was built with different settings — rebuilding")
+        print("[nq] cached corpus was built with different settings - rebuilding")
 
     ds = _load_nq_stream()
     docs: dict[str, dict] = {}
@@ -187,7 +187,7 @@ def prepare_nq(n_docs: int | None = None, force: bool = False):
         raise RuntimeError(
             f"NQ yielded 0 usable documents after scanning {n_seen} rows "
             f"({n_err} schema errors). The NQ feature layout may differ from "
-            f"what nq_data.py expects — inspect one row with "
+            f"what nq_data.py expects - inspect one row with "
             f"`next(iter(_load_nq_stream()))` and adjust the accessors."
         )
     docs_list = list(docs.values())

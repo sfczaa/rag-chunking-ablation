@@ -2,12 +2,12 @@
 
 One streaming pass collects the training corpus (STAGE8_N_TRAIN_DOCS docs +
 their questions) and the dev bench (the NEXT STAGE8_N_DEV_DOCS docs + their
-questions) — disjoint from each other and from every eval bench (which all
+questions) - disjoint from each other and from every eval bench (which all
 use the validation split). The training corpus is then chunked with the
 deployment config (fixed 15/0), each question's BGE top-20 pool is retrieved,
 and (1 positive + STAGE8_NUM_NEGATIVES hard negatives) groups are mined.
 
-Everything caches under data/nq_train/ — the eval caches are never touched,
+Everything caches under data/nq_train/ - the eval caches are never touched,
 and nothing is written to results/latest/ (this is data, not results).
 
 Needs a GPU session for the BGE embedding of ~40k chunks; no boundary models
@@ -57,7 +57,7 @@ def main() -> None:
     if not args.force and rf.groups_path().exists():
         groups = rf.load_groups()
         print(f"[stage8-data] groups already mined: {len(groups)} "
-              f"({rf.groups_path()}) — use --force to re-mine")
+              f"({rf.groups_path()}) - use --force to re-mine")
         return
 
     groups, stats = rf.mine_training_groups(train_docs, train_q)
@@ -68,7 +68,7 @@ def main() -> None:
     print(f"  questions:                {stats['questions']}")
     print(f"  kept groups:              {stats['kept']}")
     print(f"  dropped (no positive):    {stats['dropped_no_positive']} "
-          "(pool ceiling misses — reranking cannot rescue these at eval "
+          "(pool ceiling misses - reranking cannot rescue these at eval "
           "either)")
     print(f"  dropped (few negatives):  {stats['dropped_too_few_negatives']}")
     print(f"  train pool_recall@{depth}:    "

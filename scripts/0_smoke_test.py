@@ -1,4 +1,4 @@
-"""Smoke test — run all 5 phases at tiny scale to validate the pipeline plumbing
+"""Smoke test - run all 5 phases at tiny scale to validate the pipeline plumbing
 in a separate `*_smoke` artifact folder.  Usage:  python scripts/0_smoke_test.py
 """
 

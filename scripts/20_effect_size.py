@@ -141,9 +141,9 @@ def tornado(df: pd.DataFrame, coefs: pd.DataFrame, mde: dict,
     m_eff = abs(c.loc[m_idx, "coef"])
     m_ci = c.loc[m_idx, "se"] * 1.96
 
-    labels = [f"chunk size ({SIZE_LO}→{SIZE_HI} sent.)",
-              "overlap (0→1 sent.)",
-              f"chunk method (max |Δ|,\n{m_idx.split('[')[1][:-1]} vs fixed)"]
+    labels = [f"chunk size ({SIZE_LO}->{SIZE_HI} sent.)",
+              "overlap (0->1 sent.)",
+              f"chunk method (max |delta|,\n{m_idx.split('[')[1][:-1]} vs fixed)"]
     effs = [abs(size_eff), abs(ov_eff), m_eff]
     cis = [size_ci, ov_ci, m_ci]
     colors = ["#1f77b4", "#7f7f7f", "#d62728"]
@@ -237,7 +237,7 @@ def write_report(df: pd.DataFrame, all_coefs: pd.DataFrame,
         f"thresholds. This does not establish method equivalence or rule out "
         f"effects below the detection limit.",
         "",
-        "Per-cell between-method spread (max − min across fixed / bilstm / "
+        "Per-cell between-method spread (max - min across fixed / bilstm / "
         "transformer):",
         "",
         "| size | overlap | fixed | bilstm | transformer | spread |",

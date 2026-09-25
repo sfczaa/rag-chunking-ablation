@@ -2,21 +2,21 @@
 
 Stage 5 concluded that reranking the BGE top-50 is always worse than the top-20:
 the extra candidates added more noise than signal. That was measured with the
-**off-the-shelf** cross-encoder. Stage 8 then showed the off-the-shelf reranker
+off-the-shelf cross-encoder. Stage 8 then showed the off-the-shelf reranker
 is weak here (fine-tuning it bought +0.107 R@1), and the archived pool recalls
-say the deeper pool genuinely holds more answers (Stage 5, n=203:
+say the deeper pool does hold more answers (Stage 5, n=203:
 pool@20 0.9754 -> pool@50 0.9951 at transformer 15/1). So the trade-off may
 invert once the ranker is strong enough to sort 50 candidates.
 
-The experiment is a single controlled question: **at a fixed chunking config,
+The experiment is a single controlled question: at a fixed chunking config,
 does depth 50 beat depth 20 for the fine-tuned reranker, and does it still lose
-for the off-the-shelf one?**
+for the off-the-shelf one?
 
 Score reuse: cross-encoder scores are
 independent per (question, chunk) pair, so the depth-20 arm is exactly the
 depth-50 scores restricted to the first 20 dense candidates. Every depth is
-scored **once** at ``max(depths)`` and the shallower depths are derived by
-slicing — no pair is ever scored twice.
+scored once at ``max(depths)`` and the shallower depths are derived by
+slicing - no pair is ever scored twice.
 
 That also makes the reproduction check free: the derived depth-20 rows must
 match the archived ``stage8/final`` rows exactly, and only then do the depth-50
@@ -54,7 +54,7 @@ CHECK_CSV = "stage9_check_vs_stage8.csv"
 CHECK_TOLERANCE = 0.005
 
 # Default: the deployment config plus the small-chunk config where off-the-shelf
-# reranking helped most in Stage 6 — the two cases the claim is about.
+# reranking helped most in Stage 6 - the two cases the claim is about.
 DEFAULT_CONFIGS = (("fixed", 15, 0), ("fixed", 6, 0))
 
 
@@ -275,12 +275,12 @@ def _write_stage8_check(stage8_rows, rows, depths, path) -> bool | None:
         print(f"[stage9] WARN: {unmatched} row(s) had no Stage 8 counterpart")
     if ok and worst == 0.0:
         print("[stage9] check OK: depth-20 arms reproduce stage8/final exactly "
-              "— the depth-50 rows are comparable.")
+              "- the depth-50 rows are comparable.")
     elif ok:
         print(f"[stage9] check: max |delta| vs Stage 8 = {worst:.4f} (within "
               "one question).")
     else:
-        print(f"[stage9] WARN: check FAILED (max |delta| = {worst:.4f}) — do "
+        print(f"[stage9] WARN: check FAILED (max |delta| = {worst:.4f}) - do "
               "NOT trust the depth-50 rows until this is explained.")
     return ok
 
@@ -375,7 +375,7 @@ def _write_matched_csv(table, depths, path) -> None:
 
 
 def _plot(matched, depths, se2, path) -> None:
-    """Deep-minus-shallow ΔR@1 per config for each reranker, against ±2 SE."""
+    """Deep-minus-shallow delta R@1 per config for each reranker, against +/-2 SE."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -391,14 +391,14 @@ def _plot(matched, depths, se2, path) -> None:
                                     (+w / 2, "ft", "#2ca02c", "fine-tuned")):
         vals = [m.get(f"{kind}_deep_minus_shallow@{k1}") or 0.0 for m in matched]
         bars = ax.bar(x + off, vals, w, color=colour,
-                      label=f"{name}: depth {deep} − depth {shallow}")
+                      label=f"{name}: depth {deep} - depth {shallow}")
         ax.bar_label(bars, fmt="%+.3f", padding=2, fontsize=8)
     ax.axhline(0, color="#333", lw=0.8)
     for y in (se2, -se2):
         ax.axhline(y, color="#888", ls="--", lw=1,
-                   label=f"±2 SE" if y > 0 else None)
+                   label=f"+/-2 SE" if y > 0 else None)
     ax.set_xticks(x, labels, fontsize=8)
-    ax.set_ylabel(f"Δ Recall@{k1} (deeper pool − shallower pool)")
+    ax.set_ylabel(f"delta Recall@{k1} (deeper pool - shallower pool)")
     ax.set_title("Does a stronger reranker make the deeper pool pay off?")
     ax.legend(loc="best", fontsize=9)
     ax.grid(True, axis="y", alpha=0.3)
@@ -414,43 +414,43 @@ def _write_summary(out_dir, matched, depths, se2, check_ok, n_docs,
     k1 = min(ks)
     shallow, deep = min(depths), max(depths)
     lines = [
-        f"# Stage 9 — rerank depth revisited with a fine-tuned reranker",
+        f"# Stage 9 - rerank depth revisited with a fine-tuned reranker",
         "",]
     if smoke:
-        lines += ["> **SMOKE RUN — not a result.** Only the first "
+        lines += ["> SMOKE RUN - not a result. Only the first "
                   f"{n_questions} questions were scored and the Stage 8 "
                   "reproduction check was skipped. Do not archive or cite.", ""]
     lines += [
-        f"- Eval set: NQ bench, **{n_docs} docs / {n_questions} questions** "
+        f"- Eval set: NQ bench, {n_docs} docs / {n_questions} questions "
         "(the Stage 6/8 bench).",
         f"- Depths compared: {', '.join(str(d) for d in depths)}. Every depth is "
         f"scored once at depth {deep}; shallower depths are the same scores "
         "restricted to the top-d dense candidates, so no pair is scored twice.",
-        f"- 2 SE at n={n_questions} ≈ **{se2:.4f}**.",
+        f"- 2 SE at n={n_questions} ~ {se2:.4f}.",
     ]
     if check_ok is not None:
         lines.append("- Check vs `stage8/final` (depth-20 arms): "
-                     + ("**OK (exact)**" if check_ok else
-                        "**FAILED — do not trust the deep rows**"))
+                     + ("OK (exact)" if check_ok else
+                        "FAILED - do not trust the deep rows"))
     lines += [
         "",
         "## Question",
         "",
-        "Stage 5 found reranking the top-50 always lost to the top-20 — but "
-        "that used the **off-the-shelf** cross-encoder. The deeper pool "
+        "Stage 5 found reranking the top-50 always lost to the top-20 - but "
+        "that used the off-the-shelf cross-encoder. The deeper pool "
         "demonstrably holds more answers, so the verdict should depend on how "
         "well the ranker sorts them. Does fine-tuning flip it?",
         "",
         "## Results",
         "",
         f"| config | pool@{shallow} | pool@{deep} | ots@{shallow} | ots@{deep} "
-        f"| **ots Δ** | ft@{shallow} | ft@{deep} | **ft Δ** |",
+        f"| ots delta | ft@{shallow} | ft@{deep} | ft delta |",
         "|" + "---|" * 9,
     ]
     for m in matched:
         def g(key, fmt="{:.4f}"):
             v = m.get(key)
-            return "—" if v is None else fmt.format(v)
+            return "-" if v is None else fmt.format(v)
         lines.append(
             f"| {m['method']} {m['chunk_config']} "
             f"| {g(f'pool_recall@{shallow}')} | {g(f'pool_recall@{deep}')} "
@@ -460,11 +460,11 @@ def _write_summary(out_dir, matched, depths, se2, check_ok, n_docs,
             f"| {g(f'ft_deep_minus_shallow@{k1}', '{:+.4f}')} |")
     lines += [
         "",
-        f"All figures are doc-constrained Recall@{k1}. A Δ above "
-        f"+{se2:.4f} (2 SE) exceeds the positive noise band; below −{se2:.4f} "
+        f"All figures are doc-constrained Recall@{k1}. A delta above "
+        f"+{se2:.4f} (2 SE) exceeds the positive noise band; below -{se2:.4f} "
         "exceeds the negative band. Differences within the band are unresolved.",
         "",
-        "> **Runtime trade-off.** Deeper pools cost ~2.5x the reranking time for "
+        "> Runtime trade-off. Deeper pools cost ~2.5x the reranking time for "
         "at most the pool-ceiling difference. The measured recall difference "
         "and runtime describe the trade-off for these configurations.",
         "",
@@ -517,7 +517,7 @@ def main() -> None:
 
     stage8_csv = _stage_final_dir("stage8") / C.STAGE8_RESULTS_CSV
     if not stage8_csv.exists():
-        raise SystemExit(f"[stage9] missing {stage8_csv} — the depth-20 arms "
+        raise SystemExit(f"[stage9] missing {stage8_csv} - the depth-20 arms "
                          "are checked against the Stage 8 archive")
     stage8_rows = _read_csv(stage8_csv)
 
@@ -536,7 +536,7 @@ def main() -> None:
     smoke = args.max_questions is not None
     if smoke:
         questions = questions[:args.max_questions]
-        print(f"[stage9] *** SMOKE MODE: {len(questions)} questions — results "
+        print(f"[stage9] *** SMOKE MODE: {len(questions)} questions - results "
               "are NOT comparable to the archives ***")
     print(f"[stage9] bench: {len(docs)} docs / {len(questions)} questions")
     print(f"[stage9] configs: {configs}")
@@ -549,7 +549,7 @@ def main() -> None:
     except ImportError:
         device = None
     if device != "cuda":
-        print("[stage9] WARN: no GPU — reranking will run on CPU")
+        print("[stage9] WARN: no GPU - reranking will run on CPU")
     max_len = int(C.RERANK_MAX_LENGTH)
 
     def _scorer(model):
@@ -586,8 +586,8 @@ def main() -> None:
     k1 = min(C.RECALL_KS)
     shallow, deep = min(depths), max(depths)
 
-    # Smoke outputs are prefixed so they can never be mistaken for — or
-    # archived as — the real run.
+    # Smoke outputs are prefixed so they can never be mistaken for - or
+    # archived as - the real run.
     def out(name: str) -> pathlib.Path:
         return latest / (f"smoke_{name}" if smoke else name)
 
@@ -613,7 +613,7 @@ def main() -> None:
         print(f"[stage9]   {m['method']} {m['chunk_config']:<26} "
               f"ots {d_ots:+.4f}  ft {d_ft:+.4f}   -> ft: {verdict}")
     if smoke:
-        print("\n[stage9] smoke run complete — pipeline works end to end. "
+        print("\n[stage9] smoke run complete - pipeline works end to end. "
               "Re-run without --max-questions for the real numbers.")
     else:
         print("\n[stage9] complete. Review, then archive:")

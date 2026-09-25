@@ -2,7 +2,7 @@
 
 Status: complete. Run on Colab (T4) 2026-07-25. Stage 8 fine-tuned
 `BAAI/bge-reranker-base` on the NQ train split and measured ft-ots
-ΔR@1 = +0.087...+0.107 *in-domain* (NQ val). Its stated caveat was that no
+delta R@1 = +0.087...+0.107 *in-domain* (NQ val). Its stated caveat was that no
 transfer claim was made. This addendum answers that caveat directly: it re-runs
 the exact Stage 8 final protocol - same 5 configs, same three arms
 (`bge` / off-the-shelf `rerank20` / fine-tuned `rerank20_ft`) sharing one BGE
@@ -11,12 +11,12 @@ rc.wikipedia bench (472 docs / 300 questions) instead of NQ. Only the eval
 dataset changes, so any difference is a transfer effect, not a protocol
 difference. Archived to `artifacts/results/stage8/final/`.
 
-## The one number the `ft − ots` verdict hides
+## The one number the `ft - ots` verdict hides
 
 The script's automatic verdict compares the fine-tuned reranker to the
-off-the-shelf one (`ft − ots`) and, at fixed 15/0, reports
+off-the-shelf one (`ft - ots`) and, at fixed 15/0, reports
 +0.0567 > 2 SE (0.0538) -> "TRANSFERS". That is true but incomplete. The
-comparison also needs `ft − bge` - the fine-tuned reranker versus no
+comparison also needs `ft - bge` - the fine-tuned reranker versus no
 reranking at all (the raw dense order):
 
 | config (300 q) | bge R@1 | ots R@1 | ft R@1 | ft - ots | ft - bge | ots - bge |
@@ -34,22 +34,22 @@ reranker was neutral there, ots - bge ~ +0.001).
 ## Findings
 
 1. The off-the-shelf reranker generalises poorly - it *hurts* on TriviaQA.
-   `ots − bge` is negative at every config (-0.03...-0.07 R@1): reranking the
+   `ots - bge` is negative at every config (-0.03...-0.07 R@1): reranking the
    dense pool with the un-tuned cross-encoder makes the top-1 *worse* than
    plain dense retrieval. (In-domain it was merely neutral.)
 2. Fine-tuning offset the off-the-shelf degradation without a resolved net lift. The
    fine-tuned reranker recovers to parity with the dense baseline
-   (`ft − bge` ~ 0.000-0.004 at size 15, +0.02-0.04 at the extremes), so its
+   (`ft - bge` ~ 0.000-0.004 at size 15, +0.02-0.04 at the extremes), so its
    +0.057 difference from the off-the-shelf reranker mostly offsets its
-   out-of-domain degradation. Contrast in-domain, where `ft − bge` = +0.107.
+   out-of-domain degradation. Contrast in-domain, where `ft - bge` = +0.107.
 3. Direction is consistent across the five tested configs; magnitude is ~half. All 5 configs give a
-   positive `ft − ots` (+0.037...+0.073); 4/5 clear 2 SE (only fixed 15/1 sits
+   positive `ft - ots` (+0.037...+0.073); 4/5 clear 2 SE (only fixed 15/1 sits
    inside the band). The transfer magnitude is about half the in-domain one
    (+0.057 vs +0.107 at fixed 15/0). The repeated signs provide descriptive
    context for the primary config's narrow crossing of 2 SE.
 4. The matched size-15 method differences remain unresolved. Under the
-   fine-tuned reranker, the `ft − ots` spread across
-   fixed/bilstm/transformer at size 15/0 is 0.0567-0.0733 (range 0.0166) ≪ 2 SE.
+   fine-tuned reranker, the `ft - ots` spread across
+   fixed/bilstm/transformer at size 15/0 is 0.0567-0.0733 (range 0.0166), well below 2 SE.
    This addendum probes reranking rather than establishing method equivalence.
 
 ## Limitations

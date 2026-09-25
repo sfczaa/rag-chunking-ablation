@@ -279,7 +279,7 @@ def build_index_for_config(
     probabilities); the sweep passes the latter so the model forward runs once
     per doc rather than once per config.
 
-    By default **nothing is persisted** — the sweep builds these in memory and
+    By default **nothing is persisted** - the sweep builds these in memory and
     discards them so per-config FAISS files never pile up under ``nq/``. Pass
     ``save_prefix`` (e.g. ``C.NQ_INDEX_SWEEP_DIR / 'fixed_s10_o1'``) to opt into
     writing ``.faiss``/``.json``.

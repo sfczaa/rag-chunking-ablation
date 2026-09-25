@@ -10,7 +10,7 @@ import config as C
 
 
 def normalize_text(s: str) -> str:
-    """Lower-case + collapse whitespace — used on both chunks and answers so
+    """Lower-case + collapse whitespace - used on both chunks and answers so
     the substring match is robust to tokenisation spacing."""
     return re.sub(r"\s+", " ", s).strip().lower()
 
@@ -19,12 +19,12 @@ def recall_at_k(index, questions: list[dict], ks=C.RECALL_KS) -> dict[str, dict]
     """Recall@k under two definitions, returned as
     ``{"doc_constrained": {k: r}, "unconstrained": {k: r}}``.
 
-    * ``unconstrained`` — the gold answer string appears in *any* top-k chunk.
+    * ``unconstrained`` - the gold answer string appears in *any* top-k chunk.
       This over-counts: a short answer (a year, a common name, a place) can match
       a chunk from an unrelated document, inflating recall and doing so unevenly
       between the two chunking methods.
-    * ``doc_constrained`` — the answer appears in a top-k chunk **that came from
-      the question's own gold document**. This is the credible measure of whether
+    * ``doc_constrained`` - the answer appears in a top-k chunk that came from
+      the question's own gold document. This is the credible measure of whether
       better chunking actually surfaces the answer-bearing passage, so it is the
       headline number; ``unconstrained`` is kept only for reference.
     """
@@ -42,7 +42,7 @@ def recall_from_retrieved(retrieved: list[list[dict]], questions: list[dict],
     """Recall@k from already-retrieved per-question chunk lists.
 
     ``retrieved[i]`` is the ranked list of ``{'text', 'doc_id'}`` dicts for
-    ``questions[i]``. Same definitions as :func:`recall_at_k` — factored out so
+    ``questions[i]``. Same definitions as :func:`recall_at_k` - factored out so
     the Stage 4 BM25/RRF retrievers are scored by the identical code path.
     """
     empty = {k: 0.0 for k in ks}
@@ -53,7 +53,7 @@ def recall_from_retrieved(retrieved: list[list[dict]], questions: list[dict],
     for q, chunks in zip(questions, retrieved):
         ans = normalize_text(q["answer"])
         # Gold is one document (NQ: "doc_title") or several ("doc_titles",
-        # e.g. Stage 7 TriviaQA entity pages) — a hit must come from one of
+        # e.g. Stage 7 TriviaQA entity pages) - a hit must come from one of
         # them. The single-title fallback keeps the NQ behaviour unchanged.
         gold_docs = tuple(q.get("doc_titles") or ()) or (q.get("doc_title"),)
         norm = [(normalize_text(c["text"]), c["doc_id"]) for c in chunks]
@@ -117,7 +117,7 @@ def boundary_f1(model, threshold: float | None = None, split: str = "test") -> d
 # --------------------------------------------------------------------------- #
 def _prf(pred_pos, labels) -> tuple:
     """``(precision, recall, f1, tp, fp, fn)`` from a boolean prediction mask and
-    0/1 labels — same definitions as :func:`boundary_f1`."""
+    0/1 labels - same definitions as :func:`boundary_f1`."""
     pred_pos = np.asarray(pred_pos, dtype=bool)
     labels = np.asarray(labels, dtype=int)
     tp = int((pred_pos & (labels == 1)).sum())
@@ -132,7 +132,7 @@ def _prf(pred_pos, labels) -> tuple:
 def collect_boundary_scores(model, split: str = "val"):
     """Concatenate per-boundary ``(probs, labels)`` over a split.
 
-    Runs the model **once per document** (one forward pass), so the threshold
+    Runs the model once per document (one forward pass), so the threshold
     sweep and the probability diagnostics share a single pass instead of
     re-encoding per threshold. Returns two equal-length 1-D numpy arrays.
     """
@@ -164,7 +164,7 @@ def boundary_f1_from_scores(probs, labels, threshold: float) -> dict:
 
     Same definition as :func:`boundary_f1` (strict ``probs > threshold``, to match
     ``model.predict_boundaries``) but reuses already-collected scores instead of a
-    second forward pass — so a threshold picked on val reproduces that exact F1.
+    second forward pass - so a threshold picked on val reproduces that exact F1.
     """
     probs = np.asarray(probs, dtype="float32")
     prec, rec, f1, tp, fp, fn = _prf(probs > float(threshold), labels)
@@ -193,7 +193,7 @@ def boundary_threshold_sweep(probs, labels, thresholds=None) -> list[dict]:
 
 
 def best_threshold(sweep_rows: list[dict]) -> dict:
-    """Sweep row with the highest F1; ties broken toward the **higher** threshold
+    """Sweep row with the highest F1; ties broken toward the higher threshold
     (fewer, more precise cuts). ``{}`` for an empty sweep."""
     if not sweep_rows:
         return {}

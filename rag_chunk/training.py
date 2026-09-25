@@ -1,4 +1,4 @@
-"""Phase 3 — train the BiLSTM boundary detector.
+"""Phase 3 - train the BiLSTM boundary detector.
 
 One article per optimisation step (variable length, no padding).  The loss is
 a weighted BCE (``pos_weight = #neg/#pos`` from the training split, ~15) to
@@ -160,7 +160,7 @@ def train_model(model_type: str = "bilstm", max_epochs: int | None = None) -> di
 
     if model_type == "transformer":
         # The shared BOUNDARY_THRESHOLD (0.8) is BiLSTM-tuned and mis-scores the
-        # Transformer's differently-ranged probabilities — at 0.8 it can read F1=0
+        # Transformer's differently-ranged probabilities - at 0.8 it can read F1=0
         # even when the learned boundaries are fine. Calibrate the threshold on the
         # validation split (max F1), report test F1 there, and write diagnostics.
         # This is the Boundary F1 *diagnostic* only; the retrieval sweep uses the

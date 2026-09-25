@@ -67,7 +67,7 @@ working files. Stage 3/4/5 finals are read-only.
 #    every row must reproduce the archived Stage 5 rows exactly.
 python scripts/12_large_eval.py --check
 
-# 2. the large eval (~1000 docs; resume-safe — re-run the same command
+# 2. the large eval (~1000 docs; resume-safe - re-run the same command
 #    after an interruption).
 python scripts/12_large_eval.py
 
@@ -95,8 +95,8 @@ built with different retrieval/reranker models.
 | 1a | size > method | Pearson r(avg chunk size, R@5) >= 0.5 over the 30 bge configs |
 | 1b | size > method | R@5 size effect (largest vs smallest size) > mean method spread at matched (size, overlap) |
 | 2 | BGE-only remains strong | best bge R@5 >= 0.80 (loose heuristic - the corpus is ~5x larger, so some absolute drop vs 0.921 is expected) |
-| 3 | rerank20 helps mainly at small chunks | ΔR@1 at fixed size 6 >= 2 SE and > mean ΔR@1 at the size-15 configs |
-| 4 | rerank20 does not clearly improve the sweet spot | max ΔR@1 over the size-15 configs < 2 SE |
+| 3 | rerank20 helps mainly at small chunks | delta R@1 at fixed size 6 >= 2 SE and > mean delta R@1 at the size-15 configs |
+| 4 | rerank20 does not clearly improve the sweet spot | max delta R@1 over the size-15 configs < 2 SE |
 
 The CSV reports the observed value, the rule and the small-eval reference for
 every claim, so borderline verdicts can be judged from those values rather than
@@ -118,8 +118,8 @@ Written to `artifacts/results/latest/`:
 - `stage6_check_vs_stage5.csv` - from the check-mode run.
 - `stage6_size_vs_recall.png` - bge-only R@5 vs avg chunk size, small vs large
   eval side by side (claim 1 in one glance; `scripts/13_stage6_plots.py`).
-- `stage6_rerank_delta.png` - rerank20-bge ΔR@1 on the 5 matched configs at
-  both scales, with the ±2 SE band (claims 3-4).
+- `stage6_rerank_delta.png` - rerank20-bge delta R@1 on the 5 matched configs at
+  both scales, with the +/-2 SE band (claims 3-4).
 - `stage6_checkpoint_{check,large}.jsonl` - resume checkpoints (kept for
   provenance).
 
@@ -138,17 +138,17 @@ Direction checks - 5/5 replicate:
 | 1a | size > method | Pearson r(size, R@5) = 0.9515 | >= 0.5 | r ~ 0.77 |
 | 1b | size > method | size effect on R@5 = 0.0523 > method spread | size > spread | 0.07 vs <= 0.014 |
 | 2 | BGE-only strong | best bge R@5 = 0.8808 | >= 0.80 | 0.921 |
-| 3 | rerank20 helps small chunks | ΔR@1 @ fixed 6/0 = +0.0359 | >= 2 SE and > size-15 mean | +0.113 |
-| 4 | no gain at size-15 | max size-15 ΔR@1 = +0.0010 | < 2 SE | within 1 SE |
+| 3 | rerank20 helps small chunks | delta R@1 @ fixed 6/0 = +0.0359 | >= 2 SE and > size-15 mean | +0.113 |
+| 4 | no gain at size-15 | max size-15 delta R@1 = +0.0010 | < 2 SE | within 1 SE |
 
 Best bge config (unchanged from Stage 3/5): fixed size 15, overlap 0 -
 R@1 0.6279 / R@3 0.8159 / R@5 0.8808 (avg chunk size 14.6, 19 507 chunks).
 The absolute drop from 0.921 at 200 docs is expected: 5x more distractor
 documents in the index.
 
-rerank20 - bge on the 5 selected configs (ΔR@1 / ΔR@3 / ΔR@5):
+rerank20 - bge on the 5 selected configs (delta R@1 / delta R@3 / delta R@5):
 
-| Config | pool@20 | ΔR@1 | ΔR@3 | ΔR@5 |
+| Config | pool@20 | delta R@1 | delta R@3 | delta R@5 |
 |---|---|---|---|---|
 | fixed 6/0 | 0.9264 | +0.0359 | +0.0174 | +0.0203 |
 | fixed 15/0 | 0.9641 | +0.0010 | 0.0000 | -0.0048 |
@@ -164,7 +164,7 @@ Findings:
 2. The reranker's small-chunk rescue shrinks at scale (+0.113 -> +0.036 R@1
    at fixed 6/0) but stays above 2 SE - real, just smaller when the pool
    ceiling is lower (0.926 vs 0.951 at n=203).
-3. Size-15 deltas are within noise (all within ±0.012 vs 2 SE = 0.031), while the
+3. Size-15 deltas are within noise (all within +/-0.012 vs 2 SE = 0.031), while the
    size-15 pool ceilings remain >= 0.95 - the answer chunk is in the top-20 for
    ~96% of questions but the off-the-shelf cross-encoder cannot rank it first
    any better than BGE already does. That gap (R@1 0.63 vs pool 0.96) is the
