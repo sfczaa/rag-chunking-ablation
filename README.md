@@ -12,6 +12,7 @@ The project compares fixed-size, BiLSTM, and Transformer chunking on Natural Que
 - The retrieval embedder was the main improvement. Switching MiniLM to BGE improved all 30 matched configurations.
 - Hybrid retrieval was not consistently better. BM25/RRF and an off-the-shelf reranker did not beat dense retrieval reliably.
 - Fine-tuning helped in-domain. The fine-tuned reranker improved NQ results; on the tested TriviaQA bench, its result remained approximately equal to dense retrieval.
+- Later changes to the reranker's objective, training length and training-set size (Stages 11 to 14) did not improve on the Stage 8 reranker by the pre-registered 0.02 R@1 threshold.
 
 The detailed claims are backed by archived CSVs and figures in [`artifacts/results/`](artifacts/results).
 
@@ -53,6 +54,7 @@ The stage write-ups include the exact settings, reproduction checks, and negativ
 - [Stage 6 - Larger evaluation](docs/stage6_large_eval.md)
 - [Stage 7 - Cross-dataset evaluation](docs/stage7_cross_dataset.md)
 - [Stage 8 - Reranker fine-tuning](docs/stage8_reranker_finetune.md)
+- [Stages 10 to 14 - Follow-ups to the fine-tuned reranker](docs/stages10_14_summary.md)
 
 ## Repository layout
 
