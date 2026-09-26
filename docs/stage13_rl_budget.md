@@ -2,8 +2,10 @@
 
 Status: pre-registered on 2026-09-16, run on 2026-09-17. Verdict:
 INCONCLUSIVE-BUDGET (the RL arm reached 1769 of the 1977 live groups the budget
-condition asks for). The design criteria and thresholds were fixed before
-any GPU run for this stage.
+condition asks for). The design criteria and thresholds were fixed before any
+GPU run for this stage. Explanatory wording above the Results section was
+revised after the run; the criteria, thresholds and verdict rules are unchanged
+in substance, and the git history keeps every version.
 
 Question: Stage 11 trained the policy-gradient arm and its cross-entropy control
 for the same number of steps, and RL finished behind (dev R@1 RL - CE = -0.0246,
@@ -97,8 +99,8 @@ From Stage 11's dev numbers, RL trails CE by 0.0246 R@1 at one epoch. Stage 12
 showed the CE side gains little from its first epoch on the claim bench
 (+0.0019 against Stage 8). So there are three plausible outcomes, and the design
 distinguishes them: RL catches up once the budget matches, which would make
-Stage 11's result a budget artifact; RL stays behind at both budgets, leaving an objective-related gap under this
-recipe; or both objectives move together. These comparisons assess the tested
+Stage 11's result a budget artifact; RL stays behind at both budgets, leaving
+an objective-related gap under this recipe; or both objectives move together. These comparisons assess the tested
 budgets and do not isolate every possible cause of a difference.
 
 ## Cost

@@ -3,7 +3,9 @@
 Status: run 1 executed on 2026-09-15. NO-GO at the dev gate: the RL arm finished
 behind its cross-entropy control, so the Stage 6 bench was not run. The design,
 thresholds and verdict rules below were fixed before any training or evaluation.
-The results are in "Results (executed)" at the end.
+Explanatory wording above the Results section was revised after the run; the
+criteria, thresholds and verdict rules are unchanged in substance, and the git
+history keeps every version. The results are in "Results (executed)" at the end.
 
 Question: when both start from the same weights and train on the same data for
 the same compute, does a policy-gradient objective on the ranking reward rank

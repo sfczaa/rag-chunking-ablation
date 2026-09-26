@@ -4,7 +4,10 @@ Status: RL run 1 (2026-09-14) failed to optimise. The pre-registered placement
 oracle (2026-09-15) returned HEADROOM, and post-hoc checks suggest that the
 headroom depends on seeing the question. Stage 10 is open pending one decision.
 The thresholds and verdict rules below were fixed before each run and have not
-changed. The results are in "Results (executed)" at the end.
+changed. Explanatory wording above the Results section was revised after the run,
+and criterion 5 was corrected to name R@5 as the gate metric (the reward is
+MRR@10); the git history keeps every version. The results are in "Results
+(executed)" at the end.
 
 Question: so far, chunking method has not mattered at a matched chunk size. Does
 that still hold when the chunker is trained on the retrieval metric itself?
@@ -228,9 +231,9 @@ an MRR@10 reward, the supervised model's choice of where to cut inside a
 +/-4-sentence window is no better than a random choice. This is what the main
 conclusion predicts. The near-zero mean advantage and heavy-tailed gradient
 norms are consistent with noisy policy gradients, but they do not establish
-the cause of the failed optimisation. It does not bound how much the
-best possible cut could gain, because it compares random with supervised and not
-with an optimum. Steps share documents, so the interval is approximate.
+the cause of the failed optimisation. The random-versus-supervised comparison
+does not bound how much the best possible cut could gain, because neither side
+is an optimum. Steps share documents, so the interval is approximate.
 
 ### Oracle run (2026-09-15): HEADROOM, as pre-registered
 
