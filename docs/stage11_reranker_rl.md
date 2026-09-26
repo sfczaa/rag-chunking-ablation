@@ -69,8 +69,8 @@ hard negatives. No evaluation data is used for training:
 
 ## Temperature
 
-Fixed at 1, the model's own score scale, without tuning. The risk was Stage 10's
-failure mode, where scores are so sharp that sampled rankings never differ and no
+Fixed at 1, the model's own score scale, without tuning. A potential failure
+mode is that scores are so sharp that sampled rankings never differ and no
 gradient flows. A probe on training groups only:
 
 | Temperature | Groups with non-zero advantage | Among groups the model ranks wrong |

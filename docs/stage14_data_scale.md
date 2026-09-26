@@ -1,22 +1,22 @@
-# Stage 14 - does more training data improve the fine-tuned reranker?
+# Stage 14 - reranker training data scale
 
-Status: pre-registered on 2026-09-17, run on 2026-09-23. Everything above the
-Results section was written before any GPU run for this stage.
+Status: pre-registered on 2026-09-17, run on 2026-09-23. The design criteria
+and thresholds were fixed before any GPU run for this stage.
 
 Question: trained from the base model with the Stage 8 recipe, does a reranker
 fine-tuned on about 10,000 groups rank better on the Stage 6 bench than the Stage 8
 reranker trained on 2034?
 
-## Why data
+## Motivation
 
 Stages 11 to 13 changed the objective or the amount of training on a fixed set of
 about 2000 groups. None of the continued models beat the Stage 8 weights. The
-training logs suggest why: the Stage 8 model already ranks the positive first on
-about 84% of the Stage 11 groups, so only a few hundred groups carry anything to
-learn, and longer training memorises them (training greedy RR reached 0.987 to
-1.000 while bench R@1 fell below Stage 8). Policy gradient cannot exceed
-cross-entropy in this single-positive setting, since both share the same optimum.
-If the limit is the data, more groups should help; if it is not, they should not.
+training rankings were already strong: the Stage 8 model ranks the positive first
+on about 84% of the Stage 11 groups. Longer training raised training greedy RR to
+0.987 to 1.000 while bench R@1 fell below Stage 8, which is consistent with
+overfitting. Both objectives favour the positive candidate in this single-positive setting,
+but a shared optimal ranking does not imply equal optimisation or generalisation.
+This stage tests the effect of adding groups under the existing recipe.
 
 ## Arms
 
@@ -81,7 +81,7 @@ the new documents, and the Stage 6 bench comes from the NQ validation split.
    which is the same run.
 7. Scope. Training data and bench are both NQ, so the result applies to NQ only.
 
-## What to expect before running
+## Pre-run expectations
 
 Stage 8 took the off-the-shelf reranker from R@1 0.6289 to 0.7355 at fixed 15/0
 with 2034 groups. Fine-tuning gains usually grow more slowly than the data, so a
@@ -197,7 +197,7 @@ By criterion 3 the verdict is TIE: the primary interval includes 0 and the mean 
 below the 0.02 threshold, with the point estimate on the negative side.
 
 R@1 does not rise monotonically with data: 0.7345 at 2034 groups, 0.7355 at 4011,
-0.7297 at 10,334, and each of the three sits inside the others' intervals.
+0.7297 at 10,334. All paired R@1 intervals include zero.
 
 The Stage 8 row scores 0.7345 against its archived 0.7355 at R@1 (-0.0010) and
 0.9186 against 0.9215 at R@5 (-0.0029), the same gap Stage 12 measured on the
@@ -215,13 +215,11 @@ nothing measurable. What movement there is sits below rank 1: both new arms gain
 +0.0048 at R@5 and the 4k arm gains +0.0155 at R@3 on the arm table, while the
 pre-registered R@5 intervals still include 0.
 
-What this settles: for this recipe and this mining rule, training-set size between
-2000 and 10,000 groups is not what limits the fine-tuned reranker on NQ. Stages 11
-to 13 changed the objective and the training budget on a fixed set and did not
-beat the Stage 8 weights either, so three separate ways of spending more effort on
-the same recipe have now come back at or below the 0.02 threshold. What it does
-not settle: whether harder negatives, a larger reranker or a different chunk width
-would move it, and none of this transfers to another corpus.
+For this recipe and mining rule, increasing the training set from about 2000 to
+10,000 groups did not produce a measurable NQ gain. Stages 11 to 13 changed the
+objective and training budget on a fixed set and also did not beat the Stage 8
+weights by the 0.02 threshold. These results do not exclude gains from harder
+negatives, a larger reranker, a different chunk width or another corpus.
 
 | Step | Runtime | Actual |
 | --- | --- | --- |

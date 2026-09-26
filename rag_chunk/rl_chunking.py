@@ -467,8 +467,7 @@ def train(policy, env: RecallEnv, sent_emb: dict, *, steps: int,
         if log_fn is not None:
             log_fn(row)
 
-    # Checkpoint the finished run too, so `--steps N` later can pick up where
-    # this one stopped instead of paying for the same steps twice.
+    # The final checkpoint supports extending the run beyond `--steps N`.
     if checkpoint_fn is not None:
         checkpoint_fn(int(steps), optimiser, rng)
     return log
