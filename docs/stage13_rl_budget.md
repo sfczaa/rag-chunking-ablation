@@ -3,9 +3,8 @@
 Status: pre-registered on 2026-09-16, run on 2026-09-17. Verdict:
 INCONCLUSIVE-BUDGET (the RL arm reached 1769 of the 1977 live groups the budget
 condition asks for). The design criteria and thresholds were fixed before any
-GPU run for this stage. Explanatory wording above the Results section was
-revised after the run; the criteria, thresholds and verdict rules are unchanged
-in substance, and the git history keeps every version.
+GPU run for this stage. Headings and the expectations section were reworded
+after the run.
 
 Question: Stage 11 trained the policy-gradient arm and its cross-entropy control
 for the same number of steps, and RL finished behind (dev R@1 RL - CE = -0.0246,
