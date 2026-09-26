@@ -2,16 +2,16 @@
 
 A controlled study of whether RAG retrieval depends more on chunking method or chunk size.
 
-The project compares fixed-size, BiLSTM, and Transformer chunking on Natural Questions (NQ), using doc-constrained Recall@k. Each stage changes one variable and checks that the previous result still reproduces.
+The project compares fixed-size, BiLSTM, and Transformer chunking on Natural Questions (NQ), using doc-constrained Recall@k. Each stage changes one variable and checks that the previous result still reproduces. From Stage 10 on, each experiment's threshold and verdict rule were written down before it ran.
 
 [Live demo](https://huggingface.co/spaces/sfczaa/rag-chunking-ablation-demo) | [Fine-tuned reranker](https://huggingface.co/sfczaa/bge-reranker-base-nq-ft) | [Benchmark assets](https://huggingface.co/datasets/sfczaa/rag-chunking-ablation-demo-assets)
 
 ## Key results
 
-- Chunk size mattered more than chunking method. At matched sizes and overlaps, differences between fixed-size, BiLSTM, and Transformer chunking stayed below the study's detection limit; equivalence was not established.
-- The retrieval embedder was the main improvement. Switching MiniLM to BGE improved all 30 matched configurations.
-- Hybrid retrieval was not consistently better. BM25/RRF and an off-the-shelf reranker did not beat dense retrieval reliably.
-- Fine-tuning helped in-domain. The fine-tuned reranker improved NQ results; on the tested TriviaQA bench, its result remained approximately equal to dense retrieval.
+- Chunk size mattered more than chunking method. On the 1032-question bench, chunk size moved Recall@5 by about 0.064 across sizes 6 to 15 sentences. The largest gap between methods at any matched size and overlap was 0.023, below the study's detection limit of 0.032; equivalence was not established.
+- The retrieval embedder was the main improvement. Switching MiniLM to BGE raised Recall@5 in all 30 matched configurations, by 0.054 on average.
+- Hybrid retrieval was not consistently better. Equal-weight BM25 and BGE fusion lowered Recall@5 in 24 of 30 configurations (mean -0.021), and an off-the-shelf reranker left Recall@1 at fixed 15/0 almost unchanged (0.6279 to 0.6289).
+- Fine-tuning helped in-domain. The fine-tuned reranker raised Recall@1 at fixed 15/0 from 0.6289 to 0.7355 on NQ; on the tested TriviaQA bench, its result remained approximately equal to dense retrieval.
 - Later changes to the reranker's objective, training length and training-set size (Stages 11 to 14) did not improve on the Stage 8 reranker by the pre-registered 0.02 R@1 threshold.
 
 The detailed claims are backed by archived CSVs and figures in [`artifacts/results/`](artifacts/results).
