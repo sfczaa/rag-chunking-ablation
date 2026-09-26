@@ -303,10 +303,7 @@ def main() -> None:
     dev_path = _out_path(C.STAGE10_DEV_CSV, args.smoke)
     weights_path = _weights_path(args.smoke)
     state_path = _state_path(args.smoke)
-    # `steps` is not part of the identity: a 100-step run that stopped is a
-    # valid starting point for a 400-step one, so a run can be extended later
-    # on a free GPU quota. Every other setting changes what the earlier steps
-    # meant, so it is part of the identity.
+    # Excluding `steps` permits run extension without changing checkpoint identity.
     fingerprint = _fingerprint(docs_per_step, n_train_docs, lr, target_size,
                                overlap, temperature, entropy_coef, seed,
                                len(train_docs), len(dev_docs))

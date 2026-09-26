@@ -70,7 +70,7 @@ Twice a dev-bench gain of about +0.015 to +0.022 R@1 (Stage 11's CE arm, Stage
 Stage 10 trained the Transformer boundary model on an MRR@10 retrieval reward
 instead of section labels. The policy stayed near uniform over its window, so the
 run says nothing about the objective. A pre-registered placement oracle found
-+0.0605 R@5 of headroom over fixed 15/0, but only when the cut is chosen with the
++0.0605 R@5 of headroom over fixed 15/0 when the cut was chosen with the
 question in view; chosen from a document's other questions (82 held-out questions), the gain was
 +0.0090 with an interval that includes 0. This agrees with Stages 1 to 7: at a
 matched size, for a chunker that cuts before it sees the question, where the cut

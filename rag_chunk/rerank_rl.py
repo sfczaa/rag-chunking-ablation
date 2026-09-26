@@ -67,8 +67,7 @@ def plackett_luce_sample(scores, n_samples: int, temperature: float,
 
 def positive_rank(rankings, positive: int = 0):
     """1-based rank of the positive candidate in each sampled ranking."""
-    # float, not int: argmax over integer tensors is not supported on every
-    # CUDA build, and this runs on the GPU during training
+    # Some CUDA builds require a floating-point input for argmax.
     return (rankings == positive).float().argmax(dim=-1) + 1
 
 

@@ -9,7 +9,7 @@ changed. The results are in "Results (executed)" at the end.
 Question: so far, chunking method has not mattered at a matched chunk size. Does
 that still hold when the chunker is trained on the retrieval metric itself?
 
-## Why this stage exists
+## Motivation
 
 Stages 1 and 2 trained boundary models on Wikipedia section pseudo-labels with a
 weighted BCE loss, then scored them with doc-constrained Recall@k. Stages 3-7
@@ -23,9 +23,9 @@ significant; size range effect +0.064). Stage 10 addresses the objection with th
 same architecture, the same warm start from the Stage 2 weights, the same
 evaluation path, and a different objective.
 
-If a chunker trained directly on recall still ties with fixed-size chunking, the
-tie comes from the task and not from the training signal, which makes the
-project's main conclusion stronger.
+A tie after training directly on recall would extend the matched-size result to
+this objective. It would not establish why the methods tie or exclude gains
+from another training procedure.
 
 ## Formulation
 
@@ -94,7 +94,7 @@ evaluation bench in the project. The Stage 6 bench is used once, at the end. Run
 4. One reported run. The dev gate may be used to stop a run early. It may not be
    used to choose the best of several seeds and report that as the result. A NO-GO
    is recorded as a NO-GO.
-5. Both metrics. The reward is built from R@5, so R@1 and the unconstrained
+5. Both metrics. The evaluation gate uses R@5, so R@1 and the unconstrained
    variants are reported alongside it. A gain that appears only in the optimised
    metric is reported as such.
 6. In-domain only. A positive NQ result says nothing about other corpora until the
@@ -223,12 +223,12 @@ rollouts the two scored the same on the training reward:
 - reward(random in-window cut) - reward(supervised cut): mean +0.0050,
   95% CI [-0.0034, +0.0134], positive in 53 of 100 steps.
 
-In a narrow sense: on NQ-train, against a frozen fixed 15/0 distractor pool, under
+On NQ-train, against a frozen fixed 15/0 distractor pool, under
 an MRR@10 reward, the supervised model's choice of where to cut inside a
 +/-4-sentence window is no better than a random choice. This is what the main
-conclusion predicts, and it also explains the failed optimisation: with no
-reliable reward difference between cut positions, the policy gradient is mostly
-noise, as the heavy-tailed gradient norms show. It does not bound how much the
+conclusion predicts. The near-zero mean advantage and heavy-tailed gradient
+norms are consistent with noisy policy gradients, but they do not establish
+the cause of the failed optimisation. It does not bound how much the
 best possible cut could gain, because it compares random with supervised and not
 with an optimum. Steps share documents, so the interval is approximate.
 
@@ -290,5 +290,6 @@ same document would overstate generalisation. Together with RL run 1's near-zero
 advantage, the evidence suggests the headroom is real per question but mostly out
 of reach for a chunker that has to cut before the question is asked.
 
-Open decision. The allowed RL rerun is still available. Based on these
-diagnostics, its expected gain is well below the detection threshold.
+The allowed RL rerun remains unexecuted. These diagnostics do not establish
+its expected gain. The sampled oracle measures the best of the evaluated
+candidates; it does not bound every possible in-window placement policy.

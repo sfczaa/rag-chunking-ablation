@@ -1,8 +1,8 @@
-# Stage 13 - was the RL reranker simply undertrained?
+# Stage 13 - reranker training budget
 
 Status: pre-registered on 2026-09-16, run on 2026-09-17. Verdict:
 INCONCLUSIVE-BUDGET (the RL arm reached 1769 of the 1977 live groups the budget
-condition asks for). Everything above the Results section was written before
+condition asks for). The design criteria and thresholds were fixed before
 any GPU run for this stage.
 
 Question: Stage 11 trained the policy-gradient arm and its cross-entropy control
@@ -12,7 +12,7 @@ for the same number of steps, and RL finished behind (dev R@1 RL - CE = -0.0246,
 Does RL catch up when it is given enough training to see as much usable signal as
 CE, and more?
 
-## Why equal steps was not a fair budget
+## Training budget
 
 The RL loss is silent on a group whose sampled rankings agree on the reward: the
 advantage is zero and no gradient flows. Stage 11 measured that on 68.1% of
@@ -91,15 +91,15 @@ claim is made about the objective.
 8. Scope. Both objectives train on NQ and the bench is NQ, so the result applies
    to NQ only.
 
-## What to expect before running
+## Pre-run expectations
 
 From Stage 11's dev numbers, RL trails CE by 0.0246 R@1 at one epoch. Stage 12
 showed the CE side gains little from its first epoch on the claim bench
 (+0.0019 against Stage 8). So there are three plausible outcomes, and the design
 distinguishes them: RL catches up once the budget matches, which would make
-Stage 11's result a budget artifact; RL stays behind at both budgets, which makes
-the objective itself the explanation; or both objectives move together, which
-would say the extra training, not the objective, is what matters.
+Stage 11's result a budget artifact; RL stays behind at both budgets, leaving an objective-related gap under this
+recipe; or both objectives move together. These comparisons assess the tested
+budgets and do not isolate every possible cause of a difference.
 
 ## Cost
 

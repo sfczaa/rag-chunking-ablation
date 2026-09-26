@@ -158,15 +158,15 @@ Reading. The dev estimate of +0.0222 did not survive the Stage 6 bench: the same
 comparison over 1032 questions gives +0.0019, under a tenth of it and well inside
 noise. The pre-registered expectation covered this case, since a difference picked
 out of a larger comparison tends to shrink on new data and the dev interval's
-lower bound was only +0.0001. The extra epoch is not harmful either: R@5 moves
+lower bound was only +0.0001. The R@5 estimate is also uncertain: it moves
 +0.0068 with an interval that includes 0, and R@3 is +0.0058 on the arm table. One
-more CE epoch on 1977 fresh groups buys nothing measurable at the configuration
-the project deploys.
+more CE epoch on 1977 fresh groups showed no measurable gain at the
+configuration the project deploys.
 
-What this settles: the question the Stage 11 dev gate raised. On this bench the CE
-epoch is not better than the Stage 8 weights by the project's 0.02 threshold, for
-NQ. What it does not settle: whether more training helps in general. It says that
-this recipe, one epoch over 1977 groups mined with the Stage 8 rule, does not.
+On this NQ bench, the extra CE epoch suggested by the Stage 11 dev gate did not
+beat the Stage 8 weights by the project's 0.02 threshold. This applies to one
+epoch over 1977 groups mined with the Stage 8 rule; it does not establish
+whether more training helps under other conditions.
 
 Cost: 555 s per reranker for 20,640 pairs (9.3 minutes each), three rerankers plus
 the dense index.
