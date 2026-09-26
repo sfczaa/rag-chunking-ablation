@@ -13,9 +13,8 @@ At fixed 15/0 on the Stage 6 bench the BGE top-20 pool contains the answer for
 0.9641 of questions, and the Stage 8 reranker ranks it first for 0.7345. Stages 11
 to 14 changed the objective, the training length and the training-set size of the
 base model, and none beat the Stage 8 weights by the 0.02 R@1 threshold (see
-[stages10_14_summary.md](stages10_14_summary.md)). Model capacity is the remaining
-variable of the recipe that has not been changed. This stage changes it and keeps
-the data and the recipe fixed.
+[stages10_14_summary.md](stages10_14_summary.md)). This stage changes the model
+size and keeps the data and recipe fixed.
 
 ## Arms
 
@@ -31,15 +30,11 @@ Also scored for the pipeline check: `bge` (dense order) and `rerank20`
 The recipe is the Stage 8 one: listwise softmax cross-entropy over one positive and
 seven hard negatives, 2 epochs, learning rate 2e-5 with 10% warmup and linear
 decay, weight decay 0.01, four groups per optimizer step, fp16, gradient clipping
-at 1.0, seed 42, max length 512. To keep the large model within a 16 GB T4, two
-implementation settings differ, neither of which changes the recipe:
-
-- Each optimizer step of four groups runs as forward/backward passes of two
-  groups, and each pass's loss is weighted by its share of the step. The step's
-  gradient is the same mean over four groups; dropout masks and float order differ
-  from a single pass, so the run is not bit-identical to one. On CPU with a small
-  model and dropout off, one step's gradient matched a single pass within 2e-8.
-- Gradient checkpointing recomputes activations in the backward pass.
+at 1.0, seed 42, max length 512. To fit a 16 GB T4, each step's four groups run
+as two passes of two groups with the losses weighted by group count, and gradient
+checkpointing is on. On CPU with dropout off, one step's gradient matched a single
+pass within 2e-8; with dropout the masks differ, so the run is not bit-identical
+to a single pass.
 
 The Stage 8 weights on Drive are the retrained ones (same function and recipe,
 2026-07-25). They score 0.7345 R@1 at fixed 15/0 against the archived 0.7355,
@@ -83,18 +78,15 @@ and Stages 12 to 14 compared against the same weights.
 The paired standard error of two rerankers of this quality was about 0.007 in
 Stages 12 and 14, so the interval half-width should be about 0.015 and a true gain
 of 0.02 or more would usually be detected. The recipe was tuned for the base model
-and is not re-tuned here. A `TIE` would therefore say that capacity, under this
-recipe and these 2034 groups, does not move R@1 by the threshold; it would not
-exclude a gain under a recipe tuned for the larger model.
+and is not re-tuned, so a `TIE` would not exclude a gain under a recipe tuned for
+the larger model.
 
 ## Storage and checkpoints
 
-One full training state of the large model (weights plus optimizer) is about
-6.8 GB. The trainer saves one resumable checkpoint, at step 600 of 1018, so the
-shared folder never holds two states at once; the final weights are about 2.2 GB.
-The preflight requires 12 GB free under the data root. Each evaluated reranker's
-scores are saved as soon as they are computed, so a restarted evaluation reuses
-finished rerankers.
+A full training state of the large model is about 6.8 GB and the final weights
+about 2.2 GB. The trainer saves one resumable checkpoint, at step 600 of 1018, and
+the preflight requires 12 GB free under the data root. Each reranker's scores are
+saved once computed, so a restarted evaluation skips finished rerankers.
 
 ## Outputs
 
@@ -109,9 +101,6 @@ Under `artifacts/results/latest/`:
 Weights: `artifacts/models/bge_reranker_stage15/large/final/`.
 
 ## How to run
-
-Code is checked out from the public repository inside the Colab runtime; the
-shared Drive folder holds only data, weights and results.
 
 1. `notebooks/RAG_chunk_optimize_stage15_check_colab.ipynb`: preflight, a training
    smoke run on eight groups that stops and resumes once, and an evaluation smoke

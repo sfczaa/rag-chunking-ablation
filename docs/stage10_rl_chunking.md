@@ -4,10 +4,9 @@ Status: RL run 1 (2026-09-14) failed to optimise. The pre-registered placement
 oracle (2026-09-15) returned HEADROOM, and post-hoc checks suggest that the
 headroom depends on seeing the question. Stage 10 is open pending one decision.
 The thresholds and verdict rules below were fixed before each run and have not
-changed. Explanatory wording above the Results section was revised after the run,
-and criterion 5 was corrected to name R@5 as the gate metric (the reward is
-MRR@10); the git history keeps every version. The results are in "Results
-(executed)" at the end.
+changed. Later edits changed wording only, plus a fix to criterion 5: the gate
+metric is R@5 and the reward is MRR@10. The results are in "Results (executed)"
+at the end.
 
 Question: so far, chunking method has not mattered at a matched chunk size. Does
 that still hold when the chunker is trained on the retrieval metric itself?

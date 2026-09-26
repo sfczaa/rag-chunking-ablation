@@ -1,10 +1,8 @@
 # Stage 14 - reranker training data scale
 
 Status: pre-registered on 2026-09-17, run on 2026-09-23. The design criteria and
-thresholds were fixed before any GPU run for this stage. Explanatory wording
-above the Results section was revised after the run; the criteria, thresholds
-and verdict rules are unchanged in substance, and the git history keeps every
-version.
+thresholds were fixed before any GPU run for this stage. The motivation,
+headings and expectations were reworded after the run.
 
 Question: trained from the base model with the Stage 8 recipe, does a reranker
 fine-tuned on about 10,000 groups rank better on the Stage 6 bench than the Stage 8
