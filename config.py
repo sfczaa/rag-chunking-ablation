@@ -621,3 +621,33 @@ STAGE14_ROOT_ID = "566b0bd5-de24-4cb9-ae35-93e3fff2c3b1"
 STAGE14_RUN_VERSION = "stage14-v1"
 STAGE14_LOCK_FILE = "stage14_run.lock.json"         # under DATA_ROOT; never auto-deleted
 STAGE14_CKPT_EVERY = 500           # training steps between resumable checkpoints
+
+# --------------------------------------------------------------------------- #
+# Stage 15 - a larger cross-encoder under the Stage 8 recipe
+# --------------------------------------------------------------------------- #
+# Stages 11 to 14 changed the objective, the training length and the training-set
+# size of bge-reranker-base and none beat the Stage 8 weights by 0.02 R@1. Stage 15
+# changes only the model: bge-reranker-large, trained on the same 2034 Stage 8
+# groups with the same recipe. See docs/stage15_large_reranker.md.
+STAGE15_BASE_MODEL = "BAAI/bge-reranker-large"
+STAGE15_BASE_REVISION = "55611d7bca2a7133960a6d3b71e083071bbfc312"
+STAGE15_MODEL_DIRNAME = "bge_reranker_stage15"     # under MODELS_DIR
+# Memory only: each optimizer step of STAGE8_GROUPS_PER_STEP groups is split into
+# forward/backward passes of this many groups, and the per-group losses are
+# weighted so the step's gradient is the same mean over groups. Dropout masks and
+# float order differ from a single pass, so the run is not bit-identical to one.
+STAGE15_MICRO_GROUPS = 2
+STAGE15_GRADIENT_CHECKPOINTING = True
+# One resumable checkpoint (step 600 of 1018). A full training state of the large
+# model is about 6.8 GB, and a second one would double the Drive footprint.
+STAGE15_CKPT_EVERY = 600
+STAGE15_MIN_FREE_GB = 12           # preflight: free space under DATA_ROOT
+STAGE15_PRACTICAL_FLOOR = 0.02     # R@1, the Stage 8 gate and Stages 11-14 threshold
+STAGE15_ROOT_ID = STAGE14_ROOT_ID  # the same shared folder
+STAGE15_RUN_VERSION = "stage15-v1"
+STAGE15_LOCK_FILE = "stage15_run.lock.json"         # under DATA_ROOT; never auto-deleted
+# Stage 15 output filenames (written under RESULTS_LATEST_DIR).
+STAGE15_RESULTS_CSV = "stage15_eval_results.csv"
+STAGE15_PAIRED_CSV = "stage15_paired_deltas.csv"
+STAGE15_CHECK_CSV = "stage15_check_vs_stage8.csv"
+STAGE15_SUMMARY_MD = "stage15_summary.md"
