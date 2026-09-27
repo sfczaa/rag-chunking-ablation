@@ -642,3 +642,22 @@ STAGE15_RESULTS_CSV = "stage15_eval_results.csv"
 STAGE15_PAIRED_CSV = "stage15_paired_deltas.csv"
 STAGE15_CHECK_CSV = "stage15_check_vs_stage8.csv"
 STAGE15_SUMMARY_MD = "stage15_summary.md"
+
+# --------------------------------------------------------------------------- #
+# Stage 16 - the Stage 15 comparison on a new NQ validation bench
+# --------------------------------------------------------------------------- #
+# The Stage 15 and Stage 8 weights, unchanged, on up to 3000 NQ validation documents
+# whose titles are not in the Stage 6 bench. See docs/stage16_holdout_bench.md.
+STAGE16_N_DOCS = 3000
+STAGE16_BENCH_DIRNAME = "holdout"                  # under NQ_DIR
+STAGE16_MIN_QUESTIONS = 1500
+STAGE16_STAGE8_SHA256 = "0f638a21a29c40ea3ec15c78c5a12537bc274610480e8cee0f46edbc648593a0"
+STAGE16_LARGE_SHA256 = "e7fff83c1ee8faf36bb11aabafb786c4f1c2c9438067987780554fd015fc51b3"
+STAGE16_PRACTICAL_FLOOR = 0.02     # R@1, the Stage 8 gate and Stages 11-15 threshold
+STAGE16_ROOT_ID = STAGE14_ROOT_ID  # the same shared folder
+STAGE16_RUN_VERSION = "stage16-v1"
+STAGE16_LOCK_FILE = "stage16_run.lock.json"         # under DATA_ROOT; never auto-deleted
+# Stage 16 output filenames (written under RESULTS_LATEST_DIR).
+STAGE16_RESULTS_CSV = "stage16_eval_results.csv"
+STAGE16_PAIRED_CSV = "stage16_paired_deltas.csv"
+STAGE16_SUMMARY_MD = "stage16_summary.md"
