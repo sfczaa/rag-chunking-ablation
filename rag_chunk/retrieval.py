@@ -2,8 +2,8 @@
 i.e. cosine similarity) with ``IndexFlatIP``.
 
 A ``ChunkIndex`` bundles the FAISS index with the chunk texts, their sizes
-(in sentences) and the **source document id** of each chunk, so Phase 5 can
-retrieve, report average chunk size, **and** tell whether a retrieved chunk
+(in sentences) and the source document id of each chunk, so Phase 5 can
+retrieve, report average chunk size, and tell whether a retrieved chunk
 actually came from the question's gold document (doc-constrained Recall@k).
 """
 
@@ -111,7 +111,7 @@ class ChunkIndex:
 
 
 def index_prefix(name: str) -> Path:
-    """Path prefix for a named **main-evaluation** index (e.g. 'bilstm' / 'fixed').
+    """Path prefix for a named main-evaluation index (e.g. 'bilstm' / 'fixed').
 
     Lives under ``nq/indices/main/`` so the Phase 5 pair never mixes with the
     sweep's per-config indices (which are in-memory by default).
@@ -162,7 +162,7 @@ def _corpus_hash(docs: list, questions: list) -> str:
 
 def current_signature(docs: list, questions: list,
                       threshold: float | None = None) -> dict:
-    """Config fingerprint that the cached **main** indices must match to be reused.
+    """Config fingerprint that the cached main indices must match to be reused.
 
     Records everything that affects the Phase 5 ``bilstm`` + ``fixed`` indices
     *and* the chunking-policy knobs, so changing any of them forces a rebuild
@@ -279,7 +279,7 @@ def build_index_for_config(
     probabilities); the sweep passes the latter so the model forward runs once
     per doc rather than once per config.
 
-    By default **nothing is persisted** - the sweep builds these in memory and
+    By default nothing is persisted - the sweep builds these in memory and
     discards them so per-config FAISS files never pile up under ``nq/``. Pass
     ``save_prefix`` (e.g. ``C.NQ_INDEX_SWEEP_DIR / 'fixed_s10_o1'``) to opt into
     writing ``.faiss``/``.json``.
