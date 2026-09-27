@@ -1,7 +1,8 @@
 # Stage 15 - a larger cross-encoder under the Stage 8 recipe
 
-Status: pre-registered on 2026-09-27, not yet run. The design criteria and
-thresholds below were fixed before any GPU run for this stage.
+Status: pre-registered and run on 2026-09-27. Verdict: LARGE-BETTER (+0.0213
+R@1, 95% CI [+0.0009, +0.0417], n = 1032). The design criteria and thresholds
+below were fixed before any GPU run for this stage.
 
 Question: trained on the same 2034 Stage 8 groups with the same recipe, does
 `BAAI/bge-reranker-large` rank better on the Stage 6 bench than the Stage 8
@@ -110,4 +111,47 @@ Weights: `artifacts/models/bge_reranker_stage15/large/final/`.
 
 ## Results
 
-Not yet run.
+### Run 1 (2026-09-27): LARGE-BETTER
+
+Run on a Colab GPU from `notebooks/RAG_chunk_optimize_stage15_colab.ipynb` under
+one account, fixed 15/0 only.
+
+Training: 1018 steps in 64.3 minutes, final mean epoch loss 0.3147, no non-finite
+losses, peak GPU memory 10.45 GiB with two groups per pass. The checkpoint at
+step 600 was saved and not needed.
+
+Pipeline validity: PASS. The `bge` and `rerank20` rows reproduce `stage8/final`
+exactly, with the same chunk count (19,507) and the same 1032 questions. Pool
+recall@20 was 0.9641.
+
+| Arm | R@1 | R@3 | R@5 | s per question, load included |
+| --- | --- | --- | --- | --- |
+| dense BGE | 0.6279 | 0.8159 | 0.8808 | - |
+| off-the-shelf base | 0.6289 | 0.8159 | 0.8760 | 0.632 |
+| Stage 8 weights (base) | 0.7345 | 0.8750 | 0.9186 | 0.631 |
+| off-the-shelf large | 0.5940 | 0.8052 | 0.8808 | 1.867 |
+| `rerank20_s15_large` | 0.7558 | 0.8915 | 0.9293 | 1.867 |
+
+| Paired comparison | mean | 95% CI |
+| --- | --- | --- |
+| large fine-tuned - Stage 8, R@1 | +0.0213 | [+0.0009, +0.0417] |
+| large fine-tuned - Stage 8, R@5 | +0.0107 | [-0.0015, +0.0228] |
+| off-the-shelf large - off-the-shelf base, R@1 | -0.0349 | [-0.0631, -0.0067] |
+| off-the-shelf large - off-the-shelf base, R@5 | +0.0048 | [-0.0125, +0.0222] |
+| large fine-tuned - off-the-shelf large, R@1 | +0.1618 | [+0.1347, +0.1890] |
+| large fine-tuned - off-the-shelf large, R@5 | +0.0484 | [+0.0331, +0.0638] |
+
+By criterion 3 the verdict is LARGE-BETTER: the lower bound is above 0 and the mean
+is at least 0.02.
+
+Reading. The margin is small on both counts: the mean clears the 0.02 floor by
+0.0013 and the lower bound clears 0 by 0.0009. The paired standard error was
+0.0104, larger than the 0.007 expected before the run. Of the 1032 questions,
+69 are ranked first only by the large model and 47 only by the Stage 8 model. R@5
+moves +0.0107 with an interval that includes 0. Without fine-tuning the large
+model ranks worse than the base model; its gain comes from fine-tuning on the
+same 2034 groups. Reranking takes about three times as long per question.
+
+This is one run with one seed on NQ. Stages 11 to 14 tested other changes against
+the same bench and threshold, so a result this close to the floor is best read
+as a small capacity gain that a second pre-registered run would need to confirm.

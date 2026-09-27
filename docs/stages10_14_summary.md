@@ -76,10 +76,18 @@ question in view; chosen from a document's other questions (82 held-out question
 matched size, for a chunker that cuts before it sees the question, where the cut
 falls did not change recall by a detectable amount.
 
+## Stage 15: a larger reranker
+
+[Stage 15](stage15_large_reranker.md) kept the Stage 8 groups and recipe and
+changed the model to `bge-reranker-large`. R@1 rose from 0.7345 to 0.7558
+(+0.0213, 95% CI [+0.0009, +0.0417]), which meets the 0.02 threshold by a small
+margin: LARGE-BETTER. Without fine-tuning the large model ranked below the base
+model, and it takes about three times as long per question.
+
 ## Scope and what was not tested
 
-All results are on NQ, and no transfer to another corpus is claimed. The gap between pool recall (0.9641) and R@1 (about 0.73) is still a
-ranking gap. Harder negatives, a larger reranker, a different candidate pool
-depth and a different chunk width were not tried here. Stage 9 (rerank depth with
-the fine-tuned reranker) has a script and a notebook but was never run, so it has
-no result.
+All results are on NQ, and no transfer to another corpus is claimed. The gap
+between pool recall (0.9641) and R@1 (0.7558 for the best reranker) is still a
+ranking gap. Harder negatives, a different candidate pool depth and a different
+chunk width were not tried. Stage 9 (rerank depth with the fine-tuned reranker)
+has a script and a notebook but was never run, so it has no result.
