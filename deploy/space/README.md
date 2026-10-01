@@ -10,7 +10,7 @@ pinned: false
 license: mit
 short_description: Does chunking method or chunk size drive RAG recall? Try it.
 models:
-  - sfczaa/bge-reranker-base-nq-ft
+  - sfczaa/bge-reranker-large-nq-ft
   - BAAI/bge-base-en-v1.5
   - BAAI/bge-reranker-base
 datasets:
@@ -32,7 +32,7 @@ Ranking arms:
 |---|---|
 | `BGE dense` | the raw dense order, no reranking |
 | `+ off-the-shelf rerank20` | reorders the pool with `BAAI/bge-reranker-base` |
-| `+ fine-tuned rerank20` | reorders it with the same model fine-tuned on NQ train |
+| `+ fine-tuned rerank20 (large)` | reorders it with `BAAI/bge-reranker-large` fine-tuned on NQ train |
 
 Bench questions show their gold answer and document, so retrieved chunks are
 badged (`gold doc`, `answer hit`), the answer string is highlighted, and each
@@ -44,7 +44,7 @@ chunk shows how far reranking moved it (`dense #7 -> #1`).
   (3 methods x 5 sizes x 2 overlaps, n=1032), the size effect over 6->15
   sentences is +0.064 R@5 (p ~ 3e-16) - roughly 18x the largest
   chunking-method coefficient, whose nominal OLS result does not meet the conventional threshold. The largest observed
-  between-method gap (0.023) sits *below* the 0.032 detection floor at this
+  between-method gap (0.023) sits below the 0.032 detection floor at this
   sample size. Differences below that limit remain unresolved; this does not
   establish equivalence between methods. The OLS fit is descriptive because
   configs share questions, and the detection floor uses an unpaired
@@ -53,6 +53,8 @@ chunk shows how far reranking moved it (`dense #7 -> #1`).
   BM25/RRF did not improve the BGE baseline in this evaluation.
 - Fine-tuning raised in-domain R@1 by 0.107 at the size-15 setting. On the
   tested TriviaQA bench, the result remained approximately equal to dense retrieval.
+- The large reranker used here, fine-tuned the same way, added about 0.02 R@1
+  over the fine-tuned base model on 1032 bench questions and on 3063 new ones.
 
 Full write-up, code and archived results:
 https://github.com/sfczaa/rag-chunking-ablation

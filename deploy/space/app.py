@@ -48,7 +48,7 @@ ARM_BGE, ARM_OTS, ARM_FT = "bge", "rerank20", "rerank20_ft"
 ARM_LABELS = {
     ARM_BGE: "BGE dense (no rerank)",
     ARM_OTS: "+ off-the-shelf rerank20",
-    ARM_FT: "+ fine-tuned rerank20",
+    ARM_FT: "+ fine-tuned rerank20 (large)",
 }
 
 C.apply(RETRIEVAL_EMBED_MODEL=EMBED_REPO,
@@ -258,7 +258,8 @@ def build_app():
             "The fit is descriptive because configurations share questions. "
             "Observed method differences were below an approximate unpaired "
             "detection threshold; equivalence was not established. Fine-tuning "
-            "the cross-encoder reranker improved in-domain R@1 by 0.107.\n\n"
+            "the cross-encoder reranker improved in-domain R@1 by 0.107; the "
+            "fine-tuned arm here uses the large model, which adds about 0.02.\n\n"
             f"[Code, data and full write-up]({GITHUB_URL})")
         with gr.Row():
             bench = gr.Dropdown(bench_labels, label="Bench question "

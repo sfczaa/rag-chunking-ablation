@@ -1,17 +1,18 @@
 # Deployment - Hugging Face ZeroGPU Space
 
 Everything needed to host the interactive demo (`scripts/19_demo.py`'s sibling,
-rebuilt for the Hub) as a ZeroGPU Space. Three Hub repos are involved:
+rebuilt for the Hub) as a ZeroGPU Space. Four Hub repos are involved:
 
 | repo | type | what it holds |
 |---|---|---|
+| `sfczaa/bge-reranker-large-nq-ft` | model | the Stage 15 fine-tuned cross-encoder used by the Space (card: `model_card_large.md`) |
 | `sfczaa/bge-reranker-base-nq-ft` | model | the Stage 8 fine-tuned cross-encoder (card: `model_card.md`) |
 | `sfczaa/rag-chunking-ablation-demo-assets` | dataset | bench corpus + prebuilt FAISS indices (card: `dataset_card.md`) |
 | `sfczaa/rag-chunking-ablation-demo` | space | the Gradio app (`space/`) |
 
 ## Status
 
-All three repositories are public. The Space pins the dataset and model
+All four repositories are public. The Space pins the dataset and model
 revisions in `space/demo_settings.py`.
 
 ## Layout

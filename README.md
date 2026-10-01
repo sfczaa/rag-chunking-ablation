@@ -4,7 +4,7 @@ A controlled study of whether RAG retrieval depends more on chunking method or c
 
 The project compares fixed-size, BiLSTM, and Transformer chunking on Natural Questions (NQ), using doc-constrained Recall@k. Each stage changes one variable and checks that the previous result still reproduces. From Stage 10 on, each experiment's threshold and verdict rule were written down before it ran.
 
-[Live demo](https://huggingface.co/spaces/sfczaa/rag-chunking-ablation-demo) | [Fine-tuned reranker](https://huggingface.co/sfczaa/bge-reranker-base-nq-ft) | [Benchmark assets](https://huggingface.co/datasets/sfczaa/rag-chunking-ablation-demo-assets)
+[Live demo](https://huggingface.co/spaces/sfczaa/rag-chunking-ablation-demo) | Fine-tuned rerankers: [large](https://huggingface.co/sfczaa/bge-reranker-large-nq-ft), [base](https://huggingface.co/sfczaa/bge-reranker-base-nq-ft) | [Benchmark assets](https://huggingface.co/datasets/sfczaa/rag-chunking-ablation-demo-assets)
 
 ## Key results
 

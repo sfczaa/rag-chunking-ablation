@@ -12,8 +12,8 @@ ARTIFACTS = {
                   "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a"),
     "reranker": ("BAAI/bge-reranker-base",
                  "2cfc18c9415c912f9d8155881c133215df768a70"),
-    "finetuned": ("sfczaa/bge-reranker-base-nq-ft",
-                  "962cdfa7380f19cdf37db8f242d14e610de8ba71"),
+    "finetuned": ("sfczaa/bge-reranker-large-nq-ft",
+                  "817fb66c706eb259fba04c54cff013ecee2a9a28"),
 }
 
 
