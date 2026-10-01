@@ -12,7 +12,7 @@ The project compares fixed-size, BiLSTM, and Transformer chunking on Natural Que
 - The retrieval embedder was the main improvement. Switching MiniLM to BGE raised Recall@5 in all 30 matched configurations, by 0.054 on average.
 - Hybrid retrieval was not consistently better. Equal-weight BM25 and BGE fusion lowered Recall@5 in 24 of 30 configurations (mean -0.021), and an off-the-shelf reranker left Recall@1 at fixed 15/0 almost unchanged (0.6279 to 0.6289).
 - Fine-tuning helped in-domain. The fine-tuned reranker raised Recall@1 at fixed 15/0 from 0.6289 to 0.7355 on NQ; on the tested TriviaQA bench, its result remained approximately equal to dense retrieval.
-- Later changes to the reranker's objective, training length and training-set size (Stages 11 to 14) did not improve on the Stage 8 reranker by the pre-registered 0.02 R@1 threshold. A larger reranker under the same recipe (Stage 15) did, by a small margin: Recall@1 0.7558 against 0.7345 (95% CI of the gain [+0.0009, +0.0417]).
+- Later changes to the reranker's objective, training length and training-set size (Stages 11 to 14) did not improve on the Stage 8 reranker by the pre-registered 0.02 R@1 threshold. A larger reranker under the same recipe (Stage 15) did, by a small margin: Recall@1 0.7558 against 0.7345. On 3063 new questions (Stage 16) the gain held at +0.0193 (95% CI [+0.0072, +0.0314]), so it is real but about the size of the threshold.
 
 The detailed claims are backed by archived CSVs and figures in [`artifacts/results/`](artifacts/results).
 
@@ -56,6 +56,7 @@ The stage write-ups include the exact settings, reproduction checks, and negativ
 - [Stage 8 - Reranker fine-tuning](docs/stage8_reranker_finetune.md)
 - [Stages 10 to 14 - Follow-ups to the fine-tuned reranker](docs/stages10_14_summary.md)
 - [Stage 15 - A larger reranker](docs/stage15_large_reranker.md)
+- [Stage 16 - The Stage 15 comparison on new questions](docs/stage16_holdout_bench.md)
 
 ## Repository layout
 

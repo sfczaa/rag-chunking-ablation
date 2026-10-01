@@ -84,6 +84,11 @@ changed the model to `bge-reranker-large`. R@1 rose from 0.7345 to 0.7558
 margin: LARGE-BETTER. Without fine-tuning the large model ranked below the base
 model, and it takes about three times as long per question.
 
+[Stage 16](stage16_holdout_bench.md) scored the same two sets of weights on 3063
+validation questions that no earlier stage had used. The gain held at +0.0193 R@1
+(95% CI [+0.0072, +0.0314]): real, and about the size of the threshold, so the
+verdict is BELOW-FLOOR.
+
 ## Scope and what was not tested
 
 All results are on NQ, and no transfer to another corpus is claimed. The gap

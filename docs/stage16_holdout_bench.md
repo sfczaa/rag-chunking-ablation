@@ -1,6 +1,7 @@
 # Stage 16 - the Stage 15 comparison on a holdout NQ bench
 
-Status: pre-registered on 2026-09-27, not yet run. The design criteria and
+Status: pre-registered on 2026-09-27, run on 2026-10-01. Verdict: BELOW-FLOOR
+(+0.0193 R@1, 95% CI [+0.0072, +0.0314], n = 3063). The design criteria and
 thresholds below were fixed before any GPU run for this stage.
 
 Question: on NQ validation questions that no earlier stage has scored, does the
@@ -95,4 +96,43 @@ smoke run, then the evaluation.
 
 ## Results
 
-Not yet run.
+### Run 1 (2026-10-01): BELOW-FLOOR
+
+Run on a Colab GPU from `notebooks/RAG_chunk_optimize_stage16_colab.ipynb` at
+commit `543b000`, one account, one session.
+
+Bench: the stream read all 7830 rows of the validation split and ran out after
+2852 new documents with 3063 questions; 1226 rows were skipped for Stage 6 titles
+and none for Stage 6 questions. 188 of the holdout titles also appear in the
+Stage 8 training documents.
+
+Validity: PASS. Both weight files match the pre-registered hashes, and the bench
+shares no title and no question with the Stage 6 bench. Size: 3063 questions
+against the 1500 required.
+
+| Arm | R@1 | R@3 | R@5 | s per question, load included |
+| --- | --- | --- | --- | --- |
+| dense BGE | 0.6069 | 0.7989 | 0.8528 | - |
+| Stage 8 weights (base) | 0.7231 | 0.8652 | 0.8981 | 0.615 |
+| Stage 15 weights (large) | 0.7424 | 0.8766 | 0.9070 | 1.880 |
+
+Pool recall@20 was 0.9406.
+
+| Comparison, large - Stage 8 | Questions | mean | 95% CI |
+| --- | --- | --- | --- |
+| holdout, R@1 | 3063 | +0.0193 | [+0.0072, +0.0314] |
+| holdout, R@5 | 3063 | +0.0088 | [+0.0025, +0.0151] |
+| Stage 6 + holdout, R@1 | 4095 | +0.0198 | [+0.0094, +0.0302] |
+| Stage 6 + holdout, R@5 | 4095 | +0.0093 | [+0.0037, +0.0149] |
+
+By criterion 3 the verdict is BELOW-FLOOR: the lower bound is above 0 and the
+mean is below 0.02.
+
+Reading. The Stage 15 gain replicates on questions no earlier stage had scored:
++0.0193 R@1 against +0.0213 on the Stage 6 bench, with an interval that now
+excludes 0 by a clear margin. Of the 3063 questions, 209 are ranked first only by
+the large model and 150 only by the Stage 8 model. R@5 also improves, with an
+interval above 0. The size of the gain sits at the 0.02 threshold on both benches,
+as the pre-run expectations anticipated, so the data support a real gain of about
+0.02 R@1 and do not settle whether it is above or below 0.02. The large model
+takes about three times as long per question.

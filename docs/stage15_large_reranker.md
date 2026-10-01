@@ -155,3 +155,7 @@ same 2034 groups. Reranking takes about three times as long per question.
 This is one run with one seed on NQ. Stages 11 to 14 tested other changes against
 the same bench and threshold, so a result this close to the floor is best read
 as a small capacity gain that a second pre-registered run would need to confirm.
+
+[Stage 16](stage16_holdout_bench.md) rescored both sets of weights on 3063 new
+validation questions: +0.0193 R@1, 95% CI [+0.0072, +0.0314], BELOW-FLOOR. The
+gain replicates; its size stays at about the threshold.
