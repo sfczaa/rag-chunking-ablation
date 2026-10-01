@@ -59,6 +59,7 @@ SMOKE_QUESTIONS = 40
 CHECKPOINT = "stage15_checkpoint_final.jsonl"
 VERDICT_JSON = "stage15_verdict.json"
 SCORES_DIR = "stage15_scores"
+CHUNK_PAIRS = 6400                 # a multiple of RERANK_BATCH_SIZE; one save per chunk
 
 
 def _paired(rows) -> list[dict]:
@@ -98,9 +99,22 @@ def _verdict(diffs, valid, floor):
             m, lo, hi)
 
 
+def _save_atomic(arr, path: pathlib.Path) -> None:
+    import numpy as np
+
+    tmp = path.with_suffix(".tmp.npy")
+    np.save(tmp, arr)
+    tmp.replace(path)
+
+
 def cached_scorer(arm: str, load_model, cache_dir: pathlib.Path):
     """Score pairs with the model ``load_model()`` returns, loading it only when the
-    scores are not cached, and releasing it afterwards."""
+    scores are not cached, and releasing it afterwards.
+
+    Pairs are scored in chunks of CHUNK_PAIRS in a fixed longest-first order, and the
+    scores so far are saved after each chunk, so an interrupted run resumes from the
+    last saved chunk.
+    """
     import numpy as np
 
     def run(pairs):
@@ -115,28 +129,51 @@ def cached_scorer(arm: str, load_model, cache_dir: pathlib.Path):
             if json.loads(meta.read_text(encoding="utf-8")).get("pairs_sha1") == key:
                 print(f"[stage15]   {arm}: scores reused from {path.name}", flush=True)
                 return np.load(path)
-        t0 = time.perf_counter()
-        model = load_model()
-        scores = np.asarray(model.predict(pairs, batch_size=int(C.RERANK_BATCH_SIZE),
-                                          show_progress_bar=False), dtype="float32")
-        del model
-        gc.collect()
-        try:
-            import torch
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-        except ImportError:
-            pass
         cache_dir.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_suffix(".tmp.npy")
-        np.save(tmp, scores)
-        tmp.replace(path)
+        part, part_meta = cache_dir / f"{arm}.partial.npy", cache_dir / f"{arm}.partial.json"
+        order = sorted(range(len(pairs)), key=lambda i: -(len(pairs[i][0]) + len(pairs[i][1])))
+        done, seconds_before = np.zeros(0, dtype="float32"), 0.0
+        if part.exists() and part_meta.exists():
+            pm = json.loads(part_meta.read_text(encoding="utf-8"))
+            saved = np.load(part)
+            if pm.get("pairs_sha1") == key and len(saved) >= pm["n_done"]:
+                done, seconds_before = saved[:pm["n_done"]], pm["seconds"]
+                print(f"[stage15]   {arm}: resuming at {len(done)}/{len(pairs)} pairs",
+                      flush=True)
+        t0 = time.perf_counter()
+        model = None
+        for start in range(len(done), len(pairs), CHUNK_PAIRS):
+            if model is None:
+                model = load_model()
+            chunk = [pairs[i] for i in order[start:start + CHUNK_PAIRS]]
+            got = np.asarray(model.predict(chunk, batch_size=int(C.RERANK_BATCH_SIZE),
+                                           show_progress_bar=False), dtype="float32")
+            done = np.concatenate([done, got])
+            _save_atomic(done, part)
+            part_meta.write_text(json.dumps({
+                "pairs_sha1": key, "n_done": len(done),
+                "seconds": seconds_before + time.perf_counter() - t0}), encoding="utf-8")
+            print(f"[stage15]   {arm}: {len(done)}/{len(pairs)} pairs scored and saved",
+                  flush=True)
+        if model is not None:
+            del model
+            gc.collect()
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except ImportError:
+                pass
+        scores = np.empty(len(pairs), dtype="float32")
+        scores[order] = done
+        _save_atomic(scores, path)
         meta.write_text(json.dumps({"pairs_sha1": key, "n_pairs": len(pairs),
-                                    "seconds": time.perf_counter() - t0}),
+                                    "seconds": seconds_before + time.perf_counter() - t0}),
                         encoding="utf-8")
+        for f in (part, part_meta):
+            f.unlink(missing_ok=True)
         return scores
     return run
-
 
 def main() -> None:
     ap = argparse.ArgumentParser(
