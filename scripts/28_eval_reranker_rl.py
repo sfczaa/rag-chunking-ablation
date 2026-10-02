@@ -24,8 +24,8 @@ Checks. ``bge`` and ``rerank20`` are deterministic re-runs of archived rows and
 must reproduce ``stage8/final`` exactly, or the run is INVALID. ``rerank20_ft``
 is compared with its archived row too, but only reported: the Stage 8 weights
 on Drive were retrained after the originals were lost, so a small difference
-there measures training nondeterminism, not a broken pipeline. The Stage 11
-comparisons use the current weights throughout, so they are unaffected.
+there reflects training nondeterminism and does not indicate a broken pipeline.
+The Stage 11 comparisons use the current weights throughout, so they are unaffected.
 
 Usage:
     python scripts/28_eval_reranker_rl.py --dev

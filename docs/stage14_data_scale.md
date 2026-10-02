@@ -2,7 +2,8 @@
 
 Status: pre-registered on 2026-09-17, run on 2026-09-23. The design criteria and
 thresholds were fixed before any GPU run for this stage. The motivation,
-headings and expectations were reworded after the run.
+headings, expectations and the label of criterion 5 were reworded after the
+run.
 
 Question: trained from the base model with the Stage 8 recipe, does a reranker
 fine-tuned on about 10,000 groups rank better on the Stage 6 bench than the Stage 8
@@ -74,7 +75,7 @@ the new documents, and the Stage 6 bench comes from the NQ validation split.
    the one used by the Stage 8 gate and Stages 11 to 13.
 4. No direction gate. The dev bench is scored once for provenance and to catch a
    broken arm; the Stage 6 bench runs whatever it says.
-5. Reported, not claimed: `rerank20_s14_4k` minus `rerank20_ft`, `rerank20_s14_10k`
+5. Reported only: `rerank20_s14_4k` minus `rerank20_ft`, `rerank20_s14_10k`
    minus `rerank20_s14_4k`, whether R@1 rises monotonically from 2k to 4k to 10k,
    R@3 and R@5 for every arm, and the paired R@5 comparisons.
 6. One run. No re-seeding, no re-mining and no change to the recipe or the shard

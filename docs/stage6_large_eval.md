@@ -16,8 +16,8 @@ questions the SE halves, so the directions either firm up or get overturned.
 Changed (the *only* change):
 
 - `N_NQ_DOCS`: 200 -> `N_NQ_DOCS_LARGE` (~1000). The NQ stream stops at the
-  N-th usable document, so the actual docs/questions counts are reported
-  in every output, not assumed. The large corpus caches under a separate
+  N-th usable document, so every output reports the actual docs/questions
+  counts. The large corpus caches under a separate
   `nq/large_n<N>/` folder - the 200-doc cache used by Stages 1-5 (and by the
   Stage 6 check mode) is never overwritten.
 
@@ -169,7 +169,7 @@ Findings:
    ~96% of questions but the off-the-shelf cross-encoder cannot rank it first
    any better than BGE already does. That gap (R@1 0.63 vs pool 0.96) is the
    one place left where a *fine-tuned* reranker could plausibly pay off - noted
-   as the conditional trigger for a possible later stage, not done here.
+   as the conditional trigger for a possible later stage and not done here.
 4. Cost at n=1032: ~600-730 s per rerank20 config (20 640 pairs), vs ~100 s at
    n=203 - reranking cost scales linearly with questions, which is exactly why
    the rerank arm was restricted to 5 configs.

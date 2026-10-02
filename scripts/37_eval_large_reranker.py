@@ -306,7 +306,7 @@ def evaluate(args) -> None:
     floor = float(C.STAGE15_PRACTICAL_FLOOR)
     verdict, why, m, lo, hi = _verdict(diffs, valid, floor)
     if not questions_ok and check_ok:
-        why = f"the bench has {len(questions)} questions, not the archived count"
+        why = f"the question count ({len(questions)}) differs from the archive"
 
     lines = ["# Stage 15 - a larger cross-encoder under the Stage 8 recipe", "",
              f"Verdict: {verdict}. {why}.", "",

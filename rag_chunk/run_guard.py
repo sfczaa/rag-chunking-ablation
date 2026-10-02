@@ -11,8 +11,8 @@
   compared on every later one, so a resume never mixes two different runs.
 
 Drive propagates changes between runtimes with a delay, so the lock guards against
-starting a second runtime minutes after the first, not against two starts in the
-same instant.
+starting a second runtime minutes after the first; two starts in the same
+instant can both pass it.
 """
 
 from __future__ import annotations

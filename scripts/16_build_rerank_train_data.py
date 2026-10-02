@@ -8,7 +8,7 @@ deployment config (fixed 15/0), each question's BGE top-20 pool is retrieved,
 and (1 positive + STAGE8_NUM_NEGATIVES hard negatives) groups are mined.
 
 Everything caches under data/nq_train/ - the eval caches are never touched,
-and nothing is written to results/latest/ (this is data, not results).
+and nothing is written to results/latest/ (this script writes training data only).
 
 Needs a GPU session for the BGE embedding of ~40k chunks; no boundary models
 are involved (fixed chunking only).

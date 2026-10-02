@@ -2,7 +2,8 @@
 
 Status: pre-registered and run on 2026-09-27. Verdict: LARGE-BETTER (+0.0213
 R@1, 95% CI [+0.0009, +0.0417], n = 1032). The design criteria and thresholds
-below were fixed before any GPU run for this stage.
+below were fixed before any GPU run for this stage. The label of criterion 5 was
+reworded on 2026-10-02 with no change in substance.
 
 Question: trained on the same 2034 Stage 8 groups with the same recipe, does
 `BAAI/bge-reranker-large` rank better on the Stage 6 bench than the Stage 8
@@ -61,7 +62,7 @@ and Stages 12 to 14 compared against the same weights.
    the one used by the Stage 8 gate and Stages 11 to 14.
 4. No dev bench and no direction gate. The Stage 6 bench runs once the training
    condition is met.
-5. Reported, not claimed: `rerank20_large` minus `rerank20` (capacity without
+5. Reported only: `rerank20_large` minus `rerank20` (capacity without
    fine-tuning), `rerank20_s15_large` minus `rerank20_large` (the gain from
    fine-tuning the large model), R@3 and R@5 for every arm, the paired R@5
    comparisons, peak GPU memory in training, and reranking seconds per question

@@ -308,8 +308,8 @@ STAGE7_SCATTER_PNG = "stage7_recall_vs_chunk_size.png"
 # Stage 8 - fine-tune the cross-encoder reranker (Route C)
 # --------------------------------------------------------------------------- #
 # Trigger (Stage 6): at the size-15 sweet spot pool_recall@20 ~ 0.96 but
-# R@1 ~ 0.63 and the off-the-shelf reranker adds ~0 - ranking, not pool
-# recall, is the remaining bottleneck. Training data comes from the NQ *train*
+# R@1 ~ 0.63 and the off-the-shelf reranker adds ~0, so the remaining
+# bottleneck is ranking within the pool. Training data comes from the NQ *train*
 # split; every eval bench uses the validation split, so they stay disjoint.
 # See docs/stage8_reranker_finetune.md.
 STAGE8_N_TRAIN_DOCS = 2000       # training-corpus documents (~1 question/doc)

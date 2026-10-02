@@ -8,7 +8,7 @@ isolated environment. Keep credentials in environment variables or the hosting
 provider's secret store. Never commit local data, access tokens, or credentials.
 
 Corpus preparation uses an isolated copy of the Apache-2.0 Punkt inference
-code, not the NLTK package. Training, pickle loading and model import/export
+code instead of the NLTK package. Training, pickle loading and model import/export
 APIs are excluded. English parameters come from a fixed official NLTK data
 revision, with the archive SHA-256 checked before parsing or caching; no
 archive paths are extracted to disk. See

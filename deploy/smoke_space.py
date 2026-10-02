@@ -82,7 +82,7 @@ def main() -> None:
               f"(device={app.DEVICE})")
         print(f"[smoke] bench: {len(app.docs)} docs / {len(app.questions)} questions")
 
-        # the indices must be the archived ones, not a rebuild
+        # the indices must match the archived ones
         for method, (n_exp, avg_exp) in EXPECTED.items():
             idx = app.indices[method]
             n, avg = len(idx.chunk_texts), idx.avg_chunk_size()

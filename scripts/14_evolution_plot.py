@@ -17,9 +17,10 @@ Stages 1-5 share one eval set (200 docs / 203 questions), so their best-R@5
 points sit on one line. Stage 6 re-evaluates the same pipeline on a fresh
 1000-doc / 1032-question corpus: its absolute number is NOT comparable to
 Stages 1-5 (5x more distractor docs in the index), so it is drawn detached
-behind a dashed connector as a scale check, not a regression. Stage 8 shares
-the Stage 6 eval set exactly (its bge/rerank20 rows reproduce stage6/final
-byte-for-byte), so Stage 6 -> 8 is a solid, directly comparable segment.
+behind a dashed connector as a scale check; the drop is not a regression.
+Stage 8 shares the Stage 6 eval set exactly (its bge/rerank20 rows reproduce
+stage6/final byte-for-byte), so Stage 6 -> 8 is a solid, directly comparable
+segment.
 Stage 7 (TriviaQA) is a different dataset and is not drawn on this axis.
 
 Writes:
@@ -172,7 +173,7 @@ def plot(stages: list[dict], path: pathlib.Path) -> None:
     ax.text(0.99, 0.02,
             "Stages 6 and 8 share one 1000-doc / 1032-question eval set "
             "(Stages 1-5: 200 / 203); Stage 6's absolute drop reflects\n"
-            "5x more distractor documents, not a code change (35/35 rows "
+            "5x more distractor documents with unchanged code (35/35 rows "
             "exact). Stage 8 changes only the reranker weights\n(10/10 "
             "baseline rows exact). Stage 7 (TriviaQA) is a different dataset "
             "and is not drawn on this axis.",

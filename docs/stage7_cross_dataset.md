@@ -42,7 +42,7 @@ entities in the question. The loader (`rag_chunk/cross_dataset.py`):
    identical to NQ's - and the gold set is every entity page containing
    it (`doc_titles`, 1-2 titles);
 4. drops the question if no candidate appears in any of its pages (counted
-   and reported, not silent).
+   and reported).
 
 Because the answer is verified against the *sentence-joined* text - exactly
 the text chunks are built from (`chunking.chunk_text` joins with single
@@ -83,7 +83,7 @@ of claim 1, not a leaderboard run.
 ## Corpus construction
 
 - Stream validation questions until `STAGE7_N_QUESTIONS` (default 300) are
-  kept. Actual doc/question counts are reported in every output, not assumed.
+  kept. Every output reports the actual doc/question counts.
 - Corpus = every usable entity page of every *kept* question, gold or not
   (a non-gold entity page of a kept question is a natural distractor),
   deduplicated by title.
@@ -115,7 +115,7 @@ of claim 1, not a leaderboard run.
 | 2 | method difference unresolved at matched size | max method spread across the size-15 (size, overlap) cells < 2 SE |
 | 3 | best chunk size is large | nominal size of the best-R@5 config (project ranking) in {12, 15} |
 
-A claim failing to replicate is a finding, not an error: the summary must
+A claim that fails to replicate is reported as a finding: the summary must
 then say which explanation the data supports - dataset structure (e.g. page
 length distribution), the weaker distant-supervision gold, question style
 (trivia vs search queries), or a pipeline assumption - rather than re-tuning
@@ -166,8 +166,8 @@ including the multi-gold metric extension is the Stage 3 pipeline.
 
 Eval set: 472 docs / 300 questions. Loader accountability: 302 rows scanned,
 2 dropped (no answer candidate in their pages), 1 page under 2 sentences;
-118/300 questions have two gold pages (the multi-gold extension is load-
-bearing, not theoretical); document length median 152 / mean 210 sentences
+118/300 questions have two gold pages (the multi-gold extension matters in
+practice); document length median 152 / mean 210 sentences
 (comparability guard >= 30: passed). 1 SE ~ 0.018 at the mean R@5.
 
 Direction checks - 4/4 replicate:

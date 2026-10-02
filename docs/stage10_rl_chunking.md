@@ -217,11 +217,11 @@ within 0.0041 nats of uniform. The training script's windowed movement check has
 the same problem; it reached the right verdict here, but it should average only
 over documents that made decisions.
 
-By-product (descriptive, not pre-registered). Because the policy stayed close to
-uniform, every sampled rollout was a uniformly random cut inside each window,
-while the greedy rollout was, apart from a few flipped cuts (the dev chunk count
-moved by 18 of 7,937), the supervised Stage 2 cut. Across the run's 3,200 document
-rollouts the two scored the same on the training reward:
+By-product (descriptive; this analysis was not pre-registered). Because the
+policy stayed close to uniform, every sampled rollout was a uniformly random cut
+inside each window, while the greedy rollout was, apart from a few flipped cuts
+(the dev chunk count moved by 18 of 7,937), the supervised Stage 2 cut. Across the
+run's 3,200 document rollouts the two scored the same on the training reward:
 
 - reward(random in-window cut) - reward(supervised cut): mean +0.0050,
   95% CI [-0.0034, +0.0134], positive in 53 of 100 steps.

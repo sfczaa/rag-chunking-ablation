@@ -126,8 +126,8 @@ rerank arms are measured against a verified-identical baseline.
 
 Candidate-pool ceiling (reported before any improvement claim): mean
 `pool_recall@20` = 0.9650, `pool_recall@50` = 0.9851. The answer chunk
-is almost always in the pool - ranking, not pool recall, is the binding
-constraint, so reranking had room to work at both depths.
+is almost always in the pool, so the binding constraint is ranking within
+it, and reranking had room to work at both depths.
 
 Mean paired deltas over the 30 configs:
 

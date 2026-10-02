@@ -9,7 +9,7 @@ stays the first of them, so code written against the NQ schema keeps working.
 Gold-document definition (doc-constrained recall)
 -------------------------------------------------
 TriviaQA's ``entity_pages`` are full Wikipedia pages about entities in the
-question - distant supervision, not human-annotated support (weaker than NQ's
+question - distant supervision without human-annotated support (weaker than NQ's
 gold docs; every report of Stage 7 numbers must say so). The loader:
 
 1. splits each entity page into sentences (>= 2 sentences to be usable -

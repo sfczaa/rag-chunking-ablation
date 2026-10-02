@@ -3,8 +3,8 @@
 Status: pre-registered on 2026-09-16, run on 2026-09-17. Verdict:
 INCONCLUSIVE-BUDGET (the RL arm reached 1769 of the 1977 live groups the budget
 condition asks for). The design criteria and thresholds were fixed before any
-GPU run for this stage. Headings and the expectations section were reworded
-after the run.
+GPU run for this stage. Headings, the expectations section and the label of
+criterion 6 were reworded after the run.
 
 Question: Stage 11 trained the policy-gradient arm and its cross-entropy control
 for the same number of steps, and RL finished behind (dev R@1 RL - CE = -0.0246,
@@ -83,7 +83,7 @@ claim is made about the objective.
    so this stage answers its question on the claim bench in both directions. The
    dev bench is scored once for provenance and to catch a broken arm, and it
    decides nothing.
-6. Reported, not claimed: the larger budget pair `rl8` minus `ce8`; whether more
+6. Reported only: the larger budget pair `rl8` minus `ce8`; whether more
    CE training helps at all (`ce4` and `ce8` against `rerank20_s11_ce` and against
    the Stage 8 weights); R@5 for every comparison; per-arm R@1, R@3, R@5.
 7. One run. No re-seeding and no re-tuning of the temperature, learning rate,
@@ -168,8 +168,8 @@ Stage 6 bench, fixed 15/0 (pool recall@20 0.9641):
 | `rl8` | 0.7267 | 0.8837 | 0.9273 |
 
 Paired comparisons over the 1032 questions. The first row is the pre-registered
-comparison, not claimed because the budget condition failed; the rest are reported
-only.
+comparison, which makes no claim because the budget condition failed; the rest are
+reported only.
 
 | Comparison | R@1, 95% CI | R@5, 95% CI |
 | --- | --- | --- |

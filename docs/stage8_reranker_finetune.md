@@ -54,7 +54,7 @@ time. Then per question:
 - questions whose pool contains no positive are dropped (~4% expected
   from the pool ceiling; reranking cannot rescue them at eval either, so
   training on them would optimize an unreachable case). Dropped counts are
-  reported, not silent.
+  reported.
 
 Groups are written to `data/nq_train/stage8_train_groups.jsonl` with
 provenance (doc ids, dense ranks).

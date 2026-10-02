@@ -232,7 +232,7 @@ def main() -> None:
     floor = float(C.STAGE13_PRACTICAL_FLOOR)
     verdict, why, m, lo, hi = _verdict(diffs, valid, live_fraction, live_groups, floor)
     if not questions_ok and check_ok:
-        why = f"the bench has {len(questions)} questions, not the archived count"
+        why = f"the question count ({len(questions)}) differs from the archive"
 
     ft_check = next((c for c in check_rows if c["arm"] == ARM_FT
                      and c["config"] == "fixed 15/0"), None)
@@ -252,7 +252,7 @@ def main() -> None:
     if ft_check is not None and "now_recall@1" in ft_check:
         lines.append(f"- Stage 8 weights now vs archived at fixed 15/0: R@1 "
                      f"{ft_check['now_recall@1']} vs {ft_check['archived_recall@1']} "
-                     "(retrained weights, not used for validity)")
+                     "(retrained weights; excluded from the validity check)")
     lines += ["", "| config | arm | R@1 | R@3 | R@5 | pool@20 |",
               "| --- | --- | --- | --- | --- | --- |"]
     for r in rows:

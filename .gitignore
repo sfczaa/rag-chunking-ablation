@@ -24,7 +24,7 @@ __pycache__/
 venv/
 
 # --------------------------------------------------------------------------- #
-# Personal working files (kept local, not part of the public record)
+# Personal working files, kept out of the public record
 # --------------------------------------------------------------------------- #
 日誌*.docx
 ~$*.docx

@@ -8,8 +8,8 @@ the exact Stage 8 final protocol - same 5 configs, same three arms
 (`bge` / off-the-shelf `rerank20` / fine-tuned `rerank20_ft`) sharing one BGE
 top-20 pool, same fine-tuned checkpoint - but on the Stage 7 TriviaQA
 rc.wikipedia bench (472 docs / 300 questions) instead of NQ. Only the eval
-dataset changes, so any difference is a transfer effect, not a protocol
-difference. Archived to `artifacts/results/stage8/final/`.
+dataset changes, so any difference is a transfer effect; the protocol
+is unchanged. Archived to `artifacts/results/stage8/final/`.
 
 ## The one number the `ft - ots` verdict hides
 

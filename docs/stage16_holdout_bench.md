@@ -2,7 +2,8 @@
 
 Status: pre-registered on 2026-09-27, run on 2026-10-01. Verdict: BELOW-FLOOR
 (+0.0193 R@1, 95% CI [+0.0072, +0.0314], n = 3063). The design criteria and
-thresholds below were fixed before any GPU run for this stage.
+thresholds below were fixed before any GPU run for this stage. The label of
+criterion 4 was reworded on 2026-10-02 with no change in substance.
 
 Question: on NQ validation questions that no earlier stage has scored, does the
 Stage 15 reranker (`bge-reranker-large`) still beat the Stage 8 reranker?
@@ -58,7 +59,7 @@ Nothing is trained. Both rerankers reorder one shared BGE top-20 pool at fixed
    - `NOT-CONFIRMED`: the interval includes 0.
 
    The verdict uses unrounded values; tables show four decimals.
-4. Reported, not claimed: R@5 and the per-arm table on the holdout bench, the
+4. Reported only: R@5 and the per-arm table on the holdout bench, the
    pooled comparison over the Stage 6 and holdout questions, the number of
    holdout titles that also appear in the Stage 8 training documents, and seconds
    per question.

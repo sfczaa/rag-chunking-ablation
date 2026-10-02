@@ -236,7 +236,7 @@ def evaluate(args) -> None:
     floor = float(C.STAGE14_PRACTICAL_FLOOR)
     verdict, why, m, lo, hi = _verdict(diffs, valid, n_groups[ARMS["10k"]], floor)
     if not questions_ok and check_ok:
-        why = f"the bench has {len(questions)} questions, not the archived count"
+        why = f"the question count ({len(questions)}) differs from the archive"
 
     r1 = {arm: by[(15, 0, arm)]["recall@1"] for arm in (ARM_FT, ARMS["4k"], ARMS["10k"])}
     monotone = r1[ARM_FT] <= r1[ARMS["4k"]] <= r1[ARMS["10k"]]
@@ -258,7 +258,7 @@ def evaluate(args) -> None:
     if ft_check is not None and "now_recall@1" in ft_check:
         lines.append(f"- Stage 8 weights now vs archived at fixed 15/0: R@1 "
                      f"{ft_check['now_recall@1']} vs {ft_check['archived_recall@1']} "
-                     "(retrained weights, not used for validity)")
+                     "(retrained weights; excluded from the validity check)")
     lines += ["", "| config | arm | R@1 | R@3 | R@5 | pool@20 |",
               "| --- | --- | --- | --- | --- | --- |"]
     for r in rows:

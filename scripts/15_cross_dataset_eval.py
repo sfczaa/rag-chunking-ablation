@@ -317,8 +317,8 @@ def _direction_checks(rows: list[dict], n_questions: int) -> list[dict]:
     """Re-test the size-vs-method direction claims on the TriviaQA rows.
 
     Rules are explicit (see docs/stage7_cross_dataset.md); SE comes from the
-    mean bge R@5 at the actual question count. A claim failing to replicate
-    is a finding to interpret, not an error to fix."""
+    mean bge R@5 at the actual question count. A claim that fails to replicate
+    is reported and interpreted as a finding."""
     from rag_chunk.large_eval import _nominal_size, _pearson
     from rag_chunk.sweep import _rank_key
 

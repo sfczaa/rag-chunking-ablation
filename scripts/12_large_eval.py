@@ -246,7 +246,7 @@ def _write_summary(out_dir: pathlib.Path, rows, matched, checks,
         "",
         f"- Eval set: {n_docs} docs / {n_questions} questions "
         f"(requested ~{n_requested} docs; the stream stops at the N-th usable "
-        "document, so the counts are reported, not assumed)",
+        "document, so these counts are measured)",
         f"- Boundary/chunking embedding model: `{C.BOUNDARY_EMBED_MODEL}`",
         f"- Dense retrieval embedding model: `{C.RETRIEVAL_EMBED_MODEL}`",
         f"- Reranker: `{C.RERANKER_MODEL}` (off-the-shelf, top-{rerank_depth()} "
