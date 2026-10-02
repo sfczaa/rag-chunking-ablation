@@ -6,7 +6,7 @@ construction. One streaming pass builds both:
 
 * the training corpus - the first ``STAGE8_N_TRAIN_DOCS`` usable
   documents and their questions (same collection rule as ``nq_data``);
-* the dev bench - the *next* ``STAGE8_N_DEV_DOCS`` documents and the
+* the dev bench - the next ``STAGE8_N_DEV_DOCS`` documents and the
   questions whose gold doc lies in that window. Dev questions never point at
   a training document, so the go/no-go decision never touches the final
   (Stage 6) bench.
@@ -18,7 +18,7 @@ top-``STAGE8_MINE_DEPTH`` pool - exactly what the reranker sees at eval time
 - and per question:
 
 * positive = the highest-dense-ranked pool chunk that is answer-bearing
-  *and* from the gold document (the metric's own hit rule);
+  and from the gold document (the metric's own hit rule);
 * hard negatives = the first ``STAGE8_NUM_NEGATIVES`` remaining pool
   chunks by dense rank (the distractors BGE currently ranks high);
 * questions with no positive in the pool are dropped and counted - the
@@ -82,7 +82,7 @@ def load_meta() -> dict | None:
 
 
 def _load_train_stream():
-    """Stream the NQ *train* split (same retry pattern as nq_data)."""
+    """Stream the NQ train split (same retry pattern as nq_data)."""
     from datasets import load_dataset
 
     try:

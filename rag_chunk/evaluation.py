@@ -21,7 +21,7 @@ def evaluate_all(model, rebuild: bool = False) -> dict:
     fx_prefix = retrieval.index_prefix("fixed")
 
     # NQ corpus first, so we can decide whether the cached indices are still valid
-    # for the *current* config (threshold, chunk size, model weights, corpus size).
+    # for the current config (threshold, chunk size, model weights, corpus size).
     docs, questions = nq_data.prepare_nq()
     want = retrieval.current_signature(docs, questions, C.BOUNDARY_THRESHOLD)
     have = retrieval.load_manifest()

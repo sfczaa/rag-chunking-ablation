@@ -1,7 +1,7 @@
 """Stage 6 - larger-scale robustness evaluation.
 
 Re-runs the Stage 3/5 protocol at a larger corpus scale (``N_NQ_DOCS_LARGE``,
-~1000 docs/questions) to test whether the Stage 1-5 *directions* replicate.
+~1000 docs/questions) to test whether the Stage 1-5 directions replicate.
 Nothing else changes: same dataset source, same chunking logic and grids, same
 boundary models/weights, same BGE dense retriever, same off-the-shelf reranker
 (no fine-tuning), and no rerank50 arm.
@@ -18,7 +18,7 @@ resume-safe: every finished config is appended to a JSONL checkpoint, and
 a restarted run skips finished configs (boundary probabilities are recomputed
 only for the model types that still have pending configs).
 
-The eval set differs from Stages 3/5 (more documents *and* more questions), so
+The eval set differs from Stages 3/5 (more documents and more questions), so
 exact deltas against the archived baselines are not comparable. Instead
 :func:`direction_checks` re-tests the four Stage 1-5 direction claims on the
 large-scale rows and reports whether each replicates.

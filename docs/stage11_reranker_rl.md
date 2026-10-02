@@ -3,7 +3,7 @@
 Status: run 1 executed on 2026-09-15. NO-GO at the dev gate: the RL arm finished
 behind its cross-entropy control, so the Stage 6 bench was not run. The design,
 thresholds and verdict rules below were fixed before any training or evaluation.
-The temperature rationale was reworded after the run. The results are in
+The temperature rationale and the cost notes were reworded after the run. The results are in
 "Results (executed)" at the end.
 
 Question: when both start from the same weights and train on the same data for
@@ -131,17 +131,9 @@ python scripts/28_eval_reranker_rl.py                       # the claim, fixed 1
 python scripts/28_eval_reranker_rl.py --configs 15:0,6:0    # optional secondary
 ```
 
-Costs on a T4. Reranking times come from the Stage 8 archive (35 pairs per second
-at fixed 15/0, 60 at fixed 6/0). BGE encoding rates are estimated from the Stage
-10 runs and are less certain.
-
-| Step | Estimate |
-| --- | --- |
-| Mining: BGE over about 40,800 chunks | 15 to 20 minutes |
-| Both arms: Stage 8 ran 1018 steps in 17.1 minutes | about 20 minutes |
-| Dev gate: 3 rerankers at 3.8 minutes each, plus the index | about 20 minutes |
-| Final comparison, fixed 15/0: 4 rerankers at 9.7 minutes each, plus the index | about 50 minutes |
-| Optional fixed 6/0: 4 rerankers at 5.7 minutes each, plus the index | about 30 minutes |
+Measured T4 rates used for planning: the Stage 8 archive reranks 35 pairs per
+second at fixed 15/0 and 60 at fixed 6/0, and Stage 8 trained 1018 steps in 17.1
+minutes. Mining encodes about 40,800 chunks with BGE.
 
 The streaming time was not known in advance and is printed every 500 rows.
 
@@ -151,10 +143,9 @@ Finished arms and finished configs are kept.
 ## Amendment before any training or evaluation (2026-09-15)
 
 When this amendment was made, no arm had been trained and nothing had been
-evaluated; the data stream had finished and mining was running. Costing the plan
-with the archived T4 timings put the full GO path near three hours of GPU on a
-free Colab quota, almost an hour of it on steps that do not affect the verdict.
-So:
+evaluated; the data stream had finished and mining was running. Costed with the
+archived T4 rates, about a third of the GPU time on the full GO path went to
+steps that do not affect the verdict. So:
 
 - the final run defaults to the primary config, fixed 15/0, and fixed 6/0 became
   an optional second run that resumes from the same checkpoint;

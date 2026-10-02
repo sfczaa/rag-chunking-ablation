@@ -2,8 +2,8 @@
 
 Status: pre-registered on 2026-09-17, run on 2026-09-23. The design criteria and
 thresholds were fixed before any GPU run for this stage. The motivation,
-headings, expectations and the label of criterion 5 were reworded after the
-run.
+headings, expectations, cost section and the label of criterion 5 were reworded
+after the run.
 
 Question: trained from the base model with the Stage 8 recipe, does a reranker
 fine-tuned on about 10,000 groups rank better on the Stage 6 bench than the Stage 8
@@ -94,14 +94,10 @@ this range is not the limit either.
 
 ## Cost
 
-| Step | Runtime | Estimate |
-| --- | --- | --- |
-| Stream 6000 documents (Stage 11 streamed 2000 in 8.2 minutes) | CPU | about 25 minutes |
-| Mine three shards of about 38,000 chunks each | GPU | 45 to 60 minutes, the least certain figure |
-| Train the 4k arm, about 2006 steps (Stage 8: 1018 steps in 17.1 minutes) | GPU | about 34 minutes |
-| Train the 10k arm, about 5000 steps | GPU | about 84 minutes |
-| Dev bench, 3 rerankers plus the index | GPU | about 15 minutes |
-| Stage 6 bench, fixed 15/0, 4 rerankers plus the index | GPU | about 45 minutes |
+Streaming 6000 documents runs on CPU; Stage 11 streamed 2000 in 8.2 minutes.
+Mining three shards of about 38,000 chunks each, training the 4k arm (about 2006
+steps) and the 10k arm (about 5000 steps), and the two benches run on a GPU;
+Stage 8 trained 1018 steps in 17.1 minutes.
 
 Each step caches or checkpoints its output: the stream writes its documents when
 it finishes, each shard's groups are written when that shard is mined, each
@@ -128,7 +124,7 @@ Training data under `artifacts/data/nq_train_stage14/`, weights under
 Nothing had been streamed, mined, trained or evaluated when this was made. The run
 may be continued by several Colab accounts in one shared Drive folder, and the plan
 above had two gaps for that: an interrupted arm was retrained from the start (up to
-about 84 minutes lost for the 10k arm), and nothing stopped two runtimes from
+about 5000 steps lost for the 10k arm), and nothing stopped two runtimes from
 writing the same files. So:
 
 - Training uses a resumable copy of the `scripts/17` loop. Every 500 steps it saves

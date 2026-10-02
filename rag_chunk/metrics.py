@@ -19,7 +19,7 @@ def recall_at_k(index, questions: list[dict], ks=C.RECALL_KS) -> dict[str, dict]
     """Recall@k under two definitions, returned as
     ``{"doc_constrained": {k: r}, "unconstrained": {k: r}}``.
 
-    * ``unconstrained`` - the gold answer string appears in *any* top-k chunk.
+    * ``unconstrained`` - the gold answer string appears in any top-k chunk.
       This over-counts: a short answer (a year, a common name, a place) can match
       a chunk from an unrelated document, inflating recall and doing so unevenly
       between the two chunking methods.
@@ -73,7 +73,7 @@ def recall_from_retrieved(retrieved: list[list[dict]], questions: list[dict],
 def boundary_f1(model, threshold: float | None = None, split: str = "test") -> dict:
     """Precision/Recall/F1 of predicted vs pseudo-label boundaries (Wikipedia).
 
-    ``threshold`` defaults to the *current* ``C.BOUNDARY_THRESHOLD`` (read at
+    ``threshold`` defaults to the current ``C.BOUNDARY_THRESHOLD`` (read at
     call time, so ``C.apply(...)`` overrides take effect)."""
     import torch
 
@@ -203,7 +203,7 @@ def best_threshold(sweep_rows: list[dict]) -> dict:
 def boundary_prob_diagnostics(probs, labels) -> dict:
     """Distribution of predicted boundary probabilities, overall and by gold label.
 
-    Surfaces *why* a fixed threshold mis-scores: e.g. a max probability below 0.8
+    Surfaces why a fixed threshold mis-scores: e.g. a max probability below 0.8
     forces Boundary F1 to 0 at the BiLSTM's 0.8 cut. Reports percentiles, the mean
     probability on true-boundary vs non-boundary positions, and a coarse 10-bin
     histogram.

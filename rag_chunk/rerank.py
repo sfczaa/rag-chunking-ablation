@@ -3,7 +3,7 @@
 Reuses the Stage 3/4 protocol unchanged - the same NQ corpus and questions, the
 same fixed / BiLSTM / Transformer chunking grids, the same boundary models and
 weights, the same BGE dense retriever - and adds one new step over the
-*identical* chunks: BGE retrieves a top-``d`` candidate pool per question, and
+identical chunks: BGE retrieves a top-``d`` candidate pool per question, and
 an off-the-shelf pretrained cross-encoder (``C.RERANKER_MODEL``, no training or
 fine-tuning) rescores the (question, chunk) pairs and reorders the pool.
 

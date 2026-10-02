@@ -5,7 +5,7 @@ storage root through the environment variable ``RAG_DATA_ROOT`` or by calling
 :func:`set_data_root`.
 
 Every tunable number lives here so the notebook / scripts stay declarative.
-The data-scale knobs are read at *call time* by the pipeline functions, so
+The data-scale knobs are read at call time by the pipeline functions, so
 :func:`apply` / :func:`use_smoke` can re-scale the whole pipeline at runtime.
 """
 
@@ -174,7 +174,7 @@ TRANSFORMER_DROPOUT = 0.1
 # -- Boundary-threshold calibration (Stage 2.1) ------------------------------ #
 # The Transformer's sigmoid outputs occupy a different range than the BiLSTM's,
 # so the shared BOUNDARY_THRESHOLD (0.8, tuned for the BiLSTM) can score its
-# Boundary F1 at ~0 even when the learned boundaries are fine. This *separate*
+# Boundary F1 at ~0 even when the learned boundaries are fine. This separate
 # threshold is calibrated on the validation split (max boundary F1) by Phase 7
 # training. It is used ONLY for the Boundary F1 diagnostic - the retrieval sweep
 # uses the target-size (argmax) policy and ignores any threshold, so Stage 1 /
@@ -309,7 +309,7 @@ STAGE7_SCATTER_PNG = "stage7_recall_vs_chunk_size.png"
 # --------------------------------------------------------------------------- #
 # Trigger (Stage 6): at the size-15 sweet spot pool_recall@20 ~ 0.96 but
 # R@1 ~ 0.63 and the off-the-shelf reranker adds ~0, so the remaining
-# bottleneck is ranking within the pool. Training data comes from the NQ *train*
+# bottleneck is ranking within the pool. Training data comes from the NQ train
 # split; every eval bench uses the validation split, so they stay disjoint.
 # See docs/stage8_reranker_finetune.md.
 STAGE8_N_TRAIN_DOCS = 2000       # training-corpus documents (~1 question/doc)
@@ -451,7 +451,7 @@ FAIR_TABLE_CSV = "fair_comparison_table.csv"
 RECALL_PLOT_PNG = "recall_vs_chunk_size.png"
 MODEL_PLOT_PNG = "model_comparison.png"
 # Scatter of Recall@k vs avg chunk size, coloured by method - shows that recall
-# tracks chunk *size*, not chunk *method* (the Stage 2 headline finding).
+# tracks chunk size across chunking methods (the Stage 2 headline finding).
 SIZE_SCATTER_PNG = "recall_vs_size_scatter.png"
 
 # Cross-stage portfolio figure (scripts/14_evolution_plot.py): best R@5 per

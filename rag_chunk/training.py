@@ -65,7 +65,7 @@ def train_model(model_type: str = "bilstm", max_epochs: int | None = None) -> di
     """Train, early-stop on val loss, save best weights. Returns history+stats.
 
     ``model_type`` selects the boundary model ('bilstm' default keeps the old
-    behaviour); 'transformer' trains the Stage 2 model on the *same* cached
+    behaviour); 'transformer' trains the Stage 2 model on the same cached
     MiniLM embeddings + Wikipedia labels (no Phase 1/2 rerun needed).
     """
     import torch
@@ -163,7 +163,7 @@ def train_model(model_type: str = "bilstm", max_epochs: int | None = None) -> di
         # Transformer's differently-ranged probabilities - at 0.8 it can read F1=0
         # even when the learned boundaries are fine. Calibrate the threshold on the
         # validation split (max F1), report test F1 there, and write diagnostics.
-        # This is the Boundary F1 *diagnostic* only; the retrieval sweep uses the
+        # This is the Boundary F1 diagnostic only; the retrieval sweep uses the
         # target-size (argmax) policy and ignores the threshold, so it is unchanged.
         from rag_chunk import calibration
 

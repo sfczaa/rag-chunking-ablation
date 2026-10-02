@@ -3,7 +3,7 @@
 Status: implemented.
 
 Stage 1 turns the project from a single fixed-vs-learned comparison into a fair
-*optimizer*. It answers one question:
+optimizer. It answers one question:
 
 > At the same approximate chunk size and overlap, does learned target-size
 > semantic cutting choose better boundaries than fixed-size cutting?

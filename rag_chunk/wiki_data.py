@@ -6,14 +6,14 @@ The cleaned ``text`` in ``wikimedia/wikipedia`` does not preserve the
 ``== Section ==`` markers, so section boundaries cannot be recovered reliably
 from it.  We therefore:
 
-  1. pick article *titles* deterministically by streaming the HF dump
+  1. pick article titles deterministically by streaming the HF dump
      (no full download), then
-  2. fetch the *raw wikitext* for those titles from the MediaWiki API and
+  2. fetch the raw wikitext for those titles from the MediaWiki API and
      parse the real ``== Section ==`` structure with ``mwparserfromhell``.
 
 Boundary label convention
 --------------------------
-``labels[i]`` is the label of the boundary *between* ``sentences[i]`` and
+``labels[i]`` is the label of the boundary between ``sentences[i]`` and
 ``sentences[i+1]`` (so ``len(labels) == len(sentences) - 1``).  It is ``1``
 iff ``sentences[i+1]`` is the first sentence of a new section.
 

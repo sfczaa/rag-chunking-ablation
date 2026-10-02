@@ -39,7 +39,7 @@ disjoint by construction. One streaming pass builds two things
 - Dev bench: the next `STAGE8_N_DEV_DOCS` (default 400) documents and
   the questions whose gold doc lies in that window (questions pointing back
   into a training doc are dropped). The dev bench is therefore disjoint from
-  the training docs *and* from the final eval - the Stage 6 bench is touched
+  the training docs and from the final eval - the Stage 6 bench is touched
   exactly once, at the end.
 
 Mining (deployment-matched): chunk the training corpus with the
@@ -48,7 +48,7 @@ each training question's top-20 pool - exactly what the reranker sees at eval
 time. Then per question:
 
 - positive = the highest-dense-ranked pool chunk that is answer-bearing
-  *and* from the gold document (the metric's own hit rule);
+  and from the gold document (the metric's own hit rule);
 - hard negatives = the top `STAGE8_NUM_NEGATIVES` (default 7) remaining
   pool chunks by dense rank - the exact distractors BGE currently ranks high;
 - questions whose pool contains no positive are dropped (~4% expected
@@ -87,8 +87,8 @@ top-20 pool: `bge`, `rerank20` (off-the-shelf) and `rerank20_ft`.
 | <= 0 | NO-GO - stop, archive the dev results as a negative result |
 | in between | judgment call: at most one retry with more data/epochs, then decide; no threshold-shopping |
 
-The dev bench (~400 questions, 1 SE ~ 0.024) is for the *decision*, not the
-*claim* - final numbers only ever come from the Stage 6 bench.
+The dev bench (~400 questions, 1 SE ~ 0.024) only makes the go/no-go decision;
+final numbers only ever come from the Stage 6 bench.
 
 ## Final evaluation (only after GO)
 
@@ -185,16 +185,16 @@ exact - all 10 bge/rerank20 rows reproduce with every delta 0.0000, so the
    gave at most +0.001. R@3 (+0.05...+0.06) and R@5 (+0.03...+0.05) improve too -
    no metric trades down.
 2. The result is consistent with a ranking bottleneck: at fixed 15/0 the gap between
-   R@1 (0.628) and the pool ceiling (0.964) was a *ranking* problem; 2034
+   R@1 (0.628) and the pool ceiling (0.964) was a ranking problem; 2034
    in-domain groups and 17 minutes of GPU close about a third of it
    (0.628 -> 0.736).
 3. The size contrast remains: ft R@1 is 0.650 at size 6 and 0.736 at size 15.
    The size-15 method spread in ft R@5 is 0.9099-0.9244, approximately 2 SE,
    so this evaluation does not resolve a method difference.
-4. Caveats: (a) the gain is *in-domain* - trained on NQ train
+4. Caveats: (a) the gain is in-domain - trained on NQ train
    split, evaluated on NQ validation split; nothing here claims transfer to
    other datasets (a TriviaQA transfer arm was added later - see
-   [`stage8_transfer.md`](stage8_transfer.md): the gain *partially* transfers,
+   [`stage8_transfer.md`](stage8_transfer.md): the gain partially transfers,
    as damage control rather than net lift over the dense baseline). (b) Questions
    are disjoint by split, but popular Wikipedia pages can appear in both
    splits' corpora - standard for NQ, noted for transparency. (c) Reranking

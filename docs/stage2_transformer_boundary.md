@@ -20,7 +20,7 @@ MiniLM (`EMBED_DIM = 384`).
   `len(sentences) - 1`, one logit per inter-sentence boundary.
 - Input LayerNorm (fixes a collapse). The frozen MiniLM vectors are small per
   component (RMS ~0.05) while the sinusoidal PE has amplitude ~1, so adding raw PE
-  swamped the content ~10-40x and the encoder collapsed to a *constant* predictor:
+  swamped the content ~10-40x and the encoder collapsed to a constant predictor:
   the first cut reported Boundary F1 ~ 0 / a degenerate "cut-everywhere" baseline
   (precision = positive-rate, recall = 1.0). A `LayerNorm` on the input rescales
   each sentence vector to unit per-component variance before PE is added, so the
@@ -28,7 +28,7 @@ MiniLM (`EMBED_DIM = 384`).
 - Pairwise boundary head. Each boundary's logit is read from a richer view of
   the two adjacent encoded states - `[h_i ; h_{i+1} ; |h_i - h_{i+1}| ; h_i * h_{i+1}]`
   -> `Linear(4d -> 1)`. The absolute-difference and element-wise product give the
-  classifier an explicit *dissimilarity* signal (the natural cue for a topic
+  classifier an explicit dissimilarity signal (the natural cue for a topic
   change) rather than asking a plain `concat` to recover it. *(This changes the
   saved weight shape, so retrain the Transformer before sweeping - see below.)*
 - It uses the same target-size semantic cutting policy as the BiLSTM
@@ -134,7 +134,7 @@ transformer rows / series): `sweep_results.csv`, `best_config.json`,
 - `recall_vs_chunk_size.png` gains Transformer overlap=0/1 series.
 - `model_comparison.png` shows the best fixed vs best BiLSTM vs best Transformer.
 - `recall_vs_size_scatter.png` - Recall@k vs avg chunk size, coloured by method,
-  with the size-trend line + Pearson *r* and the 1-SE noise floor. This is the
+  with the size-trend line + Pearson r and the 1-SE noise floor. This is the
   figure behind the headline finding (size dominates, methods overlap; see the
   [README Results](../README.md#results) for the numbers).
 - `best_config.json` is chosen across all three methods.

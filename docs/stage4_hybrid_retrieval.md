@@ -9,7 +9,7 @@ lexical BM25 or a BGE+BM25 Reciprocal Rank Fusion beat BGE-only retrieval?
 
 ## Scope
 
-Stage 4 changes only how chunks are *ranked* for a query. Three retrievers are
+Stage 4 changes only how chunks are ranked for a query. Three retrievers are
 compared per chunking config:
 
 1. `bge` - dense retrieval, exactly the Stage 3 path (BGE embeddings,

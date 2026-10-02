@@ -1,6 +1,6 @@
 """Archive the current ``results/latest/`` into a stage snapshot folder.
 
-``results/latest/`` is the *working* output - every new sweep overwrites it. This
+``results/latest/`` is the working output - every new sweep overwrites it. This
 utility copies its contents into ``results/<stage>/final/`` so a finished run is
 preserved while ``latest/`` stays free to be overwritten. It only ever copies;
 nothing is moved or deleted.

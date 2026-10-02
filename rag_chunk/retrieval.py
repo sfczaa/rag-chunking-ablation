@@ -37,7 +37,7 @@ class ChunkIndex:
         return self
 
     def search_texts(self, queries: list[str], k: int) -> list[list[str]]:
-        """Top-k chunk *texts* for each query."""
+        """Top-k chunk texts for each query."""
         from rag_chunk import embedding
 
         if self.index is None:
@@ -67,7 +67,7 @@ class ChunkIndex:
         return out
 
     def search_ids(self, queries: list[str], k: int) -> list[list[int]]:
-        """Top-k chunk *ids* (row indices into ``chunk_texts``) for each query.
+        """Top-k chunk ids (row indices into ``chunk_texts``) for each query.
         Used by the Stage 4 hybrid sweep to fuse dense and BM25 rankings over
         one shared id space."""
         from rag_chunk import embedding
@@ -139,7 +139,7 @@ def _file_sha1(path: Path) -> str | None:
 
 
 def _corpus_hash(docs: list, questions: list) -> str:
-    """Stable SHA-1 of the *content* of the NQ corpus + queries, so a rebuilt
+    """Stable SHA-1 of the content of the NQ corpus + queries, so a rebuilt
     corpus that happens to have the same doc/question counts (e.g. after an
     ``NQ_CONFIG`` change) still invalidates the cached indices."""
     h = hashlib.sha1()
@@ -165,10 +165,10 @@ def current_signature(docs: list, questions: list,
     """Config fingerprint that the cached main indices must match to be reused.
 
     Records everything that affects the Phase 5 ``bilstm`` + ``fixed`` indices
-    *and* the chunking-policy knobs, so changing any of them forces a rebuild
+    and the chunking-policy knobs, so changing any of them forces a rebuild
     instead of silently evaluating new settings against a stale FAISS cache.
 
-    ``threshold`` defaults to the *current* ``C.BOUNDARY_THRESHOLD`` (read at
+    ``threshold`` defaults to the current ``C.BOUNDARY_THRESHOLD`` (read at
     call time, so ``C.apply(...)`` overrides take effect). Bumping
     ``manifest_version`` invalidates every previously cached index on purpose.
     """
@@ -216,7 +216,7 @@ def load_manifest() -> dict | None:
 def build_indexes(model, threshold: float | None = None, save: bool = True) -> dict:
     """Phase 4: chunk every NQ doc both ways, embed chunks, build both indices.
 
-    ``threshold`` defaults to the *current* ``C.BOUNDARY_THRESHOLD`` (read at
+    ``threshold`` defaults to the current ``C.BOUNDARY_THRESHOLD`` (read at
     call time). Returns
     ``{'bilstm': ChunkIndex, 'fixed': ChunkIndex, 'docs', 'questions'}``.
     """

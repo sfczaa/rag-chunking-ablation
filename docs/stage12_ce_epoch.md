@@ -2,7 +2,8 @@
 
 Status: pre-registered on 2026-09-15, run on 2026-09-16. Verdict: TIE
 (CE - Stage 8 = +0.0019 R@1, 95% CI [-0.0120, +0.0159], n = 1032). Everything
-above the Results section was written before any GPU run for this stage.
+above the Results section was written before any GPU run for this stage; the
+cost note was reworded afterwards.
 
 Question: on the Stage 6 bench, does the reranker trained for one more epoch of
 listwise cross-entropy on the Stage 11 groups rank better than the Stage 8
@@ -103,12 +104,8 @@ python scripts/29_eval_ce_epoch.py --configs 15:0,6:0    # optional secondary
 ```
 
 Or run all cells of `notebooks/RAG_chunk_optimize_stage12_colab.ipynb` on a GPU
-runtime. Estimated cost on a T4, based on the reranking times in `stage8/final`:
-
-| Step | Estimate |
-| --- | --- |
-| Fixed 15/0: 3 rerankers at 9.7 minutes each, plus the dense index and model loading | about 45 minutes |
-| Optional fixed 6/0: 3 rerankers at 5.7 minutes each, plus the dense index | about 30 minutes |
+runtime. In `stage8/final` one reranker took 9.7 minutes at fixed 15/0 and 5.7
+minutes at fixed 6/0 on a T4.
 
 If the runtime is lost, only the config in progress is lost. Each finished config
 is written to the checkpoint and skipped on the next run.

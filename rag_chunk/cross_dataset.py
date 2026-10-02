@@ -3,7 +3,7 @@
 Mirrors the ``nq_data`` interface: :func:`prepare_trivia` returns
 ``(docs, questions)`` where each doc is ``{"id", "title", "sentences"}`` and
 each question is ``{"question", "answer", "doc_title", "doc_titles"}``. The
-extra ``doc_titles`` lists *every* gold page (1-2 per question); ``doc_title``
+extra ``doc_titles`` lists every gold page (1-2 per question); ``doc_title``
 stays the first of them, so code written against the NQ schema keeps working.
 
 Gold-document definition (doc-constrained recall)
@@ -15,7 +15,7 @@ gold docs; every report of Stage 7 numbers must say so). The loader:
 1. splits each entity page into sentences (>= 2 sentences to be usable -
    same rule as the NQ loader);
 2. normalizes the answer candidates - ``answer.value`` first, then
-   ``answer.aliases`` in dataset order - with the *same* ``normalize_text``
+   ``answer.aliases`` in dataset order - with the same ``normalize_text``
    the metric uses;
 3. keeps the first candidate that appears as a substring of some page's
    sentence-joined normalized text. That candidate becomes the question's
@@ -23,7 +23,7 @@ gold docs; every report of Stage 7 numbers must say so). The loader:
    the gold set is every page containing it;
 4. drops the question when no candidate appears anywhere (counted, reported).
 
-The candidate is checked against the *sentence-joined* text - exactly what
+The candidate is checked against the sentence-joined text - exactly what
 chunks are built from - so the NQ answer-matching invariant holds: a doc-constrained
 miss means chunking split the answer span or retrieval missed the chunk.
 

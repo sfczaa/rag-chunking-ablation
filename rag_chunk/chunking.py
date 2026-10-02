@@ -178,7 +178,7 @@ def bilstm_chunks(
     """Chunk a document using the trained BiLSTM boundary detector (threshold
     policy - the original Phase 4/5 behaviour).
 
-    ``threshold`` defaults to the *current* ``C.BOUNDARY_THRESHOLD`` (read at
+    ``threshold`` defaults to the current ``C.BOUNDARY_THRESHOLD`` (read at
     call time, so ``C.apply(...)`` overrides take effect).
     """
     if threshold is None:
@@ -200,7 +200,7 @@ def chunks_from_probs(
     max_size: int | None = None,
     overlap: int | None = None,
 ) -> list[list[str]]:
-    """Turn *precomputed* boundary probabilities into chunks under ``policy``.
+    """Turn precomputed boundary probabilities into chunks under ``policy``.
 
     Split out from :func:`learned_chunks` so the sweep can run the model forward
     once per document (see :func:`predict_boundary_probs`) and then re-chunk

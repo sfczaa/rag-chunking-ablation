@@ -1,7 +1,7 @@
 """Stage 8 (step 2) - fine-tune BAAI/bge-reranker-base on the mined groups.
 
 Plain ``transformers`` + ``torch`` training loop (the sentence-transformers
-*training* API has churned across major versions; inference still goes
+training API has churned across major versions; inference still goes
 through ``CrossEncoder``, which loads any HF sequence-classification
 checkpoint directory, so the fine-tuned model plugs into the existing eval
 path unchanged).

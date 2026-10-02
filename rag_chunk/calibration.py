@@ -2,7 +2,7 @@
 
 The retrieval sweep cuts with the target-size (argmax) policy and never reads a
 probability threshold, so a boundary model can drive perfectly good chunks yet
-still report Boundary F1 = 0 when the *diagnostic* threshold is miscalibrated.
+still report Boundary F1 = 0 when the diagnostic threshold is miscalibrated.
 That is exactly what happened to the Transformer at the BiLSTM-tuned
 ``BOUNDARY_THRESHOLD = 0.8``.
 
@@ -15,7 +15,7 @@ the choice is auditable instead of a magic number:
     results/latest/transformer_boundary_threshold_f1.png F1 / precision / recall
 
 Nothing here touches retrieval, the sweep or the BiLSTM - it only changes which
-threshold the Boundary F1 *number* is read at.
+threshold the Boundary F1 number is read at.
 """
 
 from __future__ import annotations

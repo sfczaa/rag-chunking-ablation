@@ -3,7 +3,7 @@
 Reuses the Stage 3 protocol unchanged - the same NQ corpus and questions, the
 same fixed / BiLSTM / Transformer chunking grids, the same boundary models and
 weights, the same BGE dense retrieval - and adds two retrievers over the
-*identical* chunks:
+identical chunks:
 
 * ``bm25`` - classic lexical Okapi BM25 (pure numpy, no extra dependency);
 * ``rrf``  - Reciprocal Rank Fusion of the BGE and BM25 rankings.

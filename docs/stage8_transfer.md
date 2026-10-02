@@ -2,7 +2,7 @@
 
 Status: complete. Run on Colab (T4) 2026-07-25. Stage 8 fine-tuned
 `BAAI/bge-reranker-base` on the NQ train split and measured ft-ots
-delta R@1 = +0.087...+0.107 *in-domain* (NQ val). Its stated caveat was that no
+delta R@1 = +0.087...+0.107 in-domain (NQ val). Its stated caveat was that no
 transfer claim was made. This addendum answers that caveat directly: it re-runs
 the exact Stage 8 final protocol - same 5 configs, same three arms
 (`bge` / off-the-shelf `rerank20` / fine-tuned `rerank20_ft`) sharing one BGE
@@ -11,13 +11,13 @@ rc.wikipedia bench (472 docs / 300 questions) instead of NQ. Only the eval
 dataset changes, so any difference is a transfer effect; the protocol
 is unchanged. Archived to `artifacts/results/stage8/final/`.
 
-## The one number the `ft - ots` verdict hides
+## The fine-tuned reranker against the dense order
 
 The script's automatic verdict compares the fine-tuned reranker to the
 off-the-shelf one (`ft - ots`) and, at fixed 15/0, reports
-+0.0567 > 2 SE (0.0538) -> "TRANSFERS". That is true but incomplete. The
-comparison also needs `ft - bge` - the fine-tuned reranker versus no
-reranking at all (the raw dense order):
++0.0567 > 2 SE (0.0538) -> "TRANSFERS". The comparison with no reranking at
+all, `ft - bge` (the fine-tuned reranker against the raw dense order), is also
+needed:
 
 | config (300 q) | bge R@1 | ots R@1 | ft R@1 | ft - ots | ft - bge | ots - bge |
 |---|---|---|---|---|---|---|
@@ -33,9 +33,9 @@ reranker was neutral there, ots - bge ~ +0.001).
 
 ## Findings
 
-1. The off-the-shelf reranker generalises poorly - it *hurts* on TriviaQA.
+1. The off-the-shelf reranker generalises poorly - it hurts on TriviaQA.
    `ots - bge` is negative at every config (-0.03...-0.07 R@1): reranking the
-   dense pool with the un-tuned cross-encoder makes the top-1 *worse* than
+   dense pool with the un-tuned cross-encoder makes the top-1 worse than
    plain dense retrieval. (In-domain it was merely neutral.)
 2. Fine-tuning offset the off-the-shelf degradation without a resolved net lift. The
    fine-tuned reranker recovers to parity with the dense baseline

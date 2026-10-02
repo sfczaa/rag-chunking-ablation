@@ -96,7 +96,7 @@ def _sha1(path: pathlib.Path) -> str:
 
 def _clean_latest() -> None:
     """Remove files from ``results/latest/`` so the Stage 5 archive stays pure -
-    but only files whose byte-identical copy exists in *some* stage archive
+    but only files whose byte-identical copy exists in some stage archive
     (stage3/stage4/stage5 final), so nothing unarchived is ever deleted."""
     latest = C.RESULTS_LATEST_DIR
     if not latest.exists():

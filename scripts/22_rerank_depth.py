@@ -1,4 +1,4 @@
-"""Stage 9 - does a *fine-tuned* reranker change the rerank-depth verdict?
+"""Stage 9 - does a fine-tuned reranker change the rerank-depth verdict?
 
 Stage 5 concluded that reranking the BGE top-50 is always worse than the top-20:
 the extra candidates added more noise than signal. That was measured with the

@@ -16,7 +16,7 @@ TriviaQA `rc.wikipedia` (validation split), streamed the same way
 `nq_data.py` streams NQ.
 
 Why not HotpotQA (considered first because of its clean supporting-facts
-annotation): HotpotQA's context "documents" are the *introductory paragraphs*
+annotation): HotpotQA's context "documents" are the introductory paragraphs
 of 2017 Wikipedia pages - typically ~4 sentences each, *shorter than the
 smallest size on our chunk grid (6)*. All 30 configs would chunk such
 documents nearly identically, so the size-vs-method question would be
@@ -34,7 +34,7 @@ entities in the question. The loader (`rag_chunk/cross_dataset.py`):
 1. splits every entity page into sentences (a page needs >= 2 sentences to be
    usable - same rule as the NQ loader);
 2. takes the answer candidates in a fixed order - `answer.value` first, then
-   `answer.aliases` in dataset order - and normalizes each with the *same*
+   `answer.aliases` in dataset order - and normalizes each with the same
    `normalize_text` the metric uses;
 3. keeps the first candidate that appears as a substring of some page's
    sentence-joined normalized text. That candidate becomes the question's
@@ -44,14 +44,14 @@ entities in the question. The loader (`rag_chunk/cross_dataset.py`):
 4. drops the question if no candidate appears in any of its pages (counted
    and reported).
 
-Because the answer is verified against the *sentence-joined* text - exactly
+Because the answer is verified against the sentence-joined text - exactly
 the text chunks are built from (`chunking.chunk_text` joins with single
 spaces; `normalize_text` collapses whitespace) - the NQ answer-matching invariant is
 restored: a doc-constrained miss means chunking split the answer span or
 retrieval missed the chunk, never that the answer was absent.
 
 Distant-supervision caveat, stated up front: a gold entity page is
-*known to contain the answer string*, but unlike NQ's annotated gold
+known to contain the answer string, but unlike NQ's annotated gold
 documents it is not human-verified to support the answer. For a recall
 metric this is sound - we measure whether an answer-bearing chunk of a
 designated gold page is retrieved - but it is a weaker gold notion than
@@ -64,7 +64,7 @@ for NQ.
 
 ## Scope
 
-Changed (the *only* change): the QA dataset - NQ -> TriviaQA `rc.wikipedia`.
+Changed (the only change): the QA dataset - NQ -> TriviaQA `rc.wikipedia`.
 
 Held fixed (identical to Stage 3):
 
@@ -84,7 +84,7 @@ of claim 1, not a leaderboard run.
 
 - Stream validation questions until `STAGE7_N_QUESTIONS` (default 300) are
   kept. Every output reports the actual doc/question counts.
-- Corpus = every usable entity page of every *kept* question, gold or not
+- Corpus = every usable entity page of every kept question, gold or not
   (a non-gold entity page of a kept question is a natural distractor),
   deduplicated by title.
 - Comparability guard: the loader aborts if the median corpus document is
@@ -101,7 +101,7 @@ of claim 1, not a leaderboard run.
    and every row must reproduce `stage3/final/sweep_results.csv` exactly
    (`stage7_check_vs_stage3.csv`: every `delta_n_chunks` 0, every recall
    delta 0.0000; the console prints a verdict). This checks that (a) the Stage 7
-   code path *is* the Stage 3 pipeline and (b) the multi-gold metric
+   code path is the Stage 3 pipeline and (b) the multi-gold metric
    extension did not change single-gold behaviour. No conclusion may be
    drawn from TriviaQA rows before this prints check OK.
 2. TriviaQA mode re-tests the direction claims with explicit rules

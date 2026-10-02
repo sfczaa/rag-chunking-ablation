@@ -3,8 +3,8 @@
 Status: pre-registered on 2026-09-16, run on 2026-09-17. Verdict:
 INCONCLUSIVE-BUDGET (the RL arm reached 1769 of the 1977 live groups the budget
 condition asks for). The design criteria and thresholds were fixed before any
-GPU run for this stage. Headings, the expectations section and the label of
-criterion 6 were reworded after the run.
+GPU run for this stage. Headings, the expectations and cost sections and the
+label of criterion 6 were reworded after the run.
 
 Question: Stage 11 trained the policy-gradient arm and its cross-entropy control
 for the same number of steps, and RL finished behind (dev R@1 RL - CE = -0.0246,
@@ -104,18 +104,9 @@ budgets and do not isolate every possible cause of a difference.
 
 ## Cost
 
-On a T4, from the Stage 11 and Stage 12 measurements (CE 7.9 min per epoch, RL 7.5
-min per epoch, reranking 35 pairs per second at fixed 15/0).
-
-| Step | Estimate |
-| --- | --- |
-| Train `ce4` and `rl4` | about 65 minutes |
-| Continue to `ce8` and `rl8` | about 65 minutes |
-| Dev bench, 4 new arms plus the index | about 25 minutes |
-| Stage 6 bench, fixed 15/0, 6 rerankers plus the index | about 70 minutes |
-
-Two Colab sessions fit this: training plus dev in the first, the claim bench in the
-second. Each arm writes a completion marker, and the evaluation is checkpointed per
+On a T4, Stages 11 and 12 measured 7.9 min per CE epoch, 7.5 min per RL epoch and
+35 reranked pairs per second at fixed 15/0. Training plus the dev bench and the
+claim bench are planned as two Colab sessions. Each arm writes a completion marker, and the evaluation is checkpointed per
 config, so a lost runtime costs the arm or config in progress.
 
 ## Outputs

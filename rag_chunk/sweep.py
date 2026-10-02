@@ -12,10 +12,10 @@ exports:
 
 Design notes
 ------------
-* The question it answers is *not* "does learned chunking win?" but: at the
-  same approximate chunk size and overlap, does learned semantic cutting pick
-  better boundaries than fixed-size cutting? Hence every learned config is
-  size-matched to a fixed config in the fair table.
+* The question it answers: at the same approximate chunk size and overlap,
+  does learned semantic cutting pick better boundaries than fixed-size
+  cutting? Hence every learned config is size-matched to a fixed config in the
+  fair table.
 * Per-config FAISS indices are built in memory and discarded - nothing is
   persisted under ``nq/`` unless ``save_sweep_index`` is enabled.
 * The boundary model runs once per document; all learned configs reuse those

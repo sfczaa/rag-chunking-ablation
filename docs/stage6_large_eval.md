@@ -13,7 +13,7 @@ questions the SE halves, so the directions either firm up or get overturned.
 
 ## Scope
 
-Changed (the *only* change):
+Changed (the only change):
 
 - `N_NQ_DOCS`: 200 -> `N_NQ_DOCS_LARGE` (~1000). The NQ stream stops at the
   N-th usable document, so every output reports the actual docs/questions
@@ -100,7 +100,7 @@ built with different retrieval/reranker models.
 
 The CSV reports the observed value, the rule and the small-eval reference for
 every claim, so borderline verdicts can be judged from those values rather than
-trusted blindly. A claim failing to replicate is a *finding*, not an error.
+trusted blindly. A claim that fails to replicate is reported as a finding.
 
 ## Outputs
 
@@ -168,7 +168,7 @@ Findings:
    size-15 pool ceilings remain >= 0.95 - the answer chunk is in the top-20 for
    ~96% of questions but the off-the-shelf cross-encoder cannot rank it first
    any better than BGE already does. That gap (R@1 0.63 vs pool 0.96) is the
-   one place left where a *fine-tuned* reranker could plausibly pay off - noted
+   one place left where a fine-tuned reranker could plausibly pay off - noted
    as the conditional trigger for a possible later stage and not done here.
 4. Cost at n=1032: ~600-730 s per rerank20 config (20 640 pairs), vs ~100 s at
    n=203 - reranking cost scales linearly with questions, which is exactly why
