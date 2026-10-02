@@ -1,0 +1,11 @@
+{
+  "verdict": "NO-GO",
+  "why": "dev R@1 RL - CE = -0.0246, behind the control",
+  "rl_minus_ce_r1": -0.0246,
+  "ci95": [
+    -0.0438,
+    -0.0054
+  ],
+  "live_fraction": 0.3186868686868687,
+  "n_questions": 406
+}

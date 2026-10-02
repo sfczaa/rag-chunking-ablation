@@ -1,0 +1,5 @@
+bench,metric,comparison,mean,ci95_low,ci95_high,n_questions
+holdout,recall@1,rerank20_s15_large - rerank20_ft,0.0193,0.0072,0.0314,3063
+holdout,recall@5,rerank20_s15_large - rerank20_ft,0.0088,0.0025,0.0151,3063
+stage6 + holdout,recall@1,rerank20_s15_large - rerank20_ft,0.0198,0.0094,0.0302,4095
+stage6 + holdout,recall@5,rerank20_s15_large - rerank20_ft,0.0093,0.0037,0.0149,4095

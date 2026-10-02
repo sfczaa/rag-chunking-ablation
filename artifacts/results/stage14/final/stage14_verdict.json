@@ -1,0 +1,19 @@
+{
+  "verdict": "TIE",
+  "why": "10k - Stage 8 = -0.0048 R@1, 95% CI [-0.0204, +0.0107]: not a detectable difference",
+  "check_ok": true,
+  "questions_ok": true,
+  "10k_minus_stage8_r1": -0.0048449612403100775,
+  "ci95": [
+    -0.020395511618036856,
+    0.0107055891374167
+  ],
+  "floor": 0.02,
+  "n_questions": 1032,
+  "n_groups": {
+    "rerank20_s14_4k": 4011,
+    "rerank20_s14_10k": 10334
+  },
+  "size_required": 9000,
+  "r1_monotone": false
+}

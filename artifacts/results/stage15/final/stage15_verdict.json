@@ -1,0 +1,13 @@
+{
+  "verdict": "LARGE-BETTER",
+  "why": "large beats Stage 8 by +0.0213 R@1, 95% CI [+0.0009, +0.0417], at or above the 0.02 floor",
+  "check_ok": true,
+  "questions_ok": true,
+  "large_minus_stage8_r1": 0.02131782945736434,
+  "ci95": [
+    0.0008940472390665637,
+    0.04174161167566212
+  ],
+  "floor": 0.02,
+  "n_questions": 1032
+}

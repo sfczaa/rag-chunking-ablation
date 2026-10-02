@@ -1,0 +1,13 @@
+{
+  "n_docs": 2852,
+  "n_questions": 3063,
+  "dataset": "google-research-datasets/natural_questions",
+  "config": "default",
+  "split": "validation",
+  "stage6_titles_sha1": "321417ed515da23c65c5766f3174e123f30bec5a",
+  "sentence_splitter": "rag_chunk.sentence_tokenizer",
+  "rows_scanned": 7830,
+  "schema_errors": 0,
+  "rows_skipped_stage6_title": 1226,
+  "rows_skipped_stage6_question": 0
+}

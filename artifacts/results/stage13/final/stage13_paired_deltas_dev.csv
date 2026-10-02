@@ -1,0 +1,13 @@
+config,metric,comparison,mean,ci95_low,ci95_high,n_questions
+fixed 15/0,recall@1,rerank20_s13_rl4 - rerank20_s13_ce4,0.0,-0.0216,0.0216,406
+fixed 15/0,recall@5,rerank20_s13_rl4 - rerank20_s13_ce4,0.0049,-0.0069,0.0168,406
+fixed 15/0,recall@1,rerank20_s13_rl8 - rerank20_s13_ce8,-0.0074,-0.0261,0.0113,406
+fixed 15/0,recall@5,rerank20_s13_rl8 - rerank20_s13_ce8,0.0123,-0.0004,0.025,406
+fixed 15/0,recall@1,rerank20_s13_ce4 - rerank20_ft,0.0025,-0.0197,0.0246,406
+fixed 15/0,recall@5,rerank20_s13_ce4 - rerank20_ft,-0.0074,-0.0182,0.0034,406
+fixed 15/0,recall@1,rerank20_s13_rl4 - rerank20_ft,0.0025,-0.0217,0.0266,406
+fixed 15/0,recall@5,rerank20_s13_rl4 - rerank20_ft,-0.0025,-0.0152,0.0103,406
+fixed 15/0,recall@1,rerank20_s13_ce8 - rerank20_ft,0.0049,-0.0215,0.0314,406
+fixed 15/0,recall@5,rerank20_s13_ce8 - rerank20_ft,-0.0148,-0.0284,-0.0012,406
+fixed 15/0,recall@1,rerank20_s13_rl8 - rerank20_ft,-0.0025,-0.0285,0.0236,406
+fixed 15/0,recall@5,rerank20_s13_rl8 - rerank20_ft,-0.0025,-0.0108,0.0059,406

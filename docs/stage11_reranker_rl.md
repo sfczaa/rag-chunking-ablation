@@ -196,7 +196,8 @@ shared BGE top-20 pool (pool recall 0.973):
 | CE - Stage 8 | +0.0222 [+0.0001, +0.0442] | -0.0049 [-0.0117, +0.0019] |
 
 RL minus CE on R@1 is below 0, so by criterion 3 the verdict is NO-GO. The Stage 6
-bench was not run and nothing was archived.
+bench was not run. The dev outputs are archived in
+`artifacts/results/stage11/final/`.
 
 Interpretation. The dev gate only decides cost, so these numbers are not the Stage
 11 result. The direction is still clear: the RL objective produced a gradient on a

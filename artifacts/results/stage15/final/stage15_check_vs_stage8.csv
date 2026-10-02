@@ -1,0 +1,4 @@
+arm,config,gates_validity,archived_recall@1,now_recall@1,delta_recall@1,archived_recall@3,now_recall@3,delta_recall@3,archived_recall@5,now_recall@5,delta_recall@5,n_chunks_match,status
+bge,fixed 15/0,True,0.6279,0.6279,+0.0000,0.8159,0.8159,+0.0000,0.8808,0.8808,+0.0000,True,match
+rerank20,fixed 15/0,True,0.6289,0.6289,+0.0000,0.8159,0.8159,+0.0000,0.8760,0.8760,+0.0000,True,match
+rerank20_ft,fixed 15/0,False,0.7355,0.7345,-0.0010,0.8750,0.8750,+0.0000,0.9215,0.9186,-0.0029,True,match

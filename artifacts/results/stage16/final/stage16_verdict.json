@@ -1,0 +1,19 @@
+{
+  "verdict": "BELOW-FLOOR",
+  "why": "large beats Stage 8 by +0.0193 R@1, 95% CI [+0.0072, +0.0314], below the 0.02 floor",
+  "valid": true,
+  "n_questions": 3063,
+  "large_minus_stage8_r1": 0.019262161279791055,
+  "ci95": [
+    0.007155101074570127,
+    0.031369221485011985
+  ],
+  "floor": 0.02,
+  "title_overlap": 0,
+  "question_overlap": 0,
+  "train_title_overlap": 188,
+  "weights_sha256": {
+    "rerank20_ft": "0f638a21a29c40ea3ec15c78c5a12537bc274610480e8cee0f46edbc648593a0",
+    "rerank20_s15_large": "e7fff83c1ee8faf36bb11aabafb786c4f1c2c9438067987780554fd015fc51b3"
+  }
+}

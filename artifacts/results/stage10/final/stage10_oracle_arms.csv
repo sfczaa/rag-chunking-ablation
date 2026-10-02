@@ -1,0 +1,5 @@
+arm,recall@1,recall@5,mrr@10,avg_chunk_size,n_questions
+fixed,0.6502,0.8879,0.7498,14.686,446
+supervised,0.6525,0.8901,0.7507,14.854,446
+random_mean,0.6446,0.8858,0.7465,14.852,446
+oracle,0.8475,0.9484,0.8919,14.686,446

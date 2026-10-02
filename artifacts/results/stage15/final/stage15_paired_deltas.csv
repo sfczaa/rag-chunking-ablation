@@ -1,0 +1,7 @@
+config,metric,comparison,mean,ci95_low,ci95_high,n_questions
+fixed 15/0,recall@1,rerank20_s15_large - rerank20_ft,0.0213,0.0009,0.0417,1032
+fixed 15/0,recall@5,rerank20_s15_large - rerank20_ft,0.0107,-0.0015,0.0228,1032
+fixed 15/0,recall@1,rerank20_large - rerank20,-0.0349,-0.0631,-0.0067,1032
+fixed 15/0,recall@5,rerank20_large - rerank20,0.0048,-0.0125,0.0222,1032
+fixed 15/0,recall@1,rerank20_s15_large - rerank20_large,0.1618,0.1347,0.189,1032
+fixed 15/0,recall@5,rerank20_s15_large - rerank20_large,0.0484,0.0331,0.0638,1032

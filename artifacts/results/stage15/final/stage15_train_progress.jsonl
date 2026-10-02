@@ -1,0 +1,3 @@
+{"time": "2026-09-27T03:22:48Z", "account": "A", "arm": "large", "event": "started", "step": 0, "total": 1018}
+{"time": "2026-09-27T04:02:04Z", "account": "A", "arm": "large", "event": "checkpoint", "step": 600, "total": 1018}
+{"time": "2026-09-27T04:27:07Z", "account": "A", "arm": "large", "event": "completed", "step": 1018, "total": 1018}

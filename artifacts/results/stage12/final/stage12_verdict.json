@@ -1,0 +1,17 @@
+{
+  "verdict": "TIE",
+  "why": "CE - Stage 8 = +0.0019 R@1, 95% CI [-0.0120, +0.0159]: not a detectable difference",
+  "check_ok": true,
+  "questions_ok": true,
+  "ce_minus_stage8_r1": 0.001937984496124031,
+  "ci95": [
+    -0.012024676160010416,
+    0.015900645152258478
+  ],
+  "floor": 0.02,
+  "n_questions": 1032,
+  "configs": [
+    "fixed 15/0"
+  ],
+  "ce_init_identity": "b4badac446f6:1112201932"
+}

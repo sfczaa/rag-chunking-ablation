@@ -1,0 +1,16 @@
+{
+  "verdict": "INCONCLUSIVE-BUDGET",
+  "why": "the RL arm accumulated 1769 live groups, short of the 1977 the budget condition asks for",
+  "check_ok": true,
+  "questions_ok": true,
+  "rl4_minus_ce4_r1": 0.0048449612403100775,
+  "ci95": [
+    -0.010936062933546145,
+    0.020625985414166298
+  ],
+  "floor": 0.02,
+  "n_questions": 1032,
+  "live_fraction": 0.22373737373737373,
+  "live_groups": 1769,
+  "budget_required": 1977
+}

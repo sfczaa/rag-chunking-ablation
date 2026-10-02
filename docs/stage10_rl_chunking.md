@@ -205,7 +205,8 @@ not move.
 
 Step 0 reproduced the supervised transformer's dev row exactly, as expected with
 identical weights. By criterion 7 the run says nothing about the objective and is
-not reported as a NULL. The Stage 6 bench was not used and nothing was archived.
+not reported as a NULL. The Stage 6 bench was not used. The dev outputs are
+archived in `artifacts/results/stage10/final/`.
 
 Reading the logged entropy. Per-step values fall on four levels (about 1.988,
 2.057, 2.126, 2.194). This comes from batch composition and not from policy
@@ -238,7 +239,8 @@ is an optimum. Steps share documents, so the interval is approximate.
 
 400 NQ-train documents, 446 questions, K = 16, seed 42, 69.9 minutes on a Colab
 GPU. The smoke check's three self-checks against the RL reward path also passed on
-the GPU. Nothing was archived and the Stage 6 bench was not used.
+the GPU. The Stage 6 bench was not used. The outputs are archived in
+`artifacts/results/stage10/final/`.
 
 | Arm | R@1 | R@5 | MRR@10 | Avg chunk size |
 | --- | --- | --- | --- | --- |
