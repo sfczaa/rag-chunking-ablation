@@ -19,8 +19,8 @@ A cross-encoder reranker for RAG retrieval: `BAAI/bge-reranker-base` fine-tuned
 on hard-negative groups mined from the Natural Questions train split. It was
 produced as Stage 8 of a controlled ablation study of RAG chunking, where the
 diagnosis was explicit - at the best chunk size the answer was already inside the
-BGE top-20 pool for ~96% of questions while Recall@1 sat at ~0.63, so ranking,
-not pool recall, was the bottleneck.
+BGE top-20 pool for ~96% of questions while Recall@1 sat at ~0.63, so the
+bottleneck was ranking within the pool.
 
 ## Training
 

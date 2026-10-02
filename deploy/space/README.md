@@ -1,6 +1,5 @@
 ---
 title: Retrieval-aware RAG Chunking
-emoji: 📄
 colorFrom: blue
 colorTo: gray
 sdk: gradio
