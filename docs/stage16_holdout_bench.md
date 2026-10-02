@@ -99,7 +99,7 @@ smoke run, then the evaluation.
 ### Run 1 (2026-10-01): BELOW-FLOOR
 
 Run on a Colab GPU from `notebooks/RAG_chunk_optimize_stage16_colab.ipynb` at
-commit `543b000`, one account, one session.
+commit `b50a1b8`, one account, one session.
 
 Bench: the stream read all 7830 rows of the validation split and ran out after
 2852 new documents with 3063 questions; 1226 rows were skipped for Stage 6 titles
