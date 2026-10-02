@@ -661,3 +661,36 @@ STAGE16_LOCK_FILE = "stage16_run.lock.json"         # under DATA_ROOT; never aut
 STAGE16_RESULTS_CSV = "stage16_eval_results.csv"
 STAGE16_PAIRED_CSV = "stage16_paired_deltas.csv"
 STAGE16_SUMMARY_MD = "stage16_summary.md"
+
+# --------------------------------------------------------------------------- #
+# Stage 17 - answer accuracy with a reader on top of retrieval
+# --------------------------------------------------------------------------- #
+# A fixed instruction-tuned reader answers each Stage 6 bench question from the top
+# five reranked chunks of three chunkings. See docs/stage17_answer_quality.md.
+STAGE17_READER_MODEL = "Qwen/Qwen3-4B-Instruct-2507"
+STAGE17_READER_REVISION = "cdbee75f17c01a7cc42f958dc650907174af0554"
+# The fallback is used only if the preflight records a non-finite logit or an empty
+# output on its NQ-train rows; the switch is recorded in the Stage 17 document.
+STAGE17_FALLBACK_MODEL = "microsoft/Phi-3.5-mini-instruct"
+STAGE17_FALLBACK_REVISION = "2fe192450127e6a83f7441aef6e3ca586c338b77"
+STAGE17_USE_FALLBACK = False
+STAGE17_BILSTM_SHA256 = "04242d41034e018acf23dbcf0a0f7089dbe6509d573440fa62035549c9c2f222"
+STAGE17_TOP_K = 5
+STAGE17_PASSAGE_TOKENS = 4096      # each passage is cut to its first N reader tokens
+STAGE17_MAX_NEW_TOKENS = 64
+STAGE17_SAVE_EVERY = 32            # generations appended per save
+STAGE17_PRACTICAL_FLOOR = 0.02     # claim 1
+STAGE17_EQUIV_MARGIN = 0.03        # claim 2
+STAGE17_ROOT_ID = STAGE14_ROOT_ID  # the same shared folder
+STAGE17_RUN_VERSION = "stage17-v1"
+STAGE17_LOCK_FILE = "stage17_run.lock.json"         # under DATA_ROOT; never auto-deleted
+# Stage 17 output names (written under RESULTS_LATEST_DIR).
+STAGE17_IDENTITY_JSON = "stage17_run_identity.json"
+STAGE17_CONTEXTS_JSONL = "stage17_contexts.jsonl"
+STAGE17_SCORES_DIRNAME = "stage17_scores"
+STAGE17_GENERATIONS_DIRNAME = "stage17_generations"
+STAGE17_RESULTS_CSV = "stage17_eval_results.csv"
+STAGE17_PAIRED_CSV = "stage17_paired_deltas.csv"
+STAGE17_CHECK_CSV = "stage17_check_vs_archive.csv"
+STAGE17_SUMMARY_MD = "stage17_summary.md"
+STAGE17_VERDICT_JSON = "stage17_verdict.json"
