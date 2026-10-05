@@ -221,8 +221,9 @@ hashes again. The shared-folder identity
 check and the run lock of Stages 14 to 16 apply, with run version `stage17-v1`.
 Each row records the GPU name, and the run stops if it differs from the first
 row's. The first run records the reader and its revision, the prompt, the passage
-cap, the decoding settings, the bench and the weight hashes in
-`stage17_run_identity.json`; a resume with any difference stops.
+cap, the decoding settings, the bench questions and answers, the verdict thresholds,
+a hash of the scoring code and the weight hashes in `stage17_run_identity.json`; a
+resume with any difference stops.
 
 ## Outputs
 
@@ -271,6 +272,19 @@ bench question had been generated. So:
 - the CUDA allocator uses expandable segments;
 - the run identity records the chunk size, and each generation records the torch and
   transformers versions.
+
+A review of the code before the run led to further changes, also before any bench
+output:
+
+- the prediction rule is stated in full: after any think block is removed, the text
+  is stripped, cut at the first line break and stripped again, which is what the code
+  did;
+- the run identity also records the bench questions and answers, the two verdict
+  thresholds and a hash of the scoring code;
+- a weight-hash or bench-size failure now writes the INVALID verdict without
+  running retrieval, and an archive check needs exactly one reference row per arm;
+- the gold arm counts answers lost to the passage cap, and the reported R@1 and R@5
+  use the 1031 scored questions; the archive check still uses all 1032.
 
 The reader, the prompt text, the passage cap, k, greedy decoding and every criterion
 are unchanged.

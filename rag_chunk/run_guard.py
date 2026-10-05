@@ -124,7 +124,9 @@ def check_run_identity(path, identity: dict) -> str:
     path = pathlib.Path(path)
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(identity, indent=2, sort_keys=True), encoding="utf-8")
+        tmp = path.with_name(path.name + ".tmp")
+        tmp.write_text(json.dumps(identity, indent=2, sort_keys=True), encoding="utf-8")
+        os.replace(tmp, path)
         return "recorded"
     recorded = json.loads(path.read_text(encoding="utf-8"))
     if recorded != identity:

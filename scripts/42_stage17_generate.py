@@ -123,7 +123,7 @@ def work_items(arm: str, kept: list[int], ctx_rows: dict) -> list[tuple]:
 
 
 def _write_lines(path: pathlib.Path, rows: list[dict], mode: str) -> None:
-    with path.open(mode, encoding="utf-8") as fh:
+    with path.open(mode, encoding="utf-8", newline="\n") as fh:
         for row in rows:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
         fh.flush()
@@ -135,17 +135,19 @@ def read_rows(path: pathlib.Path) -> list[dict]:
     rewritten without it."""
     if not path.exists():
         return []
-    raw = path.read_text(encoding="utf-8")
-    lines = raw.splitlines()
+    raw = path.read_bytes()
+    lines = raw.split(b"\n")
+    if lines[-1] == b"":
+        lines.pop()
     rows = []
     for i, line in enumerate(lines):
         try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
+            rows.append(json.loads(line.decode("utf-8")))
+        except (UnicodeDecodeError, json.JSONDecodeError):
             if i != len(lines) - 1:
                 raise SystemExit(f"[stage17] {path} line {i + 1} is unreadable; stopping")
             print(f"[stage17] {path.name}: dropping a torn last line", flush=True)
-    if raw and (not raw.endswith("\n") or len(rows) != len(lines)):
+    if raw and (not raw.endswith(b"\n") or len(rows) != len(lines)):
         tmp = path.with_name(path.name + ".tmp")
         _write_lines(tmp, rows, "w")
         os.replace(tmp, path)
@@ -284,7 +286,7 @@ def run(gen_dir: pathlib.Path) -> None:
         raise SystemExit("[stage17] no run identity: run scripts/41_stage17_contexts.py "
                          "--mode fresh first")
     _, questions, titles_sha1 = S41.S16.B16.stage6_bench()
-    run_guard.check_run_identity(ident, S41.run_identity(titles_sha1))
+    run_guard.check_run_identity(ident, S41.run_identity(titles_sha1, questions))
     ctx_path = latest / C.STAGE17_CONTEXTS_JSONL
     if not ctx_path.exists():
         raise SystemExit("[stage17] no contexts: run scripts/41_stage17_contexts.py first")
@@ -293,8 +295,10 @@ def run(gen_dir: pathlib.Path) -> None:
         raise SystemExit(f"[stage17] the contexts hold {meta['n_questions']} questions, the "
                          f"bench {len(questions)}")
     if not meta["valid"]:
-        raise SystemExit(f"[stage17] the contexts failed criterion 1 ({meta['why_invalid']}); "
-                         "the verdict is INVALID and nothing is generated.")
+        print(f"[stage17] the contexts failed criterion 1 ({meta['why_invalid']}); nothing "
+              "is generated and scripts/43_stage17_score.py writes the INVALID verdict.",
+              flush=True)
+        return
     if not torch.cuda.is_available():
         raise SystemExit("[stage17] no CUDA device on this runtime")
     import transformers

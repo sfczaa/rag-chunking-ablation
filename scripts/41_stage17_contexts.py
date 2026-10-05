@@ -69,11 +69,16 @@ def reader_spec() -> tuple[str, str]:
     return C.STAGE17_READER_MODEL, C.STAGE17_READER_REVISION
 
 
-def run_identity(titles_sha1: str) -> dict:
+def run_identity(titles_sha1: str, questions: list[dict]) -> dict:
     """Everything a resumed run must share with the first one."""
     from rag_chunk import answer_eval as AE
 
     model, revision = reader_spec()
+    qa = hashlib.sha1()
+    for q in questions:
+        qa.update("\x00".join((q["question"], q["answer"], q["doc_title"])).encode("utf-8")
+                  + b"\n")
+    scoring = pathlib.Path(AE.__file__).read_bytes().replace(b"\r\n", b"\n")
     prompt = AE.user_message("q", [("t", "x")]) + "\x00" + AE.user_message("q", None)
     return {"run_version": C.STAGE17_RUN_VERSION, "reader_model": model,
             "reader_revision": revision, "top_k": int(C.STAGE17_TOP_K),
@@ -81,7 +86,11 @@ def run_identity(titles_sha1: str) -> dict:
             "max_new_tokens": int(C.STAGE17_MAX_NEW_TOKENS),
             "prefill_chunk": int(C.STAGE17_PREFILL_CHUNK),
             "prompt_sha1": hashlib.sha1(prompt.encode("utf-8")).hexdigest(),
-            "bench_titles_sha1": titles_sha1, "weights_sha256": expected_hashes()}
+            "bench_titles_sha1": titles_sha1, "bench_questions_sha1": qa.hexdigest(),
+            "practical_floor": float(C.STAGE17_PRACTICAL_FLOOR),
+            "equiv_margin": float(C.STAGE17_EQUIV_MARGIN),
+            "answer_eval_sha1": hashlib.sha1(scoring).hexdigest(),
+            "weights_sha256": expected_hashes()}
 
 
 def read_contexts(path: pathlib.Path) -> tuple[dict, dict]:
@@ -182,22 +191,23 @@ def archive_checks(rows: dict) -> tuple[bool, list[dict]]:
             return list(csv.DictReader(fh))
 
     s8 = read(C.RESULTS_DIR / "stage8" / "final" / C.STAGE8_RESULTS_CSV)
-    s15 = {r["arm"]: r for r in read(C.RESULTS_DIR / "stage15" / "final"
-                                     / C.STAGE15_RESULTS_CSV)}
+    s15 = read(C.RESULTS_DIR / "stage15" / "final" / C.STAGE15_RESULTS_CSV)
     targets = []
     for label, (method, size, overlap) in CONFIGS.items():
-        for r in s8:
-            if r["arm"] != "bge" or r["method"] != method:
-                continue
-            if method == "fixed" and (int(r["fixed_size"]), int(r["fixed_overlap"])) != (size,
-                                                                                        overlap):
-                continue
-            targets.append((f"{label}_bge", "stage8/final", r))
-    targets += [("fixed15_ft", "stage15/final", s15["rerank20_ft"]),
-                ("fixed15_large", "stage15/final", s15["rerank20_s15_large"])]
+        refs = [r for r in s8 if r["arm"] == "bge" and r["method"] == method and (
+            method != "fixed"
+            or (int(r["fixed_size"]), int(r["fixed_overlap"])) == (size, overlap))]
+        targets.append((f"{label}_bge", "stage8/final", refs))
+    for arm, s15_arm in (("fixed15_ft", "rerank20_ft"), ("fixed15_large", "rerank20_s15_large")):
+        targets.append((arm, "stage15/final", [r for r in s15 if r["arm"] == s15_arm]))
     out, ok = [], True
-    for arm, source, ref in targets:
-        now = rows[arm]
+    for arm, source, refs in targets:
+        if len(refs) != 1:
+            ok = False
+            out.append({"arm": arm, "archive": source, "metric": "reference rows",
+                        "archived": len(refs), "now": None, "diff": None, "pass": False})
+            continue
+        ref, now = refs[0], rows[arm]
         for metric in ("recall@1", "recall@3", "recall@5"):
             diff = now[metric] - float(ref[metric])
             passed = abs(diff) <= S11.CHECK_TOLERANCE
@@ -266,7 +276,7 @@ def build(args) -> None:
         if args.mode == "resume" and not ident.exists():
             raise SystemExit(f"[stage17] no {ident.name}: there is no run to resume. Use "
                              "--mode fresh.")
-        status = run_guard.check_run_identity(ident, run_identity(titles_sha1))
+        status = run_guard.check_run_identity(ident, run_identity(titles_sha1, questions))
         print(f"[stage17] run identity {status}", flush=True)
         if out_path.exists():
             meta, _ = read_contexts(out_path)
@@ -278,7 +288,16 @@ def build(args) -> None:
     bad_hash = sorted(k for k, h in hashes.items() if h != expected_hashes()[k])
     print(f"[stage17] weights: {'match' if not bad_hash else f'MISMATCH {bad_hash}'}",
           flush=True)
-    n_questions_all = len(questions)
+    counts_ok = len(docs) == int(C.N_NQ_DOCS_LARGE) and len(questions) == 1032
+    if not args.smoke and (bad_hash or not counts_ok):
+        why = (f"weights differ from the pre-registered hashes: {bad_hash}" if bad_hash
+               else "the bench does not hold 1000 documents and 1032 questions")
+        meta = {"stage": "stage17", "n_docs": len(docs), "n_questions": len(questions),
+                "bench_titles_sha1": titles_sha1, "weights_sha256": hashes,
+                "valid": False, "why_invalid": why, "arms": []}
+        write_contexts(out_path, meta, [])
+        print(f"[stage17] INVALID ({why}); retrieval skipped", flush=True)
+        return
     if args.smoke:
         questions = questions[:SMOKE_QUESTIONS]
     print(f"[stage17] Stage 6 bench: {len(docs)} docs / {len(questions)} questions"
@@ -333,19 +352,14 @@ def build(args) -> None:
               "not results and nothing was kept.", flush=True)
         return
 
-    check_ok, check_rows = archive_checks(rows)
-    counts_ok = len(docs) == int(C.N_NQ_DOCS_LARGE) and n_questions_all == 1032
-    valid = check_ok and counts_ok and not bad_hash
-    why = ("" if valid else
-           f"weights differ from the pre-registered hashes: {bad_hash}" if bad_hash else
-           "the bench does not hold 1000 documents and 1032 questions" if not counts_ok else
-           "a retrieval row did not reproduce its archive")
+    valid, check_rows = archive_checks(rows)
+    why = "" if valid else "a retrieval row did not reproduce its archive"
     S11._write_rows(latest / C.STAGE17_CHECK_CSV, check_rows)
     meta = {"stage": "stage17", "n_docs": len(docs), "n_questions": len(questions),
             "bench_titles_sha1": titles_sha1, "weights_sha256": hashes, "valid": valid,
             "why_invalid": why, "arms": list(rows) + ["gold"]}
     write_contexts(out_path, meta, list(rows.values()) + [{"arm": "gold", "contexts": gold}])
-    print(f"[stage17] archive check {'PASS' if check_ok else 'FAIL'}; valid {valid}"
+    print(f"[stage17] archive check {'PASS' if valid else 'FAIL'}; valid {valid}"
           + (f" ({why})" if why else ""), flush=True)
     print(f"[stage17] wrote {out_path}", flush=True)
 

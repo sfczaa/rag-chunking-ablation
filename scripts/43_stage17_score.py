@@ -57,8 +57,8 @@ def arm_scores(arm, items, questions, ctx_rows, gen_dir) -> dict:
                    "n_cut": r["n_cut"], "seconds": r["seconds"], "gpu": r["gpu"],
                    "versions": r.get("versions", ""),
                    "hit5": hits5[qi] if hits5 is not None else None,
-                   "lost": int(hits5 is not None and hits5[qi] == 1
-                               and r["answer_in_prompt"] is False),
+                   "lost": int(r["answer_in_prompt"] is False and (
+                       arm == AE.ARM_GOLD or (hits5 is not None and hits5[qi] == 1))),
                    "short": len(ans.split()) <= 5}
     return out
 
@@ -72,8 +72,9 @@ def arm_row(arm, scores, ctx_rows) -> dict:
                 "n_miss5": None})
     if arm in AE.RETRIEVAL_ARMS:
         c = ctx_rows[arm]
-        row.update({"config": c["config"], "recall@1": c["recall@1"], "recall@5": c["recall@5"],
-                    "n_chunks": c["n_chunks"]})
+        row.update({"config": c["config"], "n_chunks": c["n_chunks"],
+                    "recall@1": _mean(c["hits1"][q] for q in scores),
+                    "recall@5": _mean(c["hits5"][q] for q in scores)})
         for name, flag in (("hit5", 1), ("miss5", 0)):
             part = [x["acc"] for x in s if x["hit5"] == flag]
             row[f"accuracy_{name}"], row[f"n_{name}"] = _mean(part), len(part)
@@ -117,7 +118,8 @@ def score(latest: pathlib.Path) -> dict:
     from rag_chunk import run_guard
 
     _, questions, titles_sha1 = S41.S16.B16.stage6_bench()
-    run_guard.check_run_identity(latest / C.STAGE17_IDENTITY_JSON, S41.run_identity(titles_sha1))
+    run_guard.check_run_identity(latest / C.STAGE17_IDENTITY_JSON,
+                                 S41.run_identity(titles_sha1, questions))
     meta, ctx_rows = S41.read_contexts(latest / C.STAGE17_CONTEXTS_JSONL)
     if not meta["valid"]:
         verdict = {"claim1": "INVALID", "claim2": "INVALID", "valid": False,

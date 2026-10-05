@@ -107,6 +107,12 @@ def _save_atomic(arr, path: pathlib.Path) -> None:
     tmp.replace(path)
 
 
+def _write_json_atomic(obj: dict, path: pathlib.Path) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(obj), encoding="utf-8")
+    tmp.replace(path)
+
+
 def cached_scorer(arm: str, load_model, cache_dir: pathlib.Path):
     """Score pairs with the model ``load_model()`` returns, loading it only when the
     scores are not cached, and releasing it afterwards.
@@ -150,9 +156,9 @@ def cached_scorer(arm: str, load_model, cache_dir: pathlib.Path):
                                            show_progress_bar=False), dtype="float32")
             done = np.concatenate([done, got])
             _save_atomic(done, part)
-            part_meta.write_text(json.dumps({
+            _write_json_atomic({
                 "pairs_sha1": key, "n_done": len(done),
-                "seconds": seconds_before + time.perf_counter() - t0}), encoding="utf-8")
+                "seconds": seconds_before + time.perf_counter() - t0}, part_meta)
             print(f"[stage15]   {arm}: {len(done)}/{len(pairs)} pairs scored and saved",
                   flush=True)
         if model is not None:
@@ -167,9 +173,8 @@ def cached_scorer(arm: str, load_model, cache_dir: pathlib.Path):
         scores = np.empty(len(pairs), dtype="float32")
         scores[order] = done
         _save_atomic(scores, path)
-        meta.write_text(json.dumps({"pairs_sha1": key, "n_pairs": len(pairs),
-                                    "seconds": seconds_before + time.perf_counter() - t0}),
-                        encoding="utf-8")
+        _write_json_atomic({"pairs_sha1": key, "n_pairs": len(pairs),
+                            "seconds": seconds_before + time.perf_counter() - t0}, meta)
         for f in (part, part_meta):
             f.unlink(missing_ok=True)
         return scores
