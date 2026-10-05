@@ -1,7 +1,8 @@
 # Stage 17 - answer accuracy with a reader on top of retrieval
 
-Status: pre-registered on 2026-10-03, not run. The criteria below were fixed
-before any reader output on the bench existed.
+Status: pre-registered on 2026-10-03, amended on 2026-10-05 before any bench output
+(see the amendment), not run. The criteria below were fixed before any reader output
+on the bench existed.
 
 Question: when an instruction-tuned reader answers from the top five reranked
 chunks, do the retrieval differences found on the Stage 6 bench carry over to
@@ -252,6 +253,27 @@ Under `artifacts/results/latest/`:
    (`scripts/41_stage17_contexts.py`, `MODE = 'fresh'` for the first run and
    `'resume'` after any interruption), reader outputs
    (`scripts/42_stage17_generate.py`) and scores (`scripts/43_stage17_score.py`).
+
+## Amendment before any bench output (2026-10-05)
+
+The reader smoke ran out of T4 memory on an NQ-train prompt of about 7,800 tokens.
+The eleven shorter prompts before it had finite logits and non-empty outputs, so
+the fallback condition was not met. With no padding, the model drops the attention
+mask when the query and key lengths match, so SDPA took its grouped-query path,
+which on this GPU falls back to a kernel that holds the full attention matrix. No
+bench question had been generated. So:
+
+- the prompt is prefilled in chunks of 512 tokens (`prefill_chunk_size`) and decoding
+  continues from the filled cache; on a small test model, chunked and single-pass
+  greedy outputs were identical;
+- the reader smoke also runs one prompt at the longest length the passage cap allows,
+  five passages of 4096 tokens, and prints the peak and free GPU memory;
+- the CUDA allocator uses expandable segments;
+- the run identity records the chunk size, and each generation records the torch and
+  transformers versions.
+
+The reader, the prompt text, the passage cap, k, greedy decoding and every criterion
+are unchanged.
 
 ## Results
 

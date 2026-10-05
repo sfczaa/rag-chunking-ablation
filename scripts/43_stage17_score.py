@@ -55,6 +55,7 @@ def arm_scores(arm, items, questions, ctx_rows, gen_dir) -> dict:
                    "f1": AE.token_f1(r["prediction"], ans),
                    "words": len(r["prediction"].split()), "prompt_tokens": r["prompt_tokens"],
                    "n_cut": r["n_cut"], "seconds": r["seconds"], "gpu": r["gpu"],
+                   "versions": r.get("versions", ""),
                    "hit5": hits5[qi] if hits5 is not None else None,
                    "lost": int(hits5 is not None and hits5[qi] == 1
                                and r["answer_in_prompt"] is False),
@@ -136,6 +137,7 @@ def score(latest: pathlib.Path) -> dict:
               for arm in AE.ARMS}
     rows = [arm_row(arm, scores[arm], ctx_rows) for arm in AE.ARMS]
     gpus = sorted({x["gpu"] for s in scores.values() for x in s.values()})
+    versions = sorted({x["versions"] for s in scores.values() for x in s.values()})
 
     gold_q = [qi for qi, _ in items[AE.ARM_GOLD]]
     reader_ok, rm, rlo, rhi = AE.reader_check(
@@ -169,6 +171,7 @@ def score(latest: pathlib.Path) -> dict:
     lines = ["# Stage 17 - answer accuracy with a reader on top of retrieval", "",
              f"Claim 1 (chunk size): {claim1}. Claim 2 (boundary placement): {claim2}.", "",
              f"- reader: `{name}` at `{revision}`, greedy, fp16, GPU {', '.join(gpus)}",
+             f"- libraries: {'; '.join(versions)}",
              f"- Stage 6 bench: {meta['n_docs']} docs / {meta['n_questions']} questions, "
              f"{len(kept)} scored; gold chunk for {len(gold_q)}",
              "- criterion 1 (weights and archive check): PASS",
@@ -215,7 +218,7 @@ def score(latest: pathlib.Path) -> dict:
                "reported": {"comparison": "fixed15_large - fixed15_ft", "mean": m3,
                             "ci95": [lo3, hi3]},
                "n_questions": len(kept), "reader_model": name, "reader_revision": revision,
-               "gpus": gpus}
+               "gpus": gpus, "versions": versions}
     (latest / C.STAGE17_VERDICT_JSON).write_text(json.dumps(verdict, indent=2),
                                                   encoding="utf-8")
     print("\n".join(lines), flush=True)

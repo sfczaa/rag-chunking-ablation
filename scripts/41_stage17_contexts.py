@@ -79,6 +79,7 @@ def run_identity(titles_sha1: str) -> dict:
             "reader_revision": revision, "top_k": int(C.STAGE17_TOP_K),
             "passage_tokens": int(C.STAGE17_PASSAGE_TOKENS),
             "max_new_tokens": int(C.STAGE17_MAX_NEW_TOKENS),
+            "prefill_chunk": int(C.STAGE17_PREFILL_CHUNK),
             "prompt_sha1": hashlib.sha1(prompt.encode("utf-8")).hexdigest(),
             "bench_titles_sha1": titles_sha1, "weights_sha256": expected_hashes()}
 

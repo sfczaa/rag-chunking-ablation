@@ -678,6 +678,7 @@ STAGE17_BILSTM_SHA256 = "04242d41034e018acf23dbcf0a0f7089dbe6509d573440fa6203554
 STAGE17_TOP_K = 5
 STAGE17_PASSAGE_TOKENS = 4096      # each passage is cut to its first N reader tokens
 STAGE17_MAX_NEW_TOKENS = 64
+STAGE17_PREFILL_CHUNK = 512       # prompt tokens per prefill pass; bounds attention memory
 STAGE17_SAVE_EVERY = 32            # generations appended per save
 STAGE17_PRACTICAL_FLOOR = 0.02     # claim 1
 STAGE17_EQUIV_MARGIN = 0.03        # claim 2

@@ -44,6 +44,8 @@ def _load_script(filename: str, name: str):
 
 S41 = _load_script("41_stage17_contexts.py", "stage17_contexts")
 SMOKE_GROUPS = 16
+# set before torch initialises CUDA; the growing cache fragments fixed segments
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 
 def load_reader(device: str, name: str | None = None, revision: str | None = None):
@@ -54,7 +56,7 @@ def load_reader(device: str, name: str | None = None, revision: str | None = Non
         name, revision = S41.reader_spec()
     tok = AutoTokenizer.from_pretrained(name, revision=revision)
     dtype = torch.float16 if device == "cuda" else torch.float32
-    model = AutoModelForCausalLM.from_pretrained(name, revision=revision, torch_dtype=dtype)
+    model = AutoModelForCausalLM.from_pretrained(name, revision=revision, dtype=dtype)
     return model.to(device).eval(), tok
 
 
@@ -82,6 +84,7 @@ def generate(model, tok, prompt: str, scores: bool = False):
     with torch.inference_mode():
         out = model.generate(**enc, max_new_tokens=int(C.STAGE17_MAX_NEW_TOKENS),
                              do_sample=False, temperature=None, top_p=None, top_k=None,
+                             prefill_chunk_size=int(C.STAGE17_PREFILL_CHUNK),
                              pad_token_id=pad, output_scores=scores,
                              return_dict_in_generate=True)
     n_in = int(enc["input_ids"].shape[1])
@@ -153,7 +156,8 @@ def prompt_sha1(prompt: str) -> str:
     return hashlib.sha1(prompt.encode("utf-8")).hexdigest()
 
 
-def generate_arm(arm, items, questions, model, tok, gpu, out_path, gen=generate):
+def generate_arm(arm, items, questions, model, tok, gpu, out_path, gen=generate,
+                 versions=""):
     """Answer every item not yet saved for ``arm``; returns the number generated."""
     done = {r["qid"]: r for r in read_rows(out_path)}
     other = sorted({r["gpu"] for r in done.values()} - {gpu})
@@ -179,7 +183,8 @@ def generate_arm(arm, items, questions, model, tok, gpu, out_path, gen=generate)
                     "prediction": AE.prediction_from_output(raw), "prompt_tokens": n_in,
                     "n_cut": n_cut, "answer_in_prompt": answer_in_prompt(q, cut),
                     "prompt_sha1": prompt_sha1(prompt),
-                    "seconds": round(time.perf_counter() - t0, 3), "gpu": gpu})
+                    "seconds": round(time.perf_counter() - t0, 3), "gpu": gpu,
+                    "versions": versions})
         if len(buf) >= every or n == len(todo):
             _write_lines(out_path, buf, "a")
             buf = []
@@ -205,16 +210,38 @@ def smoke() -> None:
                 "five": [(g["doc_title"], t) for t in [g["pos"]] + list(g["negs"])[:4]]}
         for kind, passages in sets.items():
             prompt, _, n_cut = build_prompt(tok, g["question"], passages)
+            t0 = time.perf_counter()
             raw, n_in, finite = generate(model, tok, prompt, scores=True)
+            sec = time.perf_counter() - t0
             pred = AE.prediction_from_output(raw)
             ok = AE.contains_answer(pred, g["answer"])
             n += 1
             correct += ok
             bad_logits += not finite
             empty += not pred
-            print(f"[stage17]   {kind:8s} {n_in:5d} tok  cut {n_cut}  finite {finite}  "
+            print(f"[stage17]   {kind:8s} {n_in:5d} tok  {sec:5.2f} s  cut {n_cut}  "
+                  f"finite {finite}  "
                   f"{'hit ' if ok else 'miss'} {pred[:60]!r} | gold {g['answer']!r}",
                   flush=True)
+    # the longest prompt the cap allows: five passages of exactly the cap
+    g = rf.load_groups()[0]
+    reps = int(C.STAGE17_PASSAGE_TOKENS) // max(1, len(tok(g["pos"])["input_ids"])) + 2
+    long_text = " ".join([g["pos"]] * reps)
+    prompt, _, n_cut = build_prompt(tok, g["question"], [(g["doc_title"], long_text)] * 5)
+    if device == "cuda":
+        torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
+    t0 = time.perf_counter()
+    raw, n_in, finite = generate(model, tok, prompt, scores=True)
+    gib = 2 ** 30
+    mem = (f"peak allocated {torch.cuda.max_memory_allocated() / gib:.2f} GiB, peak reserved "
+           f"{torch.cuda.max_memory_reserved() / gib:.2f} GiB, free now "
+           f"{torch.cuda.mem_get_info()[0] / gib:.2f} GiB" if device == "cuda" else "")
+    n += 1
+    bad_logits += not finite
+    empty += not AE.prediction_from_output(raw)
+    print(f"[stage17]   longest  {n_in:5d} tok  {time.perf_counter() - t0:5.2f} s  cut {n_cut}  "
+          f"finite {finite}  {mem}", flush=True)
     print(f"[stage17] smoke: {n} generations, non-finite steps in {bad_logits}, empty "
           f"predictions {empty}, answer contained in {correct}", flush=True)
     if bad_logits or empty:
@@ -270,7 +297,10 @@ def run(gen_dir: pathlib.Path) -> None:
                          "the verdict is INVALID and nothing is generated.")
     if not torch.cuda.is_available():
         raise SystemExit("[stage17] no CUDA device on this runtime")
+    import transformers
+
     gpu = torch.cuda.get_device_name(0)
+    versions = f"torch {torch.__version__}, transformers {transformers.__version__}"
     run_guard.probe_directory(gen_dir)
     seen = sorted({r["gpu"] for arm in AE.ARMS
                    for r in read_rows(gen_dir / f"{arm}.jsonl")} - {gpu})
@@ -278,13 +308,14 @@ def run(gen_dir: pathlib.Path) -> None:
         raise SystemExit(f"[stage17] saved rows came from {seen}, this runtime has {gpu}. "
                          "The run uses one GPU type; stopping.")
     kept = kept_questions(questions)
-    print(f"[stage17] {len(kept)} of {len(questions)} questions scored; GPU {gpu}", flush=True)
+    print(f"[stage17] {len(kept)} of {len(questions)} questions scored; GPU {gpu}; "
+          f"{versions}", flush=True)
     t0 = time.perf_counter()
     model, tok = load_reader("cuda")
     print(f"[stage17] reader loaded in {time.perf_counter() - t0:.0f} s", flush=True)
     for arm in AE.ARMS:
         generate_arm(arm, work_items(arm, kept, ctx_rows), questions, model, tok, gpu,
-                     gen_dir / f"{arm}.jsonl")
+                     gen_dir / f"{arm}.jsonl", versions=versions)
     print("[stage17] every arm is complete; run scripts/43_stage17_score.py", flush=True)
 
 
