@@ -695,3 +695,27 @@ STAGE17_PAIRED_CSV = "stage17_paired_deltas.csv"
 STAGE17_CHECK_CSV = "stage17_check_vs_archive.csv"
 STAGE17_SUMMARY_MD = "stage17_summary.md"
 STAGE17_VERDICT_JSON = "stage17_verdict.json"
+
+# --------------------------------------------------------------------------- #
+# Stage 18 - Stage 17 answer comparisons on the Stage 16 holdout bench
+# --------------------------------------------------------------------------- #
+# The Stage 17 reader and scoring rules apply to the holdout questions.
+STAGE18_N_DOCS = 2852
+STAGE18_N_QUESTIONS = 3063
+STAGE18_N_SCORED = 3062
+STAGE18_N_GOLD = 3049
+STAGE18_N_FIXED15_CHUNKS = 54177
+STAGE18_N_FIXED6_CHUNKS = 133298
+STAGE18_ROOT_ID = STAGE14_ROOT_ID
+STAGE18_RUN_VERSION = "stage18-v1"
+STAGE18_LOCK_FILE = "stage18_run.lock.json"
+# Stage 18 output names (written under RESULTS_LATEST_DIR).
+STAGE18_IDENTITY_JSON = "stage18_run_identity.json"
+STAGE18_CONTEXTS_JSONL = "stage18_contexts.jsonl"
+STAGE18_SCORES_DIRNAME = "stage18_scores"
+STAGE18_GENERATIONS_DIRNAME = "stage18_generations"
+STAGE18_RESULTS_CSV = "stage18_eval_results.csv"
+STAGE18_PAIRED_CSV = "stage18_paired_deltas.csv"
+STAGE18_CHECK_CSV = "stage18_check_vs_archive.csv"
+STAGE18_SUMMARY_MD = "stage18_summary.md"
+STAGE18_VERDICT_JSON = "stage18_verdict.json"
