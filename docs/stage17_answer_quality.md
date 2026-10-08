@@ -1,8 +1,10 @@
 # Stage 17 - answer accuracy with a reader on top of retrieval
 
 Status: pre-registered on 2026-10-03, amended on 2026-10-05 before any bench output
-(see the amendment), not run. The criteria below were fixed before any reader output
-on the bench existed.
+(see the amendment), run on 2026-10-06. Claim 1: SIZE-NOT-DETECTED (+0.0155
+accuracy, 95% CI [-0.0040, +0.0351]). Claim 2: INCONCLUSIVE (+0.0175, 95% CI
+[-0.0001, +0.0351]). The criteria below were fixed before any reader output on the
+bench existed.
 
 Question: when an instruction-tuned reader answers from the top five reranked
 chunks, do the retrieval differences found on the Stage 6 bench carry over to
@@ -232,7 +234,8 @@ Under `artifacts/results/latest/`:
 - `stage17_run_identity.json` - the settings a resume must share
 - `stage17_contexts.jsonl` - the reader inputs and retrieval rows, kept on Drive only
 - `stage17_scores/` - the reranker score cache
-- `stage17_generations/` - one JSONL per arm with the raw output and the prediction
+- `stage17_generations/` - one JSONL per arm with the raw output and the prediction,
+  kept on Drive only
 - `stage17_eval_results.csv` - one row per arm
 - `stage17_paired_deltas.csv` - the paired comparisons
 - `stage17_check_vs_archive.csv` - the validity check
@@ -291,4 +294,77 @@ are unchanged.
 
 ## Results
 
-Not run yet.
+### Run 1 (2026-10-06): SIZE-NOT-DETECTED and INCONCLUSIVE
+
+Run on a Colab T4 from `notebooks/RAG_chunk_optimize_stage17_colab.ipynb` at commit
+`699ae60`, one account, one session, with torch 2.11.0 and transformers 5.18.0. By
+file times the reader inputs took 52 minutes and generation 4.1 hours.
+
+Validity: PASS. The three weight files matched their hashes. The dense rows at
+fixed 15/0, fixed 6/0 and bilstm 15/0 reproduced `stage8/final` exactly with the
+same chunk counts (19,507, 48,029 and 19,306), and the reranked fixed 15/0 rows
+reproduced `stage15/final`. Reader check: PASS, `gold` minus `closed_book` +0.3716,
+95% CI [+0.3407, +0.4025], n = 1028. No prediction was empty.
+
+| Arm | Accuracy | EM | F1 | R@1 | R@5 | Accuracy, answer in top 5 | Accuracy, answer outside top 5 | Prompt tokens | s per question |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `closed_book` | 0.1183 | 0.0582 | 0.1589 | - | - | - | - | 38 | 0.67 |
+| `gold` | 0.4903 | 0.3356 | 0.5408 | - | - | - | - | 860 | 1.10 |
+| `fixed15_ft` | 0.4471 | 0.2958 | 0.4895 | 0.7352 | 0.9185 | 0.4805 | 0.0714 | 3627 | 3.53 |
+| `fixed6_ft` | 0.4316 | 0.2842 | 0.4726 | 0.6469 | 0.8574 | 0.4955 | 0.0476 | 1915 | 1.95 |
+| `bilstm15_ft` | 0.4646 | 0.3123 | 0.5037 | 0.7148 | 0.9234 | 0.4989 | 0.0506 | 3569 | 3.45 |
+| `fixed15_large` | 0.4636 | 0.3007 | 0.4977 | 0.7556 | 0.9292 | 0.4916 | 0.0959 | 3629 | 3.57 |
+
+Accuracy, R@1 and R@5 are over the 1031 scored questions (1028 for `gold`).
+
+| Paired comparison | n | mean | 95% CI | 90% CI | answered differently |
+| --- | --- | --- | --- | --- | --- |
+| `gold` - `closed_book` | 1028 | +0.3716 | [+0.3407, +0.4025] | - | 0.393 |
+| `fixed15_ft` - `fixed6_ft`, claim 1 | 1031 | +0.0155 | [-0.0040, +0.0351] | - | 0.103 |
+| `bilstm15_ft` - `fixed15_ft`, claim 2 | 1031 | +0.0175 | [-0.0001, +0.0351] | [+0.0027, +0.0322] | 0.083 |
+| `fixed15_large` - `fixed15_ft`, reported | 1031 | +0.0165 | [+0.0017, +0.0313] | - | 0.059 |
+
+By criterion 3 claim 1 is SIZE-NOT-DETECTED: the interval includes 0. By criterion 4
+claim 2 is INCONCLUSIVE: the 95% interval includes 0 by 0.0001, and the 90% interval
+reaches +0.0322, past the 0.03 margin.
+
+| Arm | Accuracy, answer at most 5 NQ tokens | Accuracy, longer answer |
+| --- | --- | --- |
+| `closed_book` | 0.1536 | 0.0152 |
+| `gold` | 0.6120 | 0.1308 |
+| `fixed15_ft` | 0.5651 | 0.1027 |
+| `fixed6_ft` | 0.5495 | 0.0875 |
+| `bilstm15_ft` | 0.5964 | 0.0798 |
+| `fixed15_large` | 0.5846 | 0.1103 |
+
+768 stored answers are at most five NQ tokens long and 263 are longer (260 in
+`gold`). The passage cap cut 63 to 65 passages in each size-15 arm, 34 in
+`fixed6_ft` and 21 in `gold`; it removed the answer string from 3 `gold` passages and
+from one question each in `fixed15_ft` and `fixed15_large`.
+
+Reading. On these questions fixed 15/0 had the answer in the top five for 0.0611
+more questions than fixed 6/0, and answered +0.0155 more questions correctly, a
+quarter of the retrieval gap, with an interval that includes 0. Among questions with
+the answer in the top five, accuracy was 0.4805 at fixed 15/0 and 0.4955 at fixed
+6/0, so the reader did not use the longer passages better; these subsets differ
+between arms, and the comparison is descriptive. The pre-run expectation of +0.025
+to +0.038 assumed equal accuracy given retrieval.
+
+BiLSTM at size 15 answered 52 questions that fixed 15/0 missed and missed 34 that it
+answered. The mean of +0.0175 sits at the edge of the 95% interval and the 90%
+interval extends past the margin, so the run shows neither a difference nor
+equivalence. At the retrieval level the two arms were level on R@5 (0.9234 and
+0.9185), and BiLSTM was lower on R@1 (0.7148 and 0.7352).
+
+The Stage 15 reranker added +0.0165 accuracy over the Stage 8 reranker at fixed 15/0,
+with an interval above 0, against an R@1 gain of +0.0204 on the same questions.
+
+With the gold passage alone the reader reached 0.4903. Long stored answers, a
+quarter of the bench, were matched for 0.1308 of questions even with the gold
+passage, which bounds every arm. The observed share of questions answered
+differently was 0.103 for claim 1 and 0.083 for claim 2, at the low end of the
+pre-run table.
+
+This is one reader with greedy decoding on NQ. The 3063-question holdout bench of
+Stage 16 was not used and remains available for a confirmation run under its own
+pre-registration.

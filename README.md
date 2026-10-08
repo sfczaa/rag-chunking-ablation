@@ -13,6 +13,7 @@ The project compares fixed-size, BiLSTM, and Transformer chunking on Natural Que
 - Hybrid retrieval was not consistently better. Equal-weight BM25 and BGE fusion lowered Recall@5 in 24 of 30 configurations (mean -0.021), and an off-the-shelf reranker left Recall@1 at fixed 15/0 almost unchanged (0.6279 to 0.6289).
 - Fine-tuning helped in-domain. The fine-tuned reranker raised Recall@1 at fixed 15/0 from 0.6289 to 0.7355 on NQ; on the tested TriviaQA bench, its result remained approximately equal to dense retrieval.
 - Later changes to the reranker's objective, training length and training-set size (Stages 11 to 14) did not improve on the Stage 8 reranker by the pre-registered 0.02 R@1 threshold. A larger reranker under the same recipe (Stage 15) did, by a small margin: Recall@1 0.7558 against 0.7345. On 3063 new questions (Stage 16) the gain held at +0.0193 (95% CI [+0.0072, +0.0314]), so it is real but about the size of the threshold.
+- Retrieval gains reached the answers only in part. With a fixed open reader (Qwen3-4B-Instruct) answering from the top five reranked chunks (Stage 17), fixed 15/0 answered +0.0155 more questions than fixed 6/0 (95% CI [-0.0040, +0.0351]), a quarter of its +0.061 Recall@5 gap. BiLSTM against fixed chunking at size 15 was +0.0175 (95% CI [-0.0001, +0.0351]); the run established neither a difference nor equivalence.
 
 The detailed claims are backed by archived CSVs and figures in [`artifacts/results/`](artifacts/results).
 
@@ -57,6 +58,7 @@ The stage write-ups include the exact settings, reproduction checks, and negativ
 - [Stages 10 to 14 - Follow-ups to the fine-tuned reranker](docs/stages10_14_summary.md)
 - [Stage 15 - A larger reranker](docs/stage15_large_reranker.md)
 - [Stage 16 - The Stage 15 comparison on new questions](docs/stage16_holdout_bench.md)
+- [Stage 17 - Answer accuracy with a reader](docs/stage17_answer_quality.md)
 
 ## Repository layout
 

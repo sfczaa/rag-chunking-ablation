@@ -1,0 +1,5 @@
+role,comparison,metric,n_questions,mean,ci95_low,ci95_high,ci90_low,ci90_high
+reader check,gold - closed_book,accuracy,1028,0.3716,0.3407,0.4025,,
+claim 1,fixed15_ft - fixed6_ft,accuracy,1031,0.0155,-0.004,0.0351,,
+claim 2,bilstm15_ft - fixed15_ft,accuracy,1031,0.0175,-0.0001,0.0351,0.0027,0.0322
+reported,fixed15_large - fixed15_ft,accuracy,1031,0.0165,0.0017,0.0313,,

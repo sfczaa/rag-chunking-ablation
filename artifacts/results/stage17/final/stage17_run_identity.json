@@ -1,0 +1,20 @@
+{
+  "answer_eval_sha1": "e8e233cdd50276ba7936e33b2288191391a94ac0",
+  "bench_questions_sha1": "c1745bd1eb8bc0950eac68c716d3a68f5f11405c",
+  "bench_titles_sha1": "321417ed515da23c65c5766f3174e123f30bec5a",
+  "equiv_margin": 0.03,
+  "max_new_tokens": 64,
+  "passage_tokens": 4096,
+  "practical_floor": 0.02,
+  "prefill_chunk": 512,
+  "prompt_sha1": "1308ed705000aad898e5f2566d740722b8f6c679",
+  "reader_model": "Qwen/Qwen3-4B-Instruct-2507",
+  "reader_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "run_version": "stage17-v1",
+  "top_k": 5,
+  "weights_sha256": {
+    "bilstm": "04242d41034e018acf23dbcf0a0f7089dbe6509d573440fa62035549c9c2f222",
+    "ft": "0f638a21a29c40ea3ec15c78c5a12537bc274610480e8cee0f46edbc648593a0",
+    "large": "e7fff83c1ee8faf36bb11aabafb786c4f1c2c9438067987780554fd015fc51b3"
+  }
+}

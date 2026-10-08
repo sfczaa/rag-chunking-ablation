@@ -89,6 +89,15 @@ validation questions that no earlier stage had used. The gain held at +0.0193 R@
 (95% CI [+0.0072, +0.0314]): real, and about the size of the threshold, so the
 verdict is BELOW-FLOOR.
 
+## Stage 17: answer accuracy with a reader
+
+[Stage 17](stage17_answer_quality.md) put `Qwen3-4B-Instruct-2507` on top of the
+Stage 8 reranker and scored whether the stored answer appears in its reply, on 1031
+Stage 6 bench questions. Fixed 15/0 beat fixed 6/0 by +0.0155 accuracy (95% CI
+[-0.0040, +0.0351]), a quarter of the +0.061 R@5 gap: SIZE-NOT-DETECTED. BiLSTM
+minus fixed at size 15 was +0.0175 (95% CI [-0.0001, +0.0351]): INCONCLUSIVE. The
+Stage 15 reranker added +0.0165 accuracy (95% CI [+0.0017, +0.0313]).
+
 ## Scope and what was not tested
 
 All results are on NQ, and no transfer to another corpus is claimed. The gap

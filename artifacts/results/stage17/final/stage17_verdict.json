@@ -1,0 +1,54 @@
+{
+  "claim1": "SIZE-NOT-DETECTED",
+  "claim2": "INCONCLUSIVE",
+  "valid": true,
+  "reader_check": {
+    "pass": true,
+    "mean": 0.3715953307392996,
+    "ci95": [
+      0.340716072611369,
+      0.40247458886723025
+    ],
+    "n_questions": 1028
+  },
+  "claim1_detail": {
+    "comparison": "fixed15_ft - fixed6_ft",
+    "mean": 0.015518913676042677,
+    "ci95": [
+      -0.004040318400508813,
+      0.035078145752594166
+    ],
+    "floor": 0.02,
+    "r5_gap": 0.061105722599418044
+  },
+  "claim2_detail": {
+    "comparison": "bilstm15_ft - fixed15_ft",
+    "mean": 0.01745877788554801,
+    "ci95": [
+      -0.00014729142772999457,
+      0.03506484719882602
+    ],
+    "ci90": [
+      0.0026822554261896857,
+      0.032235300344906334
+    ],
+    "margin": 0.03
+  },
+  "reported": {
+    "comparison": "fixed15_large - fixed15_ft",
+    "mean": 0.016488845780795344,
+    "ci95": [
+      0.0016680030848554035,
+      0.031309688476735285
+    ]
+  },
+  "n_questions": 1031,
+  "reader_model": "Qwen/Qwen3-4B-Instruct-2507",
+  "reader_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "gpus": [
+    "Tesla T4"
+  ],
+  "versions": [
+    "torch 2.11.0+cu130, transformers 5.18.0"
+  ]
+}
